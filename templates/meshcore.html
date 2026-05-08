@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block titel %}MeshCore | DO1FFE{% endblock %}
+{% block beschreibung %}MeshCore bei DO1FFE: LoRa-Mesh, Off-Grid-Kommunikation, Nodes, Monitoring und Funkexperimente.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--mesh">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">LoRa · Off-Grid · Mesh</p>
+    <h1>MeshCore: kurze Nachrichten, lange Funkwege.</h1>
+    <p>
+      MeshCore nutzt LoRa-Geraete fuer dezentrale Textkommunikation ohne Mobilfunknetz
+      und ohne klassische Internet-Infrastruktur. Genau das macht es fuer Funkamateure
+      und Technikmenschen so interessant.
+    </p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="https://meshcore.co.uk/" target="_blank" rel="noopener noreferrer">MeshCore Website</a>
+      <a class="button button--ghost" href="https://docs.meshcore.io/faq/" target="_blank" rel="noopener noreferrer">Dokumentation</a>
+    </div>
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="lead">
+      Bei MeshCore ist der spannende Teil nicht nur, dass Nachrichten ohne Handynetz
+      uebertragen werden. Spannend ist, dass jede echte Umgebung sofort mitredet:
+      Gebaeude, Hoehenlage, Antenne, Stromversorgung, Node-Dichte und Routing.
+    </p>
+    <p>
+      LoRa ist fuer kleine Datenmengen gemacht, nicht fuer Videos oder Streams.
+      Genau deshalb passt es zu kurzen Textnachrichten, Statusmeldungen und
+      Experimenten mit Reichweite.
+    </p>
+    <p>
+      Fuer DO1FFE ist MeshCore auch deshalb interessant, weil es Funkpraxis und
+      Softwaredenken zusammenbringt. Ein Node ist Hardware. Ein Paket ist Funk.
+      Ein Monitor ist Software. Und wenn etwas nicht ankommt, beginnt die Fehlersuche.
+    </p>
+  </article>
+  <aside class="feature__media reveal">
+    <img src="{{ url_for('static', filename='assets/meshcore-lora.svg') }}" alt="Abstrakte Darstellung eines LoRa-Mesh-Netzes mit verbundenen Nodes">
+  </aside>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Warum das reizt</p>
+    <h2>Mesh ist ein Netz, das man nicht nur konfiguriert, sondern erlebt.</h2>
+  </div>
+  <div class="detail-grid">
+    <article class="detail-card reveal">
+      <h3>Off-Grid-Kommunikation</h3>
+      <p>Keine Mobilfunkzelle, kein WLAN-Router, kein normaler Server als Grundvoraussetzung.</p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Nodes und Rollen</h3>
+      <p>Ein Mesh lebt von sinnvoll platzierten Geraeten. Manche sind mobil, manche fest, manche sollen weiterleiten.</p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Monitoring</h3>
+      <p>Tools wie CoreScope oder ein MeshCore-Netzwerkmonitor machen sichtbar, welche Nodes aktiv sind.</p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Amateurfunk-Denke</h3>
+      <p>Reichweite ist kein Marketingwert, sondern Physik: Antennenhoehe, Umgebung und Stoerungen entscheiden mit.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section repo-highlight reveal">
+  <div>
+    <p class="eyebrow">Passende Repos</p>
+    <h2>MeshCore taucht auch im Code auf.</h2>
+  </div>
+  <div class="repo-list">
+    <a href="https://github.com/DO1FFE/CoreScope" target="_blank" rel="noopener noreferrer">CoreScope · MeshCore analyzer</a>
+    <a href="https://github.com/DO1FFE/meshcore-network-monitor" target="_blank" rel="noopener noreferrer">meshcore-network-monitor</a>
+    <a href="https://github.com/DO1FFE/MeshCore" target="_blank" rel="noopener noreferrer">MeshCore fork</a>
+  </div>
+</section>
+
+<section class="next-links" aria-label="Weitere Themen">
+  <a href="{{ url_for('ov_l11') }}">Zurueck zum OV L11</a>
+  <a href="{{ url_for('github') }}">GitHub-Repositories</a>
+</section>
+{% endblock %}

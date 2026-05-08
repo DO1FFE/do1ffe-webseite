@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640" role="img" aria-labelledby="title desc">
+  <title id="title">OV L11 Funkstation</title>
+  <desc id="desc">Abstrakte Funkstation mit Antenne, Stadtformen und der Kennzeichnung L11.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17363a"/>
+      <stop offset=".55" stop-color="#0f2327"/>
+      <stop offset="1" stop-color="#071113"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbf9"/>
+      <stop offset="1" stop-color="#d9e7e3"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="640" rx="0" fill="url(#sky)"/>
+  <path d="M0 474h900v166H0z" fill="#e7f0ed"/>
+  <path d="M74 475h108v-86h54v86h76V330h86v145h80V370h62v105h82v-58h70v58h134v27H74z" fill="#203236"/>
+  <path d="M686 145v330" stroke="#8ff1e4" stroke-width="8" stroke-linecap="round"/>
+  <path d="M622 300l64-155 64 155M642 250h88M664 196h44" fill="none" stroke="#8ff1e4" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M603 186c-42 42-42 110 0 152M565 148c-63 63-63 165 0 228M769 186c42 42 42 110 0 152M807 148c63 63 63 165 0 228" fill="none" stroke="#f2a33a" stroke-width="8" stroke-linecap="round" opacity=".95"/>
+  <rect x="92" y="126" width="376" height="236" rx="8" fill="url(#panel)"/>
+  <rect x="122" y="156" width="316" height="64" rx="6" fill="#0a1518"/>
+  <path d="M147 188h74m28 0h36m30 0h85" stroke="#8ff1e4" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="166" cy="278" r="36" fill="#009f93"/>
+  <circle cx="166" cy="278" r="17" fill="#071113"/>
+  <circle cx="284" cy="278" r="36" fill="#f2a33a"/>
+  <circle cx="284" cy="278" r="17" fill="#071113"/>
+  <rect x="350" y="250" width="68" height="56" rx="6" fill="#c9434b"/>
+  <path d="M113 408h356" stroke="#0a1518" stroke-width="16" stroke-linecap="round"/>
+  <rect x="129" y="430" width="320" height="42" rx="8" fill="#0a1518"/>
+  <path d="M520 514h202" stroke="#009f93" stroke-width="10" stroke-linecap="round"/>
+  <path d="M548 544h145" stroke="#c9434b" stroke-width="10" stroke-linecap="round"/>
+  <rect x="555" y="102" width="134" height="72" rx="8" fill="#f8fbf9"/>
+  <text x="622" y="148" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#0a1518">L11</text>
+</svg>

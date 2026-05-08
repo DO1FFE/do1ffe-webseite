@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block titel %}Tesla-Dashboard | DO1FFE{% endblock %}
+{% block beschreibung %}Das Tesla-Dashboard von DO1FFE: Fahrzeugdaten, Karte, Statistik, Temperaturen, Status und Supercharger.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--tesla">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">tesla.do1ffe.de · V1.0.1420</p>
+    <h1>Ein eigenes Cockpit fuer Fahrzeugdaten.</h1>
+    <p>
+      Das Tesla-Dashboard ist kein Deko-Screen, sondern eine praktische Anzeige:
+      Fahrzeugauswahl, Dashboard, Statistik, Kartenansicht, Zustandsdaten und
+      Supercharger in der Naehe.
+    </p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="https://tesla.do1ffe.de/" target="_blank" rel="noopener noreferrer">Dashboard oeffnen</a>
+      <a class="button button--ghost" href="https://github.com/DO1FFE/tesla-dashboard" target="_blank" rel="noopener noreferrer">Repo ansehen</a>
+    </div>
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="lead">
+      Ein Tesla ist rollende Software, aber die spannendsten Daten sind nicht immer
+      dort sichtbar, wo man sie haben moechte. Ein eigenes Dashboard loest genau dieses
+      Problem: Es sammelt die relevanten Werte und zeigt sie so, dass man auf einen
+      Blick versteht, was mit dem Fahrzeug gerade los ist.
+    </p>
+    <p>
+      Auf der aktuellen Dashboard-Seite gibt es eine Fahrzeugauswahl, eine
+      Dashboard- und Statistik-Ansicht sowie Kartenmodi wie Standard, Hybrid und
+      Satellit. Dazu kommen Gangzustand P/R/N/D, Geschwindigkeit, Leistung in kW
+      und Kilometerstand.
+    </p>
+    <p>
+      Innen-, Wunsch-, Aussen- und Batterietemperatur zeigen, ob Klima, Wetter und
+      Akku gerade in einem sinnvollen Bereich liegen. Tuer-, Fenster-, Frunk-,
+      Kofferraum- und Ladeanschlussstatus machen daraus eine schnelle Zustandsuebersicht.
+    </p>
+  </article>
+  <aside class="dashboard-panel reveal" aria-label="Dashboard Anzeige">
+    <div class="mini-screen">
+      <div class="mini-screen__bar"><span></span><span></span><span></span></div>
+      <div class="mini-screen__map"></div>
+      <dl>
+        <div><dt>Speed</dt><dd>0 km/h</dd></div>
+        <div><dt>Power</dt><dd>0 kW</dd></div>
+        <div><dt>Range</dt><dd>0 km</dd></div>
+        <div><dt>Battery</dt><dd>-- °C</dd></div>
+      </dl>
+    </div>
+  </aside>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Was es sichtbar macht</p>
+    <h2>Die nuetzlichen kleinen Dinge, die man sonst zusammensuchen muss.</h2>
+  </div>
+  <div class="detail-grid">
+    <article class="detail-card reveal">
+      <h3>Karte und Supercharger</h3>
+      <p>Die Kartenansicht macht Standort und Umgebung greifbar. Dazu passt die Liste der Supercharger in der Naehe.</p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Temperaturen</h3>
+      <p>Innen, Aussen, Wunschtemperatur und Batterie sind kleine Werte mit grosser Aussagekraft.</p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Status auf einen Blick</h3>
+      <p>Tueren, Fenster, Frunk, Kofferraum, Schiebedach und Ladeanschluss gehoeren in eine gemeinsame Uebersicht.</p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Nachricht an den Fahrer</h3>
+      <p>Die Funktion macht das Dashboard zu mehr als einer Anzeige: Es kann in den Alltag hineinwirken.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section quote-section reveal">
+  <p>Gute Dashboards sind nicht die mit den meisten Zahlen. Gute Dashboards sind die, bei denen man nach drei Sekunden weiss, ob alles normal ist.</p>
+</section>
+
+<section class="next-links" aria-label="Weitere Themen">
+  <a href="{{ url_for('github') }}">Die GitHub-Repositories ansehen</a>
+  <a href="{{ url_for('startseite') }}">Zur Startseite</a>
+</section>
+{% endblock %}

@@ -1,32 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block titel %}DO1FFE Webseite{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <header class="kopfbereich">
-        <div class="kopfbereich-inhalt">
-            <p class="marke">DO1FFE</p>
-            <h1>Technik, Funk und Software mit Substanz</h1>
-            <p>Keine Klickseite: Diese Webseite zeigt Hintergründe, laufende Projekte und konkrete Ergebnisse.</p>
-        </div>
-        <nav class="hauptnavigation">
-            <a href="/">Startseite</a>
-            <a href="/ueber-mich">Über mich</a>
-            <a href="/projekte">Projekte</a>
-            <a href="/kontakt">Kontakt</a>
-        </nav>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="{% block beschreibung %}Persoenliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, GitHub-Projekte und MeshCore.{% endblock %}"
+    >
+    <title>{% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body class="no-js">
+    <header class="site-header" data-header>
+      <a class="brand" href="{{ url_for('startseite') }}" aria-label="DO1FFE Startseite">
+        <span class="brand__mark">DO1FFE</span>
+        <span class="brand__sub">Essen · DOK L11</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" data-nav>
+        <a class="{% if request.endpoint == 'startseite' %}is-active{% endif %}" href="{{ url_for('startseite') }}">Start</a>
+        <a class="{% if request.endpoint in ['ov_l11', 'ueber_mich'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
+        <a class="{% if request.endpoint == 'tesla_dashboard' %}is-active{% endif %}" href="{{ url_for('tesla_dashboard') }}">Tesla</a>
+        <a class="{% if request.endpoint in ['github', 'projekte'] %}is-active{% endif %}" href="{{ url_for('github') }}">GitHub</a>
+        <a class="{% if request.endpoint == 'meshcore' %}is-active{% endif %}" href="{{ url_for('meshcore') }}">MeshCore</a>
+        <a class="{% if request.endpoint == 'kontakt' %}is-active{% endif %}" href="{{ url_for('kontakt') }}">Kontakt</a>
+      </nav>
     </header>
 
     <main>
-        {% block inhalt %}{% endblock %}
+      {% block inhalt %}{% endblock %}
     </main>
 
-    <footer>
-        <p>&copy; 2026 Erik Schauer (DO1FFE) · Essen · <a href="mailto:do1ffe@darc.de">do1ffe@darc.de</a></p>
+    <footer class="site-footer">
+      <span>&copy; <span data-year>2026</span> Erik Schauer · DO1FFE · Essen</span>
+      <a href="{{ url_for('startseite') }}">Startseite</a>
     </footer>
-</body>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
 </html>

@@ -1,27 +1,131 @@
 {% extends "layout.html" %}
 
-{% block titel %}Startseite | DO1FFE{% endblock %}
+{% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}
 
 {% block inhalt %}
-<section class="karte">
-    <h2>Willkommen bei DO1FFE</h2>
-    <p>Hier entsteht eine persönliche Technik-Webseite mit Fokus auf echten Inhalten statt bloßer Linkliste. Im Mittelpunkt stehen Amateurfunk, datengetriebene Mobilität und praxisnahe Softwareprojekte.</p>
+<section class="hero hero--editorial" id="start" aria-labelledby="hero-title">
+  <img
+    class="hero__image"
+    src="{{ url_for('static', filename='assets/hero-radio-mesh.png') }}"
+    alt="Amateurfunkstation mit Funkgeraet, Notebook und LoRa-Mesh-Geraeten auf einem modernen Schreibtisch"
+  >
+  <div class="hero__shade" aria-hidden="true"></div>
+  <div class="hero__content">
+    <p class="eyebrow">Erik Schauer · DO1FFE</p>
+    <h1 id="hero-title">Ein Technik-Notizbuch aus Essen.</h1>
+    <p class="hero__copy">
+      Keine reine Visitenkarte, sondern eine Sammlung aus Funkpraxis, selbstgebauten
+      Webtools, Fahrzeugdaten, Vereinsleben und Mesh-Experimenten.
+    </p>
+  </div>
+  <dl class="signal-strip" aria-label="Kurzprofil">
+    <div><dt>Rufzeichen</dt><dd>DO1FFE</dd></div>
+    <div><dt>DOK</dt><dd>L11</dd></div>
+    <div><dt>Locator</dt><dd>JO31MK</dd></div>
+    <div><dt>Standort</dt><dd>Essen</dd></div>
+  </dl>
 </section>
 
-<section class="kartenraster">
-    <article class="karte">
-        <h3>Amateurfunk</h3>
-        <p>Rufzeichen DO1FFE, DOK L11, Grid JO31MK. Aktiv im DARC und interessiert an moderner wie klassischer Funktechnik.</p>
+<section class="section intro-magazine">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Worum es hier geht</p>
+    <h2>Funk ist nicht nostalgisch. Funk ist ein ziemlich gutes Labor.</h2>
+  </div>
+  <div class="article-copy reveal">
+    <p>
+      Amateurfunk klingt fuer viele erst einmal nach alten Geraeten, Rufzeichen und
+      viel Abkuerzungssalat. Stimmt auch ein bisschen. Aber genau darin steckt der Reiz:
+      Man hat Technik, die man anfassen kann, Netze, die nicht einfach aus der Cloud
+      fallen, und Messwerte, bei denen man wirklich versteht, wo sie herkommen.
+    </p>
+    <p>
+      Diese Webseite ist deshalb wie ein offenes Regal: links der DARC-Ortsverband L11
+      mit Clubabend und OV-Frequenzen, daneben das Tesla-Dashboard mit Live-Daten und
+      Kartenansicht, weiter rechts GitHub-Repositories fuer kleine und grosse Alltagshelfer.
+      Und irgendwo dazwischen funkt MeshCore ueber LoRa.
+    </p>
+  </div>
+</section>
+
+<section class="section topic-index" aria-label="Themenuebersicht">
+  <article class="topic-card topic-card--wide reveal">
+    <span class="card-kicker">Ortsverband</span>
+    <h3>DARC e.V. OV L11</h3>
+    <p>
+      Der lokale Anker: Clubleben, Ausbildung, Funkbetrieb, Besucherabende und
+      technische Projekte im Haus der Begegnung in Essen.
+    </p>
+    <a href="{{ url_for('ov_l11') }}">Zum OV L11</a>
+  </article>
+  <article class="topic-card reveal">
+    <span class="card-kicker">Dashboard</span>
+    <h3>Tesla-Daten</h3>
+    <p>Eine eigene Anzeige fuer Fahrzeugzustand, Karte, Temperaturen, Meldungen und Statistik.</p>
+    <a href="{{ url_for('tesla_dashboard') }}">Dashboard erklaert</a>
+  </article>
+  <article class="topic-card reveal">
+    <span class="card-kicker">Code</span>
+    <h3>GitHub-Repositories</h3>
+    <p>33 oeffentliche Repositories: viel Python, viel Funk, Vereinshelfer, Dashboards und Tools.</p>
+    <a href="{{ url_for('github') }}">Repos ansehen</a>
+  </article>
+  <article class="topic-card reveal">
+    <span class="card-kicker">LoRa</span>
+    <h3>MeshCore</h3>
+    <p>Off-Grid-Textnachrichten, Nodes, Reichweite, Monitoring und das reizvolle Chaos echter Funkwege.</p>
+    <a href="{{ url_for('meshcore') }}">MeshCore lesen</a>
+  </article>
+</section>
+
+<section class="feature feature--radio">
+  <div class="feature__media reveal">
+    <img src="{{ url_for('static', filename='assets/ov-l11-radio.svg') }}" alt="Abstrakte Illustration einer Funkstation in Essen mit OV L11 Kennzeichnung">
+  </div>
+  <div class="feature__content reveal">
+    <p class="eyebrow">Aus dem Clubraum</p>
+    <h2>Der OV L11 ist mehr als ein Termin im Kalender.</h2>
+    <p>
+      Ein Ortsverband lebt von den Leuten, die freitags vorbeikommen, Geraete
+      auseinandernehmen, neue Betriebsarten ausprobieren, ueber Antennen diskutieren
+      und Neulinge nicht im Fachchinesisch stehen lassen.
+    </p>
+    <a class="text-link" href="{{ url_for('ov_l11') }}">Die OV-Seite lesen</a>
+  </div>
+</section>
+
+<section class="section notes-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Auf der Werkbank</p>
+    <h2>Aktuelle Themen, die zusammen mehr ergeben als einzelne Links.</h2>
+  </div>
+  <div class="note-grid">
+    <article class="note-card reveal">
+      <h3>Fahrzeugdaten sichtbar machen</h3>
+      <p>
+        Das Tesla-Dashboard zeigt, wie schnell aus einer API-Idee ein eigenes Cockpit
+        wird: Kartenansicht, Gangzustand, Leistung, Temperaturen, Odometer,
+        Supercharger in der Naehe und eine Ansicht, die man selbst kontrolliert.
+      </p>
+      <a href="{{ url_for('tesla_dashboard') }}">Mehr zum Dashboard</a>
     </article>
-    <article class="karte">
-        <h3>Tesla-Dashboard</h3>
-        <p>Das Dashboard zeigt laufende Fahrzeugdaten und technische Kennzahlen in klarer Form.</p>
-        <p><a href="https://tesla.do1ffe.de" target="_blank" rel="noopener noreferrer">Dashboard öffnen</a></p>
+    <article class="note-card reveal">
+      <h3>Repos als Logbuch</h3>
+      <p>
+        GitHub ist hier kein Trophaeenschrank. Die Repositories lesen sich eher wie
+        ein Basteltisch: Club-Zahlungsterminal, Adventskalender fuer den OV,
+        AX.25-UDP-Router, PTT-Steuerung, DAPNET-API und Websteuerungen.
+      </p>
+      <a href="{{ url_for('github') }}">Projektuebersicht</a>
     </article>
-    <article class="karte">
-        <h3>GitHub-Projekte</h3>
-        <p>Alle öffentlichen Repositories sind über das GitHub-Profil erreichbar; ausgewählte Arbeiten werden zusätzlich auf der Projektseite erläutert.</p>
-        <p><a href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">GitHub-Profil ansehen</a></p>
+    <article class="note-card reveal">
+      <h3>MeshCore beobachten</h3>
+      <p>
+        LoRa-Mesh ist spannend, weil es nicht perfekt und glatt ist. Nodes verschwinden,
+        Pakete nehmen Umwege, Reichweite ist Standortphysik. Genau deshalb sind
+        Monitor, Analyzer und Live-Visualisierung so nuetzlich.
+      </p>
+      <a href="{{ url_for('meshcore') }}">MeshCore-Thema</a>
     </article>
+  </div>
 </section>
 {% endblock %}

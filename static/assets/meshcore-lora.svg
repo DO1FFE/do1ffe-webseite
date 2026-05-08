@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640" role="img" aria-labelledby="title desc">
+  <title id="title">LoRa Mesh Netzwerk</title>
+  <desc id="desc">Abstraktes MeshCore-Netz mit mehreren verbundenen LoRa-Nodes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef6f3"/>
+      <stop offset=".6" stop-color="#d6e7e2"/>
+      <stop offset="1" stop-color="#f6ead7"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0a1518" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect width="900" height="640" fill="url(#bg)"/>
+  <path d="M124 494c87-120 174-142 262-65s183 59 288-53c50-53 92-78 126-74v338H124z" fill="#bfd8d1"/>
+  <path d="M121 172l186 124 164-82 154 144 143-198" fill="none" stroke="#0a1518" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".22"/>
+  <path d="M307 296l48 168M471 214l-116 250M625 358l-270 106M625 358l143-198M121 172l234 292" fill="none" stroke="#009f93" stroke-width="6" stroke-dasharray="10 14" stroke-linecap="round" opacity=".78"/>
+  <g filter="url(#soft)">
+    <circle cx="121" cy="172" r="56" fill="#ffffff"/>
+    <circle cx="307" cy="296" r="56" fill="#ffffff"/>
+    <circle cx="471" cy="214" r="56" fill="#ffffff"/>
+    <circle cx="625" cy="358" r="56" fill="#ffffff"/>
+    <circle cx="768" cy="160" r="56" fill="#ffffff"/>
+    <circle cx="355" cy="464" r="66" fill="#0a1518"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M121 141v62m-22-40h44" stroke="#009f93" stroke-width="9"/>
+    <path d="M307 265v62m-22-40h44" stroke="#f2a33a" stroke-width="9"/>
+    <path d="M471 183v62m-22-40h44" stroke="#c9434b" stroke-width="9"/>
+    <path d="M625 327v62m-22-40h44" stroke="#009f93" stroke-width="9"/>
+    <path d="M768 129v62m-22-40h44" stroke="#6aa84f" stroke-width="9"/>
+  </g>
+  <path d="M316 454h78l14 92H302z" fill="#8ff1e4"/>
+  <rect x="284" y="402" width="142" height="96" rx="8" fill="#ffffff"/>
+  <circle cx="326" cy="450" r="16" fill="#009f93"/>
+  <circle cx="383" cy="450" r="16" fill="#f2a33a"/>
+  <path d="M355 402v-86" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <path d="M326 346c16-16 42-16 58 0M302 316c29-30 77-30 106 0" fill="none" stroke="#8ff1e4" stroke-width="9" stroke-linecap="round"/>
+  <rect x="72" y="520" width="216" height="58" rx="8" fill="#ffffff"/>
+  <text x="180" y="558" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="800" fill="#0a1518">MeshCore</text>
+</svg>
