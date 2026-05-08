@@ -37,3 +37,14 @@ def test_githubseite_enthaelt_repo_auswahl():
     assert "CoreScope" in html
     assert "meshcore-network-monitor" in html
     assert "https://github.com/do1ffe" in html
+
+
+def test_meshcoreseite_bewirbt_lokale_einstiege():
+    klient = app.test_client()
+    antwort = klient.get("/meshcore")
+    html = antwort.get_data(as_text=True)
+
+    assert "https://meshcore-essen.de/" in html
+    assert "https://corescope.lima11.de/#/home" in html
+    assert "MeshCore-Essen" in html
+    assert "CoreScope Essen" in html
