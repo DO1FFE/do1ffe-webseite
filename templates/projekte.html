@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block titel %}Projekte | DO1FFE{% endblock %}
+
+{% block inhalt %}
+<section class="karte">
+    <h2>Projekte und Repositories</h2>
+    <p>Diese Seite bündelt laufende Arbeiten. Neben Einzelprojekten ist auch das komplette GitHub-Profil verlinkt, damit alle Repositories zentral erreichbar sind.</p>
+    <p><a href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">Alle GitHub-Repositories anzeigen</a></p>
+</section>
+
+<section class="kartenraster">
+    {% for repo in repos %}
+    <article class="karte">
+        <h3>{{ repo.name }}</h3>
+        <p>{{ repo.beschreibung }}</p>
+        <p><a href="{{ repo.url }}" target="_blank" rel="noopener noreferrer">Projekt öffnen</a></p>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

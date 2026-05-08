@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titel %}DO1FFE Webseite{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="kopfbereich">
+        <div class="kopfbereich-inhalt">
+            <p class="marke">DO1FFE</p>
+            <h1>Technik, Funk und Software mit Substanz</h1>
+            <p>Keine Klickseite: Diese Webseite zeigt Hintergründe, laufende Projekte und konkrete Ergebnisse.</p>
+        </div>
+        <nav class="hauptnavigation">
+            <a href="/">Startseite</a>
+            <a href="/ueber-mich">Über mich</a>
+            <a href="/projekte">Projekte</a>
+            <a href="/kontakt">Kontakt</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block inhalt %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Erik Schauer (DO1FFE) · Essen · <a href="mailto:do1ffe@darc.de">do1ffe@darc.de</a></p>
+    </footer>
+</body>
+</html>
