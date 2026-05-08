@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block titel %}GitHub-Repositories | DO1FFE{% endblock %}
+{% block beschreibung %}GitHub-Projekte von DO1FFE: Tesla-Dashboard, Funktools, MeshCore, OV-Webseiten und Automatisierung.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--code">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">github.com/do1ffe</p>
+    <h1>Repos als Basteltisch, Logbuch und Werkzeugkasten.</h1>
+    <p>
+      33 oeffentliche Repositories zeigen ziemlich gut, worum es hier geht:
+      Python-lastige Tools, Funktechnik, Vereinshelfer, Dashboards, MeshCore und
+      praktische Weboberflaechen.
+    </p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">GitHub-Profil</a>
+    </div>
+  </div>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Auswahl</p>
+    <h2>Projekte, die den Charakter der Sammlung zeigen.</h2>
+  </div>
+  <div class="repo-grid">
+    {% for repo in repos %}
+    <article class="repo-card reveal">
+      <span>{{ repo.meta }}</span>
+      <h3>{{ repo.name }}</h3>
+      <p>{{ repo.beschreibung }}</p>
+      <a href="{{ repo.url }}" target="_blank" rel="noopener noreferrer">Repository</a>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="lead">
+      Die Repository-Liste wirkt nicht wie ein einzelnes grosses Produkt. Sie wirkt
+      eher wie ein technisches Tagebuch: Wenn im OV ein Formular gebraucht wird,
+      entsteht eine Webseite. Wenn ein Funkgeraet gesteuert werden soll, entsteht
+      ein Tool. Wenn Fahrzeugdaten zu verteilt sind, entsteht ein Dashboard.
+    </p>
+    <p>
+      Spannend ist die Mischung: Vereinsseiten wie Treffen-Webseite,
+      Fruehstuecksbrunch-Webseite und weihnachtsessen-anmeldung stehen neben
+      Funkprojekten wie PTT, DAPNET-API, afu-dstar, QRG-Website und UDP-Router.
+      Dazu kommen Systemhelfer wie debian-update, sysinfo und web-steuerung.
+    </p>
+  </article>
+  <aside class="fact-panel reveal">
+    <h2>Repository-Profil</h2>
+    <dl class="fact-list">
+      <div><dt>Oeffentliche Repos</dt><dd>33</dd></div>
+      <div><dt>Haeufige Sprache</dt><dd>Python</dd></div>
+      <div><dt>Themen</dt><dd>Funk, Webtools, Dashboards, OV-Helfer, Automatisierung</dd></div>
+      <div><dt>Aktivitaet</dt><dd>mehrere Updates im April und Mai 2026</dd></div>
+    </dl>
+  </aside>
+</section>
+
+<section class="next-links" aria-label="Weitere Themen">
+  <a href="{{ url_for('tesla_dashboard') }}">Zum Tesla-Dashboard</a>
+  <a href="{{ url_for('meshcore') }}">MeshCore lesen</a>
+</section>
+{% endblock %}

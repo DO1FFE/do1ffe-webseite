@@ -1,16 +1,39 @@
 from app import app
 
 
-def test_alle_seiten_erreichbar():
+def test_alle_hauptseiten_erreichbar():
     klient = app.test_client()
-    for route in ['/', '/ueber-mich', '/projekte', '/kontakt']:
+    for route in [
+        "/",
+        "/ov-l11",
+        "/tesla-dashboard",
+        "/github",
+        "/meshcore",
+        "/kontakt",
+        "/ueber-mich",
+        "/projekte",
+    ]:
         antwort = klient.get(route)
         assert antwort.status_code == 200
 
 
-def test_projektseite_enthaelt_github_link():
+def test_startseite_verlinkt_unterseiten():
     klient = app.test_client()
-    antwort = klient.get('/projekte')
+    antwort = klient.get("/")
     html = antwort.get_data(as_text=True)
-    assert 'https://github.com/do1ffe' in html
-    assert 'tesla-dashboard' in html
+
+    assert "/ov-l11" in html
+    assert "/tesla-dashboard" in html
+    assert "/github" in html
+    assert "/meshcore" in html
+
+
+def test_githubseite_enthaelt_repo_auswahl():
+    klient = app.test_client()
+    antwort = klient.get("/github")
+    html = antwort.get_data(as_text=True)
+
+    assert "tesla-dashboard" in html
+    assert "CoreScope" in html
+    assert "meshcore-network-monitor" in html
+    assert "https://github.com/do1ffe" in html

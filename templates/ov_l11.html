@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block titel %}DARC OV L11 | DO1FFE{% endblock %}
+{% block beschreibung %}DARC e.V. Ortsverband L11 in Essen: Clubleben, Termine, Frequenzen und Amateurfunkpraxis.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--radio">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">DARC e.V. · Ortsverband Essen-Mitte</p>
+    <h1>DOK L11: Funkbetrieb mitten in Essen.</h1>
+    <p>
+      Der OV L11 ist der lokale Treffpunkt fuer Amateurfunk, Ausbildung, Bastelideen,
+      Clubstation und Technikgespraeche. Wer Funk nicht nur lesen, sondern hoeren,
+      anfassen und ausprobieren will, landet hier ziemlich schnell richtig.
+    </p>
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="lead">
+      Ein Ortsverband ist im besten Fall kein Vereinsformular mit Antenne, sondern ein
+      Raum fuer Neugier. Im Haus der Begegnung in Essen treffen sich Menschen, die
+      wissen wollen, warum eine Antenne mal grossartig spielt und am naechsten Abend
+      beleidigt schweigt, wie man sauber Betrieb macht und welche digitalen
+      Betriebsarten gerade Spass machen.
+    </p>
+    <p>
+      L11 verbindet klassische Amateurfunkpraxis mit modernen Themen: Relaisbetrieb,
+      OV-QRG, Clubstation, Ausbildung ueber Plattformen wie 50ohm, Aktionen fuer
+      Besucher und technische Experimente.
+    </p>
+    <p>
+      Fuer Einsteiger ist wichtig: Man muss nicht schon alles koennen. Amateurfunk
+      wirkt von aussen manchmal wie eine Wand aus Rufzeichen, Frequenzen und
+      Abkuerzungen. Im Clubraum wird daraus normalerweise schnell ein Gespraech.
+    </p>
+  </article>
+  <aside class="fact-panel reveal" aria-label="OV L11 Fakten">
+    <h2>OV-Daten</h2>
+    <dl class="fact-list">
+      <div><dt>DOK</dt><dd>L11</dd></div>
+      <div><dt>Ort</dt><dd>Haus der Begegnung, I. Weberstr. 28, 45127 Essen</dd></div>
+      <div><dt>OV-Abend</dt><dd>jeden 2. Dienstag im Monat um 19 Uhr</dd></div>
+      <div><dt>Clubabend</dt><dd>freitags ab 17 Uhr</dd></div>
+      <div><dt>Relais</dt><dd>DB0NA · 439,075 MHz · CTCSS 67 Hz</dd></div>
+    </dl>
+    <a class="text-link" href="https://www.darc.de/der-club/distrikte/l/ortsverbaende/11/" target="_blank" rel="noopener noreferrer">
+      Offizielle OV-Seite
+    </a>
+  </aside>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Was dort passiert</p>
+    <h2>Vom Clubabend bis zur Funkpraxis.</h2>
+  </div>
+  <div class="detail-grid">
+    <article class="detail-card reveal">
+      <h3>Clubabend</h3>
+      <p>
+        Der Freitag ist der niedrigschwellige Einstieg: vorbeikommen, reden, schauen,
+        fragen, manchmal ein Geraet testen, manchmal einfach nur die Woche technisch sortieren.
+      </p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Ausbildung</h3>
+      <p>
+        Amateurfunk lebt davon, dass Wissen weitergegeben wird. L11 verweist auf
+        Ausbildungsangebote wie 50ohm und macht aus trockener Theorie etwas Greifbares.
+      </p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Frequenzen</h3>
+      <p>
+        Lokale Treffpunkte auf 2 m und 70 cm: 145,2125 MHz und 430,2125 MHz. Dazu
+        DB0NA auf 439,075 MHz und im BrandMeister-DMR die TG 1211.
+      </p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Oeffentlichkeit</h3>
+      <p>
+        Aktionen wie "Tueren auf mit der Maus" zeigen, dass Funk nicht geheimnisvoll
+        hinter verschlossenen Tueren bleiben muss.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="next-links" aria-label="Weitere Themen">
+  <a href="{{ url_for('tesla_dashboard') }}">Weiter zum Tesla-Dashboard</a>
+  <a href="{{ url_for('meshcore') }}">MeshCore und LoRa lesen</a>
+</section>
+{% endblock %}

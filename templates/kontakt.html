@@ -1,19 +1,45 @@
 {% extends "layout.html" %}
 
 {% block titel %}Kontakt | DO1FFE{% endblock %}
+{% block beschreibung %}Kontakt zu DO1FFE fuer Amateurfunk, Softwareprojekte, DARC OV L11 und technische Fragen.{% endblock %}
 
 {% block inhalt %}
-<section class="karte">
-    <h2>Kontakt</h2>
-    <p>Für Rückfragen zu Funk, Projekten oder Kooperationen:</p>
-    <p><a href="mailto:do1ffe@darc.de">do1ffe@darc.de</a></p>
+<section class="page-hero page-hero--mesh">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">Kontakt</p>
+    <h1>Funk, Code, Clubabend oder eine gute technische Frage?</h1>
+    <p>
+      Der kurze Weg geht per E-Mail. Fuer Quellcode, Issues und Projektspuren ist
+      GitHub der bessere Einstieg.
+    </p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="mailto:do1ffe@darc.de">do1ffe@darc.de</a>
+      <a class="button button--ghost" href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">GitHub-Profil</a>
+    </div>
+  </div>
 </section>
 
-<section class="karte">
-    <h2>Weitere Einstiege</h2>
-    <ul>
-        <li><a href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">GitHub-Profil</a></li>
-        <li><a href="https://tesla.do1ffe.de" target="_blank" rel="noopener noreferrer">Tesla-Dashboard</a></li>
-    </ul>
+<section class="section topic-index" aria-label="Kontakt Einstiege">
+  <article class="topic-card topic-card--wide reveal">
+    <span class="card-kicker">Amateurfunk</span>
+    <h3>DARC OV L11</h3>
+    <p>
+      Fuer lokale Funkpraxis, Clubabend, Besucherfragen und alles rund um L11 ist die
+      OV-Seite der passende Einstieg.
+    </p>
+    <a href="{{ url_for('ov_l11') }}">OV L11 ansehen</a>
+  </article>
+  <article class="topic-card reveal">
+    <span class="card-kicker">Dashboard</span>
+    <h3>Tesla-Dashboard</h3>
+    <p>Fahrzeugdaten, Statuswerte und Kartenansicht sind direkt unter tesla.do1ffe.de erreichbar.</p>
+    <a href="https://tesla.do1ffe.de/" target="_blank" rel="noopener noreferrer">Dashboard oeffnen</a>
+  </article>
+  <article class="topic-card reveal">
+    <span class="card-kicker">Code</span>
+    <h3>GitHub</h3>
+    <p>Repositories, Projektspuren und Issues gehoeren am besten direkt auf GitHub.</p>
+    <a href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">Profil ansehen</a>
+  </article>
 </section>
 {% endblock %}
