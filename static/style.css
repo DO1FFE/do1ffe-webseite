@@ -700,6 +700,56 @@ h3 {
   min-height: 260px;
 }
 
+.promo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 42px;
+}
+
+.promo-card {
+  display: flex;
+  min-height: 350px;
+  flex-direction: column;
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
+}
+
+.promo-card--accent {
+  color: var(--white);
+  border-color: transparent;
+  background:
+    linear-gradient(135deg, rgba(0, 159, 147, 0.86), rgba(19, 35, 38, 0.94)),
+    #132326;
+}
+
+.promo-card__tag {
+  margin-bottom: 24px;
+  color: var(--red);
+  font-size: 0.73rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.promo-card p {
+  margin: 16px 0 28px;
+  color: var(--ink-2);
+}
+
+.promo-card--accent p,
+.promo-card--accent .promo-card__tag {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.promo-card .button {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
 .page-hero {
   position: relative;
   display: grid;
@@ -1005,6 +1055,7 @@ h3 {
   .topic-index,
   .note-grid,
   .detail-grid,
+  .promo-grid,
   .repo-grid,
   .article-layout,
   .repo-highlight,
@@ -1062,6 +1113,10 @@ h3 {
 
   h2 {
     font-size: clamp(1.8rem, 10vw, 3rem);
+  }
+
+  .page-hero h1 {
+    font-size: clamp(2.35rem, 11vw, 3.4rem);
   }
 
   .hero__actions,
