@@ -15,7 +15,7 @@
     </p>
     <div class="hero__actions">
       <a class="button button--primary" href="https://meshcore-essen.de/" target="_blank" rel="noopener noreferrer">MeshCore-Essen</a>
-      <a class="button button--ghost" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}">Repeater-Konfigurator APK</a>
+      <a class="button button--ghost" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>Repeater-Konfigurator APK</a>
       <a class="button button--ghost" href="https://corescope.lima11.de/#/home" target="_blank" rel="noopener noreferrer">CoreScope Essen live</a>
       <a class="button button--ghost" href="https://docs.meshcore.io/faq/" target="_blank" rel="noopener noreferrer">MeshCore Docs</a>
     </div>
@@ -98,7 +98,7 @@
         </div>
         <div>
           <dt>Downloads</dt>
-          <dd>{{ repeater_apk.downloads }}</dd>
+          <dd data-download-count="{{ repeater_apk.version }}" data-downloads="{{ repeater_apk.downloads }}">{{ repeater_apk.downloads }}</dd>
         </div>
         <div>
           <dt>Größe</dt>
@@ -122,11 +122,11 @@
           {% for apk in repeater_apk_historie %}
           <li>
             {% if apk.verfügbar %}
-            <a href="{{ url_for('meshcore_repeater_konfigurator_apk_version', version=apk.version) }}">V{{ apk.version }}</a>
+            <a href="{{ url_for('meshcore_repeater_konfigurator_apk_version', version=apk.version) }}" data-download-version="{{ apk.version }}">V{{ apk.version }}</a>
             {% else %}
             <span>V{{ apk.version }}</span>
             {% endif %}
-            <strong>{{ apk.downloads }} {% if apk.downloads == 1 %}Download{% else %}Downloads{% endif %}</strong>
+            <strong data-download-count="{{ apk.version }}" data-downloads="{{ apk.downloads }}" data-download-label="true">{{ apk.downloads }} {% if apk.downloads == 1 %}Download{% else %}Downloads{% endif %}</strong>
           </li>
           {% endfor %}
         </ol>
@@ -134,7 +134,7 @@
       {% endif %}
     </div>
     <div class="download-panel__actions">
-      <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}">APK herunterladen</a>
+      <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
       <a class="download-panel__repo" href="https://github.com/DO1FFE/meshcore-repeater-konfigurator" target="_blank" rel="noopener noreferrer">Repository ansehen</a>
     </div>
   </div>

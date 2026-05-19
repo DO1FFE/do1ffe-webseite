@@ -71,6 +71,8 @@ def test_meshcoreseite_verlinkt_repeater_konfigurator_apk():
     html = antwort.get_data(as_text=True)
 
     assert 'class="download-panel reveal" id="app"' in html
+    assert "data-download-count" in html
+    assert "data-download-version" in html
     assert "/downloads/meshcore-repeater-konfigurator.apk" in html
     assert "MeshCore Repeater-Konfigurator direkt herunterladen" in html
 
@@ -142,3 +144,14 @@ def test_repeater_konfigurator_download_zählt_versioniert(tmp_path, monkeypatch
     assert antwort.status_code == 200
     assert antwort.data == b"alt"
     assert json.loads(zähler_datei.read_text(encoding="utf-8"))["1.0.21"] == 10
+
+
+def test_repeater_konfigurator_head_zählt_nicht(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"neu")
+
+    klient = app.test_client()
+    antwort = klient.head("/downloads/meshcore-repeater-konfigurator.apk")
+
+    assert antwort.status_code == 200
+    assert not zähler_datei.exists()
