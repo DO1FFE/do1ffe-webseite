@@ -780,9 +780,9 @@ h3 {
 
 .download-meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
-  max-width: 700px;
+  max-width: 780px;
   margin: 30px 0 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -809,6 +809,56 @@ h3 {
   margin: 0;
   font-size: clamp(1.02rem, 1.7vw, 1.22rem);
   font-weight: 900;
+  white-space: nowrap;
+}
+
+.download-history {
+  max-width: 780px;
+  margin-top: 34px;
+}
+
+.download-history h3 {
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1rem;
+}
+
+.download-history ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  max-height: 280px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  list-style: none;
+}
+
+.download-history li {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.download-history a,
+.download-history span {
+  color: #8ff1e4;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.download-history strong {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.92rem;
+  white-space: nowrap;
 }
 
 .download-panel__actions {
@@ -1208,6 +1258,10 @@ h3 {
   }
 
   .download-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .download-history ol {
     grid-template-columns: 1fr;
   }
 }

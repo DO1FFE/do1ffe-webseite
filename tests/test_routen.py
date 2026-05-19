@@ -1,6 +1,19 @@
+import json
+
 import app as webseite
 
 app = webseite.app
+
+
+def richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch):
+    download_ordner = tmp_path / "downloads"
+    archiv_ordner = tmp_path / "artifacts"
+    download_ordner.mkdir()
+    archiv_ordner.mkdir()
+    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_APK_ORDNER", download_ordner)
+    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_ARCHIV_ORDNER", archiv_ordner)
+    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI", tmp_path / "download-zaehler.json")
+    return download_ordner, archiv_ordner, tmp_path / "download-zaehler.json"
 
 
 def test_alle_hauptseiten_erreichbar():
@@ -61,14 +74,32 @@ def test_meshcoreseite_verlinkt_repeater_konfigurator_apk():
     assert "MeshCore Repeater-Konfigurator direkt herunterladen" in html
 
 
-def test_repeater_konfigurator_download_liefert_neuste_apk(tmp_path, monkeypatch):
-    apk_ordner = tmp_path / "MeshCoreRepeaterKonfigurator"
-    apk_ordner.mkdir()
-    alte_apk = apk_ordner / "MeshCoreRepeaterKonfigurator-1.0.9-release-signed.apk"
-    neue_apk = apk_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk"
+def test_meshcoreseite_zeigt_download_historie(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.20-release-signed.apk").write_bytes(b"alt")
+    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"mittel")
+    (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"neu")
+    zähler_datei.write_text(json.dumps({"1.0.20": 3, "1.0.21": 10, "1.0.22": 4}), encoding="utf-8")
+
+    klient = app.test_client()
+    antwort = klient.get("/meshcore")
+    html = antwort.get_data(as_text=True)
+
+    assert "Aktuelle Version" in html
+    assert "V1.0.22" in html
+    assert "Vergangene Versionen" in html
+    assert "V1.0.21" in html
+    assert "10 Downloads" in html
+    assert "V1.0.20" in html
+    assert "3 Downloads" in html
+
+
+def test_repeater_konfigurator_download_liefert_neuste_apk_und_zählt(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    alte_apk = archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.9-release-signed.apk"
+    neue_apk = download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk"
     alte_apk.write_bytes(b"alt")
     neue_apk.write_bytes(b"neu")
-    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_APK_ORDNER", apk_ordner)
 
     klient = app.test_client()
     antwort = klient.get("/downloads/meshcore-repeater-konfigurator.apk")
@@ -76,3 +107,18 @@ def test_repeater_konfigurator_download_liefert_neuste_apk(tmp_path, monkeypatch
     assert antwort.status_code == 200
     assert antwort.data == b"neu"
     assert "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk" in antwort.headers["Content-Disposition"]
+    assert json.loads(zähler_datei.read_text(encoding="utf-8"))["1.0.22"] == 1
+
+
+def test_repeater_konfigurator_download_zählt_versioniert(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"neu")
+    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"alt")
+    zähler_datei.write_text(json.dumps({"1.0.21": 9}), encoding="utf-8")
+
+    klient = app.test_client()
+    antwort = klient.get("/downloads/meshcore-repeater-konfigurator/v1.0.21.apk")
+
+    assert antwort.status_code == 200
+    assert antwort.data == b"alt"
+    assert json.loads(zähler_datei.read_text(encoding="utf-8"))["1.0.21"] == 10

@@ -93,8 +93,12 @@
       <dl class="download-meta">
         {% if repeater_apk %}
         <div>
-          <dt>Version</dt>
-          <dd>{{ repeater_apk.version }}</dd>
+          <dt>Aktuelle Version</dt>
+          <dd>V{{ repeater_apk.version }}</dd>
+        </div>
+        <div>
+          <dt>Downloads</dt>
+          <dd>{{ repeater_apk.downloads }}</dd>
         </div>
         <div>
           <dt>Größe</dt>
@@ -111,6 +115,23 @@
         </div>
         {% endif %}
       </dl>
+      {% if repeater_apk_historie %}
+      <div class="download-history">
+        <h3>Vergangene Versionen</h3>
+        <ol>
+          {% for apk in repeater_apk_historie %}
+          <li>
+            {% if apk.verfügbar %}
+            <a href="{{ url_for('meshcore_repeater_konfigurator_apk_version', version=apk.version) }}">V{{ apk.version }}</a>
+            {% else %}
+            <span>V{{ apk.version }}</span>
+            {% endif %}
+            <strong>{{ apk.downloads }} {% if apk.downloads == 1 %}Download{% else %}Downloads{% endif %}</strong>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+      {% endif %}
     </div>
     <div class="download-panel__actions">
       <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}">APK herunterladen</a>
