@@ -10,6 +10,7 @@ DARC e.V. OV L11, Tesla-Dashboard, GitHub-Repositories und MeshCore.
 - `/tesla-dashboard` Erklärung zum Dashboard unter `tesla.do1ffe.de`
 - `/github` Auswahl öffentlicher GitHub-Repositories
 - `/meshcore` LoRa-Mesh, Off-Grid-Kommunikation und Monitoring
+- `/meshcore#app` direkter Sprung zur Android-App
 - `/downloads/meshcore-repeater-konfigurator.apk` aktuelle APK des MeshCore Repeater-Konfigurators
 - `/downloads/meshcore-repeater-konfigurator/v<version>.apk` historische APK-Version
 - `/kontakt` Kontakt und weiterführende Einstiege
