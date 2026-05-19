@@ -28,7 +28,7 @@ def test_startseite_verlinkt_unterseiten():
     assert "/meshcore" in html
 
 
-def test_githubseite_enthaelt_repo_auswahl():
+def test_githubseite_enthält_repo_auswahl():
     klient = app.test_client()
     antwort = klient.get("/github")
     html = antwort.get_data(as_text=True)

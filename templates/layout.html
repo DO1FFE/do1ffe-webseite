@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="{% block beschreibung %}Persoenliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, GitHub-Projekte und MeshCore.{% endblock %}"
+      content="{% block beschreibung %}Persönliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, GitHub-Projekte und MeshCore.{% endblock %}"
     >
     <title>{% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -23,7 +23,7 @@
       </button>
       <nav class="site-nav" id="site-nav" data-nav>
         <a class="{% if request.endpoint == 'startseite' %}is-active{% endif %}" href="{{ url_for('startseite') }}">Start</a>
-        <a class="{% if request.endpoint in ['ov_l11', 'ueber_mich'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
+        <a class="{% if request.endpoint in ['ov_l11', 'über_mich'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
         <a class="{% if request.endpoint == 'tesla_dashboard' %}is-active{% endif %}" href="{{ url_for('tesla_dashboard') }}">Tesla</a>
         <a class="{% if request.endpoint in ['github', 'projekte'] %}is-active{% endif %}" href="{{ url_for('github') }}">GitHub</a>
         <a class="{% if request.endpoint == 'meshcore' %}is-active{% endif %}" href="{{ url_for('meshcore') }}">MeshCore</a>
@@ -36,7 +36,7 @@
     </main>
 
     <footer class="site-footer">
-      <span>&copy; <span data-year>2026</span> Erik Schauer · DO1FFE · Essen</span>
+      <span>&copy; <span data-year>2026</span> Erik Schauer, do1ffe@darc.de</span>
       <a href="{{ url_for('startseite') }}">Startseite</a>
     </footer>
 

@@ -7,7 +7,7 @@ REPOSITORIES = [
     {
         "name": "tesla-dashboard",
         "meta": "Python · aktualisiert Apr 2026",
-        "beschreibung": "Ein Dashboard fuer den Tesla: Fahrzeugdaten, Karte, Statistik und Statuswerte.",
+        "beschreibung": "Ein Dashboard für den Tesla: Fahrzeugdaten, Karte, Statistik und Statuswerte.",
         "url": "https://github.com/DO1FFE/tesla-dashboard",
     },
     {
@@ -19,31 +19,31 @@ REPOSITORIES = [
     {
         "name": "CoreScope",
         "meta": "Fork · MeshCore",
-        "beschreibung": "MeshCore-Analyzer fuer Live-Pakete, Replay, Node Health, Decryption und Analytics.",
+        "beschreibung": "MeshCore-Analyzer für Live-Pakete, Replay, Node Health, Decryption und Analytics.",
         "url": "https://github.com/DO1FFE/CoreScope",
     },
     {
         "name": "Adventskalender-Webseite",
         "meta": "Python · OV L11",
-        "beschreibung": "Ein Adventskalender fuer den Amateurfunkclub des DARC e.V. OV L11.",
+        "beschreibung": "Ein Adventskalender für den Amateurfunkclub des DARC e.V. OV L11.",
         "url": "https://github.com/DO1FFE/Adventskalender-Webseite",
     },
     {
         "name": "ptt",
         "meta": "Python · MIT",
-        "beschreibung": "PTT-Steuerung ueber COM-Port mit RTS/DTS: klein, konkret, funkpraktisch.",
+        "beschreibung": "PTT-Steuerung über COM-Port mit RTS/DTS: klein, konkret, funkpraktisch.",
         "url": "https://github.com/DO1FFE/ptt",
     },
     {
         "name": "club-payment",
         "meta": "Python · Club",
-        "beschreibung": "Zahlungsterminal fuer die Clubstation, also Software direkt aus dem Vereinsalltag.",
+        "beschreibung": "Zahlungsterminal für die Clubstation, also Software direkt aus dem Vereinsalltag.",
         "url": "https://github.com/DO1FFE/club-payment",
     },
     {
         "name": "meshcore-network-monitor",
         "meta": "Python · Mesh",
-        "beschreibung": "Monitoring fuer MeshCore-Netze, wenn Funkwege beobachtet werden sollen.",
+        "beschreibung": "Monitoring für MeshCore-Netze, wenn Funkwege beobachtet werden sollen.",
         "url": "https://github.com/DO1FFE/meshcore-network-monitor",
     },
     {
@@ -92,7 +92,7 @@ def kontakt():
 
 
 @app.route("/ueber-mich")
-def ueber_mich():
+def über_mich():
     return render_template("ov_l11.html")
 
 
