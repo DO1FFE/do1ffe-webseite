@@ -90,6 +90,9 @@
         Companion ein. Sie ist für die praktische Arbeit am Node gedacht: verbinden,
         Repeater auswählen, Passwort eingeben und die Einrichtungskommandos senden.
       </p>
+      <p class="download-note">
+        Gedacht für Android-Handys mit Bluetooth Low Energy. Der QR-Code führt auf denselben APK-Download.
+      </p>
       <dl class="download-meta">
         {% if repeater_apk %}
         <div>
@@ -135,6 +138,10 @@
     </div>
     <div class="download-panel__actions">
       <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
+      <div class="download-qr" aria-label="QR-Code für den APK-Download">
+        <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}" alt="QR-Code für den APK-Download der Android-App">
+        <span>Mit dem Android-Handy scannen</span>
+      </div>
     </div>
   </div>
 </section>
