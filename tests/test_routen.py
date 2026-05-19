@@ -70,7 +70,7 @@ def test_meshcoreseite_verlinkt_repeater_konfigurator_apk():
     antwort = klient.get("/meshcore")
     html = antwort.get_data(as_text=True)
 
-    assert 'id="app"' in html
+    assert 'class="download-panel reveal" id="app"' in html
     assert "/downloads/meshcore-repeater-konfigurator.apk" in html
     assert "MeshCore Repeater-Konfigurator direkt herunterladen" in html
 

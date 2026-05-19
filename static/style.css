@@ -750,12 +750,12 @@ h3 {
   margin-top: auto;
 }
 
-.mesh-download {
-  scroll-margin-top: 104px;
+.content-section.mesh-download {
   padding-top: 0;
 }
 
 .download-panel {
+  scroll-margin-top: 132px;
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
   gap: clamp(24px, 5vw, 56px);
@@ -781,7 +781,7 @@ h3 {
 
 .download-meta {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(150px, 0.9fr) minmax(110px, 0.7fr) minmax(120px, 0.7fr) minmax(190px, 1.1fr);
   gap: 1px;
   max-width: 780px;
   margin: 30px 0 0;
