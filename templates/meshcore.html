@@ -137,11 +137,11 @@
       {% endif %}
     </div>
     <div class="download-panel__actions">
-      <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
       <div class="download-qr" aria-label="QR-Code für den APK-Download">
         <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}" alt="QR-Code für den APK-Download der Android-App">
         <span>Mit dem Android-Handy scannen</span>
       </div>
+      <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
     </div>
   </div>
 </section>
