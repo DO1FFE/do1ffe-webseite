@@ -807,7 +807,7 @@ h3 {
 
 .download-meta dd {
   margin: 0;
-  font-size: clamp(1.05rem, 2vw, 1.34rem);
+  font-size: clamp(1.02rem, 1.7vw, 1.22rem);
   font-weight: 900;
 }
 

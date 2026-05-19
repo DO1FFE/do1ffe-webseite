@@ -120,7 +120,7 @@ def meshcore_repeater_apk_info():
     return {
         "dateiname": datei.name,
         "größe": formatiere_dateigröße(status.st_size),
-        "geändert": datetime.fromtimestamp(status.st_mtime).strftime("%d.%m.%Y %H:%M"),
+        "geändert": datetime.fromtimestamp(status.st_mtime).strftime("%d.%m.%Y, %H:%M"),
         "version": apk_version(datei),
     }
 
