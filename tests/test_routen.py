@@ -74,7 +74,7 @@ def test_meshcoreseite_verlinkt_repeater_konfigurator_apk():
     assert "MeshCore Repeater-Konfigurator direkt herunterladen" in html
 
 
-def test_meshcoreseite_zeigt_download_historie(tmp_path, monkeypatch):
+def test_meshcoreseite_blendet_historie_vor_1_0_22_aus(tmp_path, monkeypatch):
     download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
     (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.20-release-signed.apk").write_bytes(b"alt")
     (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"mittel")
@@ -87,11 +87,30 @@ def test_meshcoreseite_zeigt_download_historie(tmp_path, monkeypatch):
 
     assert "Aktuelle Version" in html
     assert "V1.0.22" in html
+    assert "Vergangene Versionen" not in html
+    assert "V1.0.21" not in html
+    assert "10 Downloads" not in html
+    assert "V1.0.20" not in html
+    assert "3 Downloads" not in html
+
+
+def test_meshcoreseite_zeigt_historie_ab_1_0_22(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"alt")
+    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"mittel")
+    (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.23-release-signed.apk").write_bytes(b"neu")
+    zähler_datei.write_text(json.dumps({"1.0.21": 10, "1.0.22": 7, "1.0.23": 2}), encoding="utf-8")
+
+    klient = app.test_client()
+    antwort = klient.get("/meshcore")
+    html = antwort.get_data(as_text=True)
+
+    assert "V1.0.23" in html
     assert "Vergangene Versionen" in html
-    assert "V1.0.21" in html
-    assert "10 Downloads" in html
-    assert "V1.0.20" in html
-    assert "3 Downloads" in html
+    assert "V1.0.22" in html
+    assert "7 Downloads" in html
+    assert "V1.0.21" not in html
+    assert "10 Downloads" not in html
 
 
 def test_repeater_konfigurator_download_liefert_neuste_apk_und_zählt(tmp_path, monkeypatch):

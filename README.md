@@ -42,6 +42,8 @@ Die Download-Zähler werden je Version in folgender JSON-Datei gespeichert:
 /home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator/download-zaehler.json
 ```
 
+Die sichtbare Download-Historie beginnt mit Version `1.0.22`.
+
 ## Starten
 
 ```bash

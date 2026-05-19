@@ -13,6 +13,7 @@ MESHCORE_REPEATER_APK_ORDNER = Path("/home/do1ffe/software-downloads/MeshCoreRep
 MESHCORE_REPEATER_ARCHIV_ORDNER = Path("/home/do1ffe/meshcore-repeater-konfigurator/artifacts")
 MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI = MESHCORE_REPEATER_APK_ORDNER / "download-zaehler.json"
 MESHCORE_REPEATER_APK_MUSTER = "MeshCoreRepeaterKonfigurator-*-release-signed.apk"
+MESHCORE_REPEATER_HISTORIE_AB_VERSION = "1.0.22"
 MESHCORE_REPEATER_APK_REGEX = re.compile(
     r"^MeshCoreRepeaterKonfigurator-(?P<version>\d+(?:\.\d+)*)-release-signed\.apk$"
 )
@@ -96,6 +97,10 @@ def apk_sortierschlüssel(datei):
     except OSError:
         geändert = 0
     return versions_sortierschlüssel(version), geändert
+
+
+def ist_version_in_download_historie(version):
+    return versions_sortierschlüssel(version) >= versions_sortierschlüssel(MESHCORE_REPEATER_HISTORIE_AB_VERSION)
 
 
 def sammle_repeater_apks():
@@ -203,8 +208,10 @@ def meshcore_repeater_apk_übersicht():
     if not infos:
         return None, []
     fehlende_versionen = set(zähler) - set(dateien_nach_version)
-    historie = infos[1:]
+    historie = [info for info in infos[1:] if ist_version_in_download_historie(info["version"])]
     for version in sorted(fehlende_versionen, key=versions_sortierschlüssel, reverse=True):
+        if not ist_version_in_download_historie(version):
+            continue
         historie.append(baue_apk_info(version, None, zähler.get(version, 0)))
     return infos[0], historie
 
