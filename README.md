@@ -10,9 +10,24 @@ DARC e.V. OV L11, Tesla-Dashboard, GitHub-Repositories und MeshCore.
 - `/tesla-dashboard` Erklärung zum Dashboard unter `tesla.do1ffe.de`
 - `/github` Auswahl öffentlicher GitHub-Repositories
 - `/meshcore` LoRa-Mesh, Off-Grid-Kommunikation und Monitoring
+- `/downloads/meshcore-repeater-konfigurator.apk` aktuelle APK des MeshCore Repeater-Konfigurators
 - `/kontakt` Kontakt und weiterführende Einstiege
 
 Die alten Einstiege `/ueber-mich` und `/projekte` bleiben als kompatible Routen erreichbar.
+
+## Downloads
+
+Die MeshCore-Seite verlinkt die jeweils neueste signierte APK aus:
+
+```text
+/home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator/
+```
+
+Erwartet werden Dateinamen nach dem Muster:
+
+```text
+MeshCoreRepeaterKonfigurator-<version>-release-signed.apk
+```
 
 ## Starten
 

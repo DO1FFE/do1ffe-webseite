@@ -1,6 +1,17 @@
-from flask import Flask, render_template
+from datetime import datetime
+from pathlib import Path
+import re
+
+from flask import Flask, abort, render_template, send_file
 
 app = Flask(__name__)
+
+
+MESHCORE_REPEATER_APK_ORDNER = Path("/home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator")
+MESHCORE_REPEATER_APK_MUSTER = "MeshCoreRepeaterKonfigurator-*-release-signed.apk"
+MESHCORE_REPEATER_APK_REGEX = re.compile(
+    r"^MeshCoreRepeaterKonfigurator-(?P<version>\d+(?:\.\d+)*)-release-signed\.apk$"
+)
 
 
 REPOSITORIES = [
@@ -61,6 +72,59 @@ REPOSITORIES = [
 ]
 
 
+def apk_version(datei):
+    treffer = MESHCORE_REPEATER_APK_REGEX.match(datei.name)
+    if not treffer:
+        return ""
+    return treffer.group("version")
+
+
+def apk_sortierschlüssel(datei):
+    version = apk_version(datei)
+    teile = [int(teil) for teil in version.split(".") if teil.isdigit()]
+    aufgefüllt = tuple((teile + [0, 0, 0, 0])[:4])
+    try:
+        geändert = datei.stat().st_mtime
+    except OSError:
+        geändert = 0
+    return aufgefüllt, geändert
+
+
+def finde_neuste_repeater_apk():
+    if not MESHCORE_REPEATER_APK_ORDNER.exists():
+        return None
+    dateien = [
+        datei
+        for datei in MESHCORE_REPEATER_APK_ORDNER.glob(MESHCORE_REPEATER_APK_MUSTER)
+        if datei.is_file()
+    ]
+    if not dateien:
+        return None
+    return max(dateien, key=apk_sortierschlüssel)
+
+
+def formatiere_dateigröße(größe):
+    if größe >= 1024 * 1024:
+        return f"{größe / (1024 * 1024):.1f} MiB".replace(".", ",")
+    return f"{größe / 1024:.0f} KiB"
+
+
+def meshcore_repeater_apk_info():
+    datei = finde_neuste_repeater_apk()
+    if datei is None:
+        return None
+    try:
+        status = datei.stat()
+    except OSError:
+        return None
+    return {
+        "dateiname": datei.name,
+        "größe": formatiere_dateigröße(status.st_size),
+        "geändert": datetime.fromtimestamp(status.st_mtime).strftime("%d.%m.%Y %H:%M"),
+        "version": apk_version(datei),
+    }
+
+
 @app.route("/")
 def startseite():
     return render_template("startseite.html")
@@ -83,7 +147,21 @@ def github():
 
 @app.route("/meshcore")
 def meshcore():
-    return render_template("meshcore.html")
+    return render_template("meshcore.html", repeater_apk=meshcore_repeater_apk_info())
+
+
+@app.route("/downloads/meshcore-repeater-konfigurator.apk")
+def meshcore_repeater_konfigurator_apk():
+    datei = finde_neuste_repeater_apk()
+    if datei is None:
+        abort(404)
+    return send_file(
+        datei,
+        as_attachment=True,
+        download_name=datei.name,
+        mimetype="application/vnd.android.package-archive",
+        max_age=0,
+    )
 
 
 @app.route("/kontakt")

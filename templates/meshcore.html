@@ -15,6 +15,7 @@
     </p>
     <div class="hero__actions">
       <a class="button button--primary" href="https://meshcore-essen.de/" target="_blank" rel="noopener noreferrer">MeshCore-Essen</a>
+      <a class="button button--ghost" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}">Repeater-Konfigurator APK</a>
       <a class="button button--ghost" href="https://corescope.lima11.de/#/home" target="_blank" rel="noopener noreferrer">CoreScope Essen live</a>
       <a class="button button--ghost" href="https://docs.meshcore.io/faq/" target="_blank" rel="noopener noreferrer">MeshCore Docs</a>
     </div>
@@ -76,6 +77,45 @@
       </p>
       <a class="button button--primary" href="https://corescope.lima11.de/#/home" target="_blank" rel="noopener noreferrer">CoreScope Essen starten</a>
     </article>
+  </div>
+</section>
+
+<section class="section content-section mesh-download">
+  <div class="download-panel reveal">
+    <div>
+      <p class="eyebrow">Android-App</p>
+      <h2>MeshCore Repeater-Konfigurator direkt herunterladen.</h2>
+      <p>
+        Die APK richtet favorisierte MeshCore-Repeater über einen per BLE verbundenen
+        Companion ein. Sie ist für die praktische Arbeit am Node gedacht: verbinden,
+        Repeater auswählen, Passwort eingeben und die Einrichtungskommandos senden.
+      </p>
+      <dl class="download-meta">
+        {% if repeater_apk %}
+        <div>
+          <dt>Version</dt>
+          <dd>{{ repeater_apk.version }}</dd>
+        </div>
+        <div>
+          <dt>Größe</dt>
+          <dd>{{ repeater_apk.größe }}</dd>
+        </div>
+        <div>
+          <dt>Stand</dt>
+          <dd>{{ repeater_apk.geändert }} Uhr</dd>
+        </div>
+        {% else %}
+        <div>
+          <dt>Status</dt>
+          <dd>APK noch nicht bereitgestellt</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+    <div class="download-panel__actions">
+      <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}">APK herunterladen</a>
+      <a class="download-panel__repo" href="https://github.com/DO1FFE/meshcore-repeater-konfigurator" target="_blank" rel="noopener noreferrer">Repository ansehen</a>
+    </div>
   </div>
 </section>
 
