@@ -4,6 +4,12 @@
 {% block beschreibung %}MeshCore bei DO1FFE: LoRa-Mesh, Off-Grid-Kommunikation, Nodes, Monitoring und Funkexperimente.{% endblock %}
 
 {% block inhalt %}
+{% if repeater_apk %}
+  {% set repeater_apk_download_url = url_for('meshcore_repeater_konfigurator_apk_version', version=repeater_apk.version) %}
+{% else %}
+  {% set repeater_apk_download_url = url_for('meshcore_repeater_konfigurator_apk') %}
+{% endif %}
+
 <section class="page-hero page-hero--mesh">
   <div class="page-hero__content reveal">
     <p class="eyebrow">LoRa · Off-Grid · Mesh</p>
@@ -15,7 +21,7 @@
     </p>
     <div class="hero__actions">
       <a class="button button--primary" href="https://meshcore-essen.de/" target="_blank" rel="noopener noreferrer">MeshCore-Essen</a>
-      <a class="button button--ghost" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>Repeater-Konfigurator APK</a>
+      <a class="button button--ghost" href="{{ repeater_apk_download_url }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>Repeater-Konfigurator APK</a>
       <a class="button button--ghost" href="https://corescope.lima11.de/#/home" target="_blank" rel="noopener noreferrer">CoreScope Essen live</a>
       <a class="button button--ghost" href="https://docs.meshcore.io/faq/" target="_blank" rel="noopener noreferrer">MeshCore Docs</a>
     </div>
@@ -141,7 +147,7 @@
         <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}" alt="QR-Code für den APK-Download der Android-App">
         <span>Mit dem Android-Handy scannen</span>
       </div>
-      <a class="button button--primary" href="{{ url_for('meshcore_repeater_konfigurator_apk') }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
+      <a class="button button--primary" href="{{ repeater_apk_download_url }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
     </div>
   </div>
 </section>

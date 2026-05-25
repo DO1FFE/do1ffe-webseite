@@ -73,7 +73,7 @@ def test_meshcoreseite_verlinkt_repeater_konfigurator_apk():
     assert 'class="download-panel reveal" id="app"' in html
     assert "data-download-count" in html
     assert "data-download-version" in html
-    assert "/downloads/meshcore-repeater-konfigurator.apk" in html
+    assert "/downloads/meshcore-repeater-konfigurator/v" in html
     assert "Gedacht für Android-Handys" in html
     assert "meshcore-repeater-konfigurator-apk-qr.png" in html
     assert "MeshCore Repeater-Konfigurator direkt herunterladen" in html

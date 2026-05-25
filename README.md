@@ -11,7 +11,7 @@ DARC e.V. OV L11, Tesla-Dashboard, GitHub-Repositories und MeshCore.
 - `/github` Auswahl öffentlicher GitHub-Repositories
 - `/meshcore` LoRa-Mesh, Off-Grid-Kommunikation und Monitoring
 - `/meshcore#app` direkter Sprung zur Android-App
-- `/downloads/meshcore-repeater-konfigurator.apk` aktuelle APK des MeshCore Repeater-Konfigurators
+- `/downloads/meshcore-repeater-konfigurator.apk` aktuelle APK des MeshCore Repeater-Konfigurators als kompatibler Alias
 - `/downloads/meshcore-repeater-konfigurator/v<version>.apk` historische APK-Version
 - `/kontakt` Kontakt und weiterführende Einstiege
 
@@ -19,7 +19,10 @@ Die alten Einstiege `/ueber-mich` und `/projekte` bleiben als kompatible Routen 
 
 ## Downloads
 
-Die MeshCore-Seite verlinkt die jeweils neueste signierte APK aus:
+Die MeshCore-Seite verlinkt die jeweils neueste signierte APK über den expliziten
+Versionslink `/downloads/meshcore-repeater-konfigurator/v<version>.apk`.
+Der Alias `/downloads/meshcore-repeater-konfigurator.apk` bleibt kompatibel.
+Die Dateien liegen unter:
 
 ```text
 /home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator/
