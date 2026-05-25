@@ -209,6 +209,17 @@ def download_anzahl(zähler, datei):
         return 0
 
 
+def download_anzahl_für_übersicht(zähler, datei, zähler_nach_version):
+    genaue_anzahl = download_anzahl(zähler, datei)
+    try:
+        datei.relative_to(MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER)
+        return genaue_anzahl
+    except ValueError:
+        pass
+    version = apk_version(datei)
+    return zähler_nach_version.get(version, genaue_anzahl)
+
+
 def downloads_nach_version_aus_zähler(zähler):
     dateien = zähler.get("dateien")
     if not isinstance(dateien, dict):
@@ -354,15 +365,15 @@ def baue_apk_info(version, datei, downloads):
 def meshcore_repeater_apk_übersicht():
     dateien_nach_version = sammle_repeater_apks()
     zähler = lade_download_zähler()
+    zähler_nach_version = downloads_nach_version_aus_zähler(zähler)
     infos = []
     for version in sorted(dateien_nach_version, key=versions_sortierschlüssel, reverse=True):
         datei = dateien_nach_version.get(version)
-        info = baue_apk_info(version, datei, download_anzahl(zähler, datei))
+        info = baue_apk_info(version, datei, download_anzahl_für_übersicht(zähler, datei, zähler_nach_version))
         if info is not None:
             infos.append(info)
     if not infos:
         return None, []
-    zähler_nach_version = downloads_nach_version_aus_zähler(zähler)
     fehlende_versionen = set(zähler_nach_version) - set(dateien_nach_version)
     historie = [info for info in infos[1:] if ist_version_in_download_historie(info["version"])]
     for version in sorted(fehlende_versionen, key=versions_sortierschlüssel, reverse=True):

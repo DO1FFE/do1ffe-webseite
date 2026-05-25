@@ -147,6 +147,24 @@ def test_meshcoreseite_zeigt_historie_ab_1_0_22(tmp_path, monkeypatch):
     assert "10 Downloads" not in html
 
 
+def test_meshcoreseite_zeigt_historischen_zähler_aus_downloadportal(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    alte_download_apk = download_ordner / "MeshCoreRepeaterKonfigurator-1.0.23-release-signed.apk"
+    alte_download_apk.write_bytes(b"alt")
+    schreibe_download_zähler(zähler_datei, {alte_download_apk: 4})
+    alte_download_apk.unlink()
+    (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.24-release-signed.apk").write_bytes(b"neu")
+    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.23-release-signed.apk").write_bytes(b"alt")
+
+    klient = app.test_client()
+    antwort = klient.get("/meshcore")
+    html = antwort.get_data(as_text=True)
+
+    assert "V1.0.24" in html
+    assert "V1.0.23" in html
+    assert "4 Downloads" in html
+
+
 def test_repeater_konfigurator_download_liefert_neuste_apk_ohne_quelle_und_zählt_nicht(tmp_path, monkeypatch):
     download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
     alte_apk = archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.9-release-signed.apk"
