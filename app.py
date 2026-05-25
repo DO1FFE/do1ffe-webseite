@@ -1,8 +1,10 @@
 from datetime import datetime
+import hashlib
 import json
 from pathlib import Path
 import re
 from threading import Lock
+import time
 
 from flask import Flask, abort, render_template, request, send_file
 
@@ -11,7 +13,8 @@ app = Flask(__name__)
 
 MESHCORE_REPEATER_APK_ORDNER = Path("/home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator")
 MESHCORE_REPEATER_ARCHIV_ORDNER = Path("/home/do1ffe/meshcore-repeater-konfigurator/artifacts")
-MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI = MESHCORE_REPEATER_APK_ORDNER / "download-zaehler.json"
+MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER = Path("/home/do1ffe/software-downloads")
+MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI = MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER / ".download-zaehler.json"
 MESHCORE_REPEATER_APK_MUSTER = "MeshCoreRepeaterKonfigurator-*-release-signed.apk"
 MESHCORE_REPEATER_HISTORIE_AB_VERSION = "1.0.22"
 MESHCORE_REPEATER_APK_REGEX = re.compile(
@@ -19,6 +22,7 @@ MESHCORE_REPEATER_APK_REGEX = re.compile(
 )
 DOWNLOAD_ZÄHLER_SPERRE = Lock()
 DOWNLOAD_ZÄHLER_QUELLEN = {"button", "qr", "historie"}
+DOWNLOAD_ZÄHLER_ENTPRELL_FENSTER_SEKUNDEN = 15 * 60
 
 
 REPOSITORIES = [
@@ -131,23 +135,33 @@ def finde_repeater_apk_version(version):
     return sammle_repeater_apks().get(version)
 
 
+def leerer_download_zähler():
+    return {
+        "schema": 1,
+        "dateien": {},
+    }
+
+
+def normalisiere_download_zähler(daten):
+    if not isinstance(daten, dict):
+        return leerer_download_zähler()
+    dateien = daten.get("dateien")
+    if not isinstance(dateien, dict):
+        dateien = {}
+    return {
+        "schema": 1,
+        "dateien": dateien,
+    }
+
+
 def lade_download_zähler():
     if not MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI.exists():
-        return {}
+        return leerer_download_zähler()
     try:
         daten = json.loads(MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return {}
-    if not isinstance(daten, dict):
-        return {}
-    zähler = {}
-    for version, anzahl in daten.items():
-        if re.fullmatch(r"\d+(?:\.\d+)*", str(version)):
-            try:
-                zähler[str(version)] = max(0, int(anzahl or 0))
-            except (TypeError, ValueError):
-                zähler[str(version)] = 0
-    return zähler
+        return leerer_download_zähler()
+    return normalisiere_download_zähler(daten)
 
 
 def speichere_download_zähler(zähler):
@@ -160,12 +174,151 @@ def speichere_download_zähler(zähler):
     temporär.replace(MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI)
 
 
-def erhöhe_download_zähler(version):
+def download_versionskennung(datei):
+    try:
+        status = datei.stat()
+    except OSError:
+        return ""
+    return f"{status.st_size}:{status.st_mtime_ns}"
+
+
+def download_relativer_pfad(datei):
+    try:
+        return datei.relative_to(MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER).as_posix()
+    except ValueError:
+        return f"MeshCoreRepeaterKonfigurator/{datei.name}"
+
+
+def download_zähler_eintrag(zähler, datei):
+    dateien = zähler.get("dateien")
+    if not isinstance(dateien, dict):
+        return None
+    eintrag = dateien.get(download_relativer_pfad(datei))
+    if not isinstance(eintrag, dict):
+        return None
+    return eintrag
+
+
+def download_anzahl(zähler, datei):
+    eintrag = download_zähler_eintrag(zähler, datei)
+    if not eintrag or eintrag.get("versionskennung") != download_versionskennung(datei):
+        return 0
+    try:
+        return max(0, int(eintrag.get("downloads") or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
+def downloads_nach_version_aus_zähler(zähler):
+    dateien = zähler.get("dateien")
+    if not isinstance(dateien, dict):
+        return {}
+    ergebnis = {}
+    for pfad, eintrag in dateien.items():
+        if not isinstance(pfad, str) or not isinstance(eintrag, dict):
+            continue
+        version = apk_version(Path(pfad))
+        if not version:
+            continue
+        try:
+            ergebnis[version] = max(0, int(eintrag.get("downloads") or 0))
+        except (TypeError, ValueError):
+            ergebnis[version] = 0
+    return ergebnis
+
+
+def download_entprell_datei():
+    return MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI.with_name("download-zaehler-entprellung.json")
+
+
+def lade_download_entprellung():
+    datei = download_entprell_datei()
+    if not datei.exists():
+        return {}
+    try:
+        daten = json.loads(datei.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(daten, dict):
+        return {}
+    einträge = daten.get("einträge", daten)
+    if not isinstance(einträge, dict):
+        return {}
+    ergebnis = {}
+    for schlüssel, zeitstempel in einträge.items():
+        try:
+            ergebnis[str(schlüssel)] = float(zeitstempel)
+        except (TypeError, ValueError):
+            continue
+    return ergebnis
+
+
+def speichere_download_entprellung(einträge):
+    datei = download_entprell_datei()
+    datei.parent.mkdir(parents=True, exist_ok=True)
+    temporär = datei.with_suffix(".tmp")
+    temporär.write_text(
+        json.dumps({"einträge": einträge}, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    temporär.replace(datei)
+
+
+def download_quelle():
+    return request.args.get("quelle", "").strip().casefold()
+
+
+def download_client_fingerprint():
+    forwarded_for = request.headers.get("X-Forwarded-For", "").split(",", 1)[0].strip()
+    ip = forwarded_for or request.remote_addr or ""
+    user_agent = request.headers.get("User-Agent", "")
+    accept_language = request.headers.get("Accept-Language", "")
+    roh = "\n".join([ip, user_agent, accept_language])
+    return hashlib.sha256(roh.encode("utf-8")).hexdigest()
+
+
+def download_entprell_schlüssel(version):
+    return ":".join([version, download_quelle(), download_client_fingerprint()])
+
+
+def download_ist_neu_genug(version, jetzt=None):
+    jetzt = time.time() if jetzt is None else jetzt
+    schlüssel = download_entprell_schlüssel(version)
+    einträge = lade_download_entprellung()
+    frist = jetzt - DOWNLOAD_ZÄHLER_ENTPRELL_FENSTER_SEKUNDEN
+    einträge = {
+        alter_schlüssel: alter_zeitstempel
+        for alter_schlüssel, alter_zeitstempel in einträge.items()
+        if alter_zeitstempel >= frist
+    }
+    letzter_zeitstempel = einträge.get(schlüssel)
+    einträge[schlüssel] = jetzt
+    speichere_download_entprellung(einträge)
+    return letzter_zeitstempel is None or letzter_zeitstempel < frist
+
+
+def erhöhe_download_zähler(version, datei):
     with DOWNLOAD_ZÄHLER_SPERRE:
+        if not download_ist_neu_genug(version):
+            return None
         zähler = lade_download_zähler()
-        zähler[version] = zähler.get(version, 0) + 1
+        dateien = zähler.setdefault("dateien", {})
+        relativer_pfad = download_relativer_pfad(datei)
+        versionskennung = download_versionskennung(datei)
+        eintrag = dateien.get(relativer_pfad)
+        if (
+            isinstance(eintrag, dict)
+            and eintrag.get("versionskennung") == versionskennung
+        ):
+            downloads = download_anzahl(zähler, datei)
+        else:
+            downloads = 0
+        dateien[relativer_pfad] = {
+            "downloads": downloads + 1,
+            "versionskennung": versionskennung,
+        }
         speichere_download_zähler(zähler)
-        return zähler[version]
+        return downloads + 1
 
 
 def formatiere_dateigröße(größe):
@@ -203,17 +356,19 @@ def meshcore_repeater_apk_übersicht():
     zähler = lade_download_zähler()
     infos = []
     for version in sorted(dateien_nach_version, key=versions_sortierschlüssel, reverse=True):
-        info = baue_apk_info(version, dateien_nach_version.get(version), zähler.get(version, 0))
+        datei = dateien_nach_version.get(version)
+        info = baue_apk_info(version, datei, download_anzahl(zähler, datei))
         if info is not None:
             infos.append(info)
     if not infos:
         return None, []
-    fehlende_versionen = set(zähler) - set(dateien_nach_version)
+    zähler_nach_version = downloads_nach_version_aus_zähler(zähler)
+    fehlende_versionen = set(zähler_nach_version) - set(dateien_nach_version)
     historie = [info for info in infos[1:] if ist_version_in_download_historie(info["version"])]
     for version in sorted(fehlende_versionen, key=versions_sortierschlüssel, reverse=True):
         if not ist_version_in_download_historie(version):
             continue
-        historie.append(baue_apk_info(version, None, zähler.get(version, 0)))
+        historie.append(baue_apk_info(version, None, zähler_nach_version.get(version, 0)))
     return infos[0], historie
 
 
@@ -222,7 +377,7 @@ def sende_repeater_apk(datei):
     if not version:
         abort(404)
     if request.method == "GET" and download_soll_gezählt_werden():
-        erhöhe_download_zähler(version)
+        erhöhe_download_zähler(version, datei)
     return send_file(
         datei,
         as_attachment=True,
@@ -233,7 +388,7 @@ def sende_repeater_apk(datei):
 
 
 def download_soll_gezählt_werden():
-    return request.args.get("quelle", "").strip().casefold() in DOWNLOAD_ZÄHLER_QUELLEN
+    return download_quelle() in DOWNLOAD_ZÄHLER_QUELLEN
 
 
 @app.route("/")

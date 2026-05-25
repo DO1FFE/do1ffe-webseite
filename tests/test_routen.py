@@ -6,14 +6,33 @@ app = webseite.app
 
 
 def richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch):
-    download_ordner = tmp_path / "downloads"
+    download_basis = tmp_path / "software-downloads"
+    download_ordner = download_basis / "MeshCoreRepeaterKonfigurator"
     archiv_ordner = tmp_path / "artifacts"
-    download_ordner.mkdir()
+    download_ordner.mkdir(parents=True)
     archiv_ordner.mkdir()
+    zähler_datei = download_basis / ".download-zaehler.json"
+    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER", download_basis)
     monkeypatch.setattr(webseite, "MESHCORE_REPEATER_APK_ORDNER", download_ordner)
     monkeypatch.setattr(webseite, "MESHCORE_REPEATER_ARCHIV_ORDNER", archiv_ordner)
-    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI", tmp_path / "download-zaehler.json")
-    return download_ordner, archiv_ordner, tmp_path / "download-zaehler.json"
+    monkeypatch.setattr(webseite, "MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI", zähler_datei)
+    return download_ordner, archiv_ordner, zähler_datei
+
+
+def schreibe_download_zähler(zähler_datei, einträge):
+    daten = {"schema": 1, "dateien": {}}
+    for datei, downloads in einträge.items():
+        daten["dateien"][webseite.download_relativer_pfad(datei)] = {
+            "downloads": downloads,
+            "versionskennung": webseite.download_versionskennung(datei),
+        }
+    zähler_datei.write_text(json.dumps(daten), encoding="utf-8")
+
+
+def lies_downloads(zähler_datei, datei):
+    daten = json.loads(zähler_datei.read_text(encoding="utf-8"))
+    eintrag = daten["dateien"][webseite.download_relativer_pfad(datei)]
+    return eintrag["downloads"]
 
 
 def test_alle_hauptseiten_erreichbar():
@@ -86,7 +105,11 @@ def test_meshcoreseite_blendet_historie_vor_1_0_22_aus(tmp_path, monkeypatch):
     (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.20-release-signed.apk").write_bytes(b"alt")
     (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"mittel")
     (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"neu")
-    zähler_datei.write_text(json.dumps({"1.0.20": 3, "1.0.21": 10, "1.0.22": 4}), encoding="utf-8")
+    schreibe_download_zähler(zähler_datei, {
+        archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.20-release-signed.apk": 3,
+        archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk": 10,
+        download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk": 4,
+    })
 
     klient = app.test_client()
     antwort = klient.get("/meshcore")
@@ -106,7 +129,11 @@ def test_meshcoreseite_zeigt_historie_ab_1_0_22(tmp_path, monkeypatch):
     (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"alt")
     (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"mittel")
     (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.23-release-signed.apk").write_bytes(b"neu")
-    zähler_datei.write_text(json.dumps({"1.0.21": 10, "1.0.22": 7, "1.0.23": 2}), encoding="utf-8")
+    schreibe_download_zähler(zähler_datei, {
+        archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk": 10,
+        archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk": 7,
+        download_ordner / "MeshCoreRepeaterKonfigurator-1.0.23-release-signed.apk": 2,
+    })
 
     klient = app.test_client()
     antwort = klient.get("/meshcore")
@@ -138,28 +165,44 @@ def test_repeater_konfigurator_download_liefert_neuste_apk_ohne_quelle_und_zähl
 
 def test_repeater_konfigurator_download_zählt_mit_erlaubter_quelle(tmp_path, monkeypatch):
     download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
-    (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"neu")
+    neue_apk = download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk"
+    neue_apk.write_bytes(b"neu")
 
     klient = app.test_client()
     antwort = klient.get("/downloads/meshcore-repeater-konfigurator.apk?quelle=button")
 
     assert antwort.status_code == 200
     assert antwort.data == b"neu"
-    assert json.loads(zähler_datei.read_text(encoding="utf-8"))["1.0.22"] == 1
+    assert lies_downloads(zähler_datei, neue_apk) == 1
+
+
+def test_repeater_konfigurator_download_entprellt_mehrfach_gets(tmp_path, monkeypatch):
+    download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
+    neue_apk = download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk"
+    neue_apk.write_bytes(b"neu")
+
+    klient = app.test_client()
+    erste_antwort = klient.get("/downloads/meshcore-repeater-konfigurator.apk?quelle=button")
+    zweite_antwort = klient.get("/downloads/meshcore-repeater-konfigurator.apk?quelle=button")
+
+    assert erste_antwort.status_code == 200
+    assert zweite_antwort.status_code == 200
+    assert lies_downloads(zähler_datei, neue_apk) == 1
 
 
 def test_repeater_konfigurator_download_zählt_versioniert(tmp_path, monkeypatch):
     download_ordner, archiv_ordner, zähler_datei = richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch)
     (download_ordner / "MeshCoreRepeaterKonfigurator-1.0.22-release-signed.apk").write_bytes(b"neu")
-    (archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk").write_bytes(b"alt")
-    zähler_datei.write_text(json.dumps({"1.0.21": 9}), encoding="utf-8")
+    alte_apk = archiv_ordner / "MeshCoreRepeaterKonfigurator-1.0.21-release-signed.apk"
+    alte_apk.write_bytes(b"alt")
+    schreibe_download_zähler(zähler_datei, {alte_apk: 9})
 
     klient = app.test_client()
     antwort = klient.get("/downloads/meshcore-repeater-konfigurator/v1.0.21.apk?quelle=historie")
 
     assert antwort.status_code == 200
     assert antwort.data == b"alt"
-    assert json.loads(zähler_datei.read_text(encoding="utf-8"))["1.0.21"] == 10
+    assert lies_downloads(zähler_datei, alte_apk) == 10
 
 
 def test_repeater_konfigurator_head_zählt_nicht(tmp_path, monkeypatch):
