@@ -33,24 +33,6 @@ if (toggle && nav) {
 
 const revealTargets = document.querySelectorAll(".reveal");
 
-const updateDownloadCounter = (version) => {
-  document.querySelectorAll("[data-download-count]").forEach((target) => {
-    if (target.dataset.downloadCount !== version) return;
-    const current = Number.parseInt(target.dataset.downloads || target.textContent, 10);
-    const next = Number.isFinite(current) ? current + 1 : 1;
-    target.dataset.downloads = next.toString();
-    target.textContent = target.dataset.downloadLabel === "true"
-      ? `${next} ${next === 1 ? "Download" : "Downloads"}`
-      : next.toString();
-  });
-};
-
-document.querySelectorAll("[data-download-version]").forEach((link) => {
-  link.addEventListener("click", () => {
-    updateDownloadCounter(link.dataset.downloadVersion || "");
-  });
-});
-
 if ("IntersectionObserver" in window) {
   const observer = new IntersectionObserver(
     (entries) => {

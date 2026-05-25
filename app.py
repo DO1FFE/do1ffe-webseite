@@ -18,6 +18,7 @@ MESHCORE_REPEATER_APK_REGEX = re.compile(
     r"^MeshCoreRepeaterKonfigurator-(?P<version>\d+(?:\.\d+)*)-release-signed\.apk$"
 )
 DOWNLOAD_ZÄHLER_SPERRE = Lock()
+DOWNLOAD_ZÄHLER_QUELLEN = {"button", "qr", "historie"}
 
 
 REPOSITORIES = [
@@ -220,7 +221,7 @@ def sende_repeater_apk(datei):
     version = apk_version(datei)
     if not version:
         abort(404)
-    if request.method == "GET":
+    if request.method == "GET" and download_soll_gezählt_werden():
         erhöhe_download_zähler(version)
     return send_file(
         datei,
@@ -229,6 +230,10 @@ def sende_repeater_apk(datei):
         mimetype="application/vnd.android.package-archive",
         max_age=0,
     )
+
+
+def download_soll_gezählt_werden():
+    return request.args.get("quelle", "").strip().casefold() in DOWNLOAD_ZÄHLER_QUELLEN
 
 
 @app.route("/")
