@@ -52,12 +52,14 @@
       bestehen, bewusst senden und die Rückmeldung als OK oder Wiederholen zuordnen.
       Zusätzlich kann der Ablauf mit zwei Programminstanzen ohne HF geprüft werden:
       FunkBrücke erzeugt Station-A-/Station-B-Profile, schreibt einen Austauschordner
-      und kann FB2-Rahmen als Datei schreiben oder lesen. Seit v0.9.225 ist dieser
+      und kann FB2-Rahmen als Datei schreiben oder lesen. Seit v0.9.226 ist dieser
       Austausch gegen eigene Exporte, bereits gelesene Dateien, eigene Absender und
       falsche Zielrufzeichen geschützt. Zusätzlich zeigt der normale Direktpfad einen
-      QSO-Fahrplan für Text, Paket, Kanalprüfung, TX, RX und Antwort. Die Moduswahl
-      robust, normal und schnell bleibt profilgebunden bis 32-MFSK lauffähig und nennt
-      Bitrate, Signalbreite und Praxisgrenze direkt.
+      QSO-Fahrplan für Text, Paket, Kanalprüfung, TX, RX und Antwort. QSO-Abschluss,
+      Auto-RX-Status, Sendemotor-Praxisstatus und Zwei-Instanzen-Kurzablauf zeigen
+      nun klarer, was gerade passiert und was als nächstes geprüft werden muss. Die
+      Moduswahl robust, normal und schnell bleibt profilgebunden bis 32-MFSK lauffähig
+      und nennt Bitrate, Signalbreite und Praxisgrenze direkt.
     </p>
     <p>
       Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
@@ -79,7 +81,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2-Direkt mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2-Direkt, Zwei-Instanzen-Austausch, Antwort, Wiederholung und harter Vor-TX-Prüfung</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2-Direkt, QSO-Abschluss, Auto-RX-Status, Zwei-Instanzen-Austausch, Antwort, Wiederholung und harter Vor-TX-Prüfung</dd></div>
     </dl>
   </aside>
 </section>
@@ -109,7 +111,8 @@
       QSO-Ablauf, Modusplan, FB2-Testpfad, FB2-QSO-Pfad und Vor-TX-Prüfung.
       Normale Textnachrichten werden als FB2-Nutzdatenrahmen vorbereitet; OK/Wiederholen
       bleibt bewusst bedient und wird nicht automatisch gesendet. Neu sind der QSO-Fahrplan,
-      die RX-Härtung mit Marker, Paketgrenze und CRCs, der lokale Hintergrund-Prüflauf,
+      die RX-Härtung mit Marker, Paketgrenze und CRCs, der sichtbare QSO-Abschluss,
+      Auto-RX-Status, Sendemotor-Praxisstatus, der lokale Hintergrund-Prüflauf,
       die Auswahl robust/normal/schnell, manuelle Wiederholung
       nach Wiederholen oder Timeout, ein speicherbares FB2-Direkt-Protokoll,
       profilabhängige Rufzeichen, Zwei-Instanzen-Profile, geschützte Austauschdateien,
@@ -207,7 +210,8 @@
       Dabei geht es noch nicht um vollautomatischen Funkbetrieb, sondern um einen
       überprüfbaren Ablauf: FB2-Auftrag vorbereiten, lokalen Paket-/Antwort-Prüflauf lesen,
       den QSO-Fahrplan lesen, Gegenstation festlegen, Kanalwache beachten, bewusst senden,
-      FB2-RX mit CRC-Härtung zuordnen, Antwort vorbereiten, die Rückmeldung auf Station A
+      den Sendemotor-Praxisstatus prüfen, FB2-RX mit CRC-Härtung und Auto-RX-Status
+      zuordnen, Antwort vorbereiten, die Rückmeldung auf Station A
       auswerten und bei Bedarf manuell wiederholen. Vor einem echten Funkversuch kann derselbe Ablauf über lokale
       geschützte Austauschdateien zwischen zwei FunkBrücke-Instanzen geprobt werden. Produktive
       Wiederholautomatik und automatische Mesh-Weiterleitung bleiben bewusst gesperrt,
@@ -222,6 +226,7 @@
       <li>FB2-Direktauftrag mit sichtbarer RX-Zuordnung und bewusster Antwort.</li>
       <li>QSO-Fahrplan für Text, Paket, Kanalprüfung, TX, RX und Antwort.</li>
       <li>RX-Härtung für FB2-Rahmen mit Marker, Paketgrenze, CRCs, Ziel und OK/Wiederholen.</li>
+      <li>QSO-Abschluss, Auto-RX-Status und Sendemotor-Praxisstatus für den direkten FB2-Test.</li>
       <li>Zwei-Instanzen-Test mit lokalen, geschützten FB2-Austauschdateien vor dem ersten HF-Test.</li>
       <li>Bewusste Empfangsbestätigung und nachvollziehbare manuelle Wiederholung.</li>
       <li>QSO-Lage für Empfangserwartung, Antwort und Wiederholhinweis.</li>
@@ -243,7 +248,8 @@
       Die Oberfläche bündelt Stationsprofil, CAT-Verbindung, Testabläufe,
       Mesh-Hinweise, Sendepuffer, Hauptfluss, Rollenwahl, QSO-Fall, Antwortkarte,
       Rückweg, RX-Lage, FB2-RX, FB2-Direkt, QSO-Lage, Moduswahl, Wiederholung,
-      QSO-Fahrplan, RX-Härtung, Feldtestprotokoll, FB2-QSO-Pfad, Vor-TX-Prüfung und Dokumentation. Die wichtigsten
+      QSO-Fahrplan, RX-Härtung, QSO-Abschluss, Auto-RX-Status, Sendemotor-Praxisstatus,
+      Feldtestprotokoll, FB2-QSO-Pfad, Vor-TX-Prüfung und Dokumentation. Die wichtigsten
       Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
       Nächster Schritt und die FB2-Direkt-Karte durch Prüfung, Senden, Empfangen und
       Antworten.
@@ -262,11 +268,11 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, QSO-Fall, Rückweg, FB2-Direkt, QSO-Fahrplan, lokaler Prüfung und FB2-QSO-Pfad.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, QSO-Fall, Rückweg, FB2-Direkt, QSO-Fahrplan, QSO-Abschluss, Auto-RX und FB2-QSO-Pfad.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter FB2-Direkt-Testbereich">
-      <figcaption>FB2-Direkt: Modus robust/normal/schnell wählen, 32-MFSK-Grenze sehen, QSO-Fahrplan lesen, ohne Funk im Hintergrund testen, Datei schreiben/lesen, Antwort zuordnen und Wiederholung bewusst vorbereiten.</figcaption>
+      <figcaption>FB2-Direkt: Modus robust/normal/schnell wählen, 32-MFSK-Grenze sehen, QSO-Fahrplan lesen, Sendemotor-Praxisstatus prüfen, Datei schreiben/lesen, Antwort zuordnen und Wiederholung bewusst vorbereiten.</figcaption>
     </figure>
   </div>
 </section>
@@ -340,6 +346,8 @@
       Nutzdaten in die Nachrichtenliste und bereitet beaufsichtigte Zwei-Stationen-Tests
       mit geschütztem Datei-Austausch vor. Die RX-Härtung nennt Marker, Paketgrenze,
       Kopf-CRC, Nutzdaten-CRC und Ziel, damit ein erkannter Rahmen nachvollziehbar bleibt.
+      Der aktuelle Direktpfad ergänzt sichtbaren QSO-Abschluss, Auto-RX-Status,
+      Sendemotor-Praxisstatus und einen kurzen Zwei-Instanzen-Ablauf.
       Im Mesh sollen Nachbarstationen später helfen, die
       schnellste und zuverlässigste Übertragung passend zur aktuellen Verbindung auszuwählen.
     </p>
