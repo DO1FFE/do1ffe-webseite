@@ -1,0 +1,46 @@
+{
+  "quellen": [
+    "https://docs.meshcore.io/cli_commands/",
+    "https://github.com/meshcore-dev/MeshCore/wiki/Repeater-&-Room-Server-CLI-Reference",
+    "https://blog.meshcore.io/2026/01/20/region-filtering"
+  ],
+  "exakteKommandos": {
+    "set radio.rxgain on": "Aktiviert den RX-Boosted-Gain-Modus des SX12xx-Funkchips. Laut MeshCore gilt der Parameter ab Firmware 1.14.1 und ist nur wirksam, wenn Hardware und Firmware ihn unterstützen.",
+    "set repeat on": "Aktiviert die Repeat-Funktion. Der Repeater darf dadurch MeshCore-Pakete weiterleiten.",
+    "set af 9": "Setzt den älteren Airtime-Faktor auf 9. Nach einer Sendung bleibt der Repeater ungefähr neunmal so lange still wie die Sendung gedauert hat; das entspricht grob 10 Prozent Duty Cycle. MeshCore empfiehlt ab Firmware 1.15.0 stattdessen „set dutycycle“.",
+    "set dutycycle 10": "Setzt das Duty-Cycle-Limit auf 10 Prozent. Dieser neuere Parameter ist laut MeshCore ab Firmware 1.15.0 verfügbar.",
+    "set advert.interval 60": "Setzt das lokale Zero-Hop-Advert-Intervall auf 60 Minuten. MeshCore rundet diesen Wert auf gerade Minuten; 0 würde die lokalen Adverts deaktivieren.",
+    "set flood.advert.interval 3": "Setzt das Flood-Advert-Intervall auf 3 Stunden. 0 würde Flood-Adverts deaktivieren.",
+    "set multi.acks 1": "Aktiviert Multi-Acks. MeshCore sendet dadurch zusätzliche Bestätigungen bzw. nutzt zusätzliche ACK-Pfade.",
+    "set int.thresh 0": "Setzt die lokale Interferenzschwelle auf 0. Der Parameter steuert den von MeshCore verwendeten Interference-Threshold-Wert.",
+    "set path.hash.mode 1": "Setzt die Pfad-Hash-Größe für Repeater-Adverts auf Modus 1. Laut MeshCore bedeutet das 2 Byte Hash-Größe; damit sind bis zu 65.536 eindeutige IDs möglich und der maximale Flood-Pfad sinkt auf 32 Hops.",
+    "set loop.detect minimal": "Aktiviert die minimale Loop-Erkennung. MeshCore verwirft Flood-Pakete, wenn der eigene Repeater-Hash je nach Pfad-Hash-Größe zu oft im Pfad auftaucht.",
+    "set flood.max 64": "Setzt die maximale Flood-Hop-Anzahl auf 64. Das ist laut MeshCore der obere erlaubte Wert."
+  },
+  "präfixKommandos": [
+    {
+      "präfix": "region put ",
+      "beschreibung": "Legt die Region „{wert}“ an oder aktualisiert sie. Ohne angegebenen Parent nutzt MeshCore die Wildcard-Region als Elternregion."
+    },
+    {
+      "präfix": "region allowf ",
+      "beschreibung": "Setzt für die Region „{wert}“ die Flood-Erlaubnis. Bei „*“ erlaubt MeshCore Pakete ohne Region-Transport-Code."
+    },
+    {
+      "präfix": "region denyf ",
+      "beschreibung": "Entfernt für die Region „{wert}“ die Flood-Erlaubnis. Bei „*“ verwirft MeshCore Pakete ohne Region-Transport-Code."
+    },
+    {
+      "präfix": "region home ",
+      "beschreibung": "Setzt „{wert}“ als Home-Region des Repeaters."
+    },
+    {
+      "präfix": "region default ",
+      "beschreibung": "Setzt „{wert}“ als Default-Scope-Region des Repeaters. Der Wert kann laut MeshCore auch geleert werden, um den Default-Scope zurückzusetzen."
+    }
+  ],
+  "fallback": {
+    "region save": "Speichert die seit dem Neustart geänderte Regionskonfiguration dauerhaft.",
+    "*": "Sendet dieses Kommando an den verbundenen Repeater."
+  }
+}

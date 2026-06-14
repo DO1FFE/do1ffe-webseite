@@ -9,20 +9,21 @@
     <p class="eyebrow">github.com/do1ffe</p>
     <h1>Repos als Basteltisch, Logbuch und Werkzeug</h1>
     <p>
-      33 öffentliche Repositories zeigen ziemlich gut, worum es hier geht:
-      Python-lastige Tools, Funktechnik, Vereinshelfer, Dashboards, MeshCore und
-      praktische Weboberflächen.
+      {{ repo_statistik["anzahl_öffentlich"] }} öffentliche Repositories zeigen
+      ziemlich gut, worum es hier geht: {{ repo_statistik["häufige_sprachen"] }},
+      praktische Weboberflächen, Funktechnik, Vereinshelfer, Dashboards und
+      MeshCore.
     </p>
     <div class="hero__actions">
-      <a class="button button--primary" href="https://github.com/do1ffe" target="_blank" rel="noopener noreferrer">GitHub-Profil</a>
+      <a class="button button--primary" href="{{ repo_statistik.profil_url }}" target="_blank" rel="noopener noreferrer">GitHub-Profil</a>
     </div>
   </div>
 </section>
 
 <section class="section content-section">
   <div class="section__heading reveal">
-    <p class="eyebrow">Auswahl</p>
-    <h2>Projekte, die den Charakter der Sammlung zeigen.</h2>
+    <p class="eyebrow">Aktuell von GitHub</p>
+    <h2>Öffentliche Repositories, sortiert nach letzter Änderung.</h2>
   </div>
   <div class="repo-grid">
     {% for repo in repos %}
@@ -30,6 +31,17 @@
       <span>{{ repo.meta }}</span>
       <h3>{{ repo.name }}</h3>
       <p>{{ repo.beschreibung }}</p>
+      <dl class="repo-card__facts" aria-label="Repository-Daten">
+        <div><dt>Stars</dt><dd>{{ repo.sterne }}</dd></div>
+        <div><dt>Forks</dt><dd>{{ repo.forks }}</dd></div>
+        <div><dt>Issues</dt><dd>{{ repo.offene_issues }}</dd></div>
+      </dl>
+      {% if repo.archiviert or repo.fork %}
+      <div class="repo-card__badges" aria-label="Repository-Status">
+        {% if repo.archiviert %}<strong>Archiviert</strong>{% endif %}
+        {% if repo.fork %}<strong>Fork</strong>{% endif %}
+      </div>
+      {% endif %}
       <a href="{{ repo.url }}" target="_blank" rel="noopener noreferrer">Repository</a>
     </article>
     {% endfor %}
@@ -54,11 +66,27 @@
   <aside class="fact-panel reveal">
     <h2>Repository-Profil</h2>
     <dl class="fact-list">
-      <div><dt>Öffentliche Repos</dt><dd>33</dd></div>
-      <div><dt>Häufige Sprache</dt><dd>Python</dd></div>
-      <div><dt>Themen</dt><dd>Funk, Webtools, Dashboards, OV-Helfer, Automatisierung</dd></div>
-      <div><dt>Aktivität</dt><dd>mehrere Updates im April und Mai 2026</dd></div>
+      <div><dt>Öffentliche Repos</dt><dd>{{ repo_statistik["anzahl_öffentlich"] }}</dd></div>
+      <div>
+        <dt>Private Repos</dt>
+        <dd>{% if repo_statistik.private_repos_verfügbar %}{{ repo_statistik["anzahl_privat"] }} gezählt, nicht verlinkt{% else %}nicht verfügbar{% endif %}</dd>
+      </div>
+      <div><dt>Angezeigt</dt><dd>{{ repo_statistik.angezeigte_repos }}</dd></div>
+      <div><dt>Häufige Sprache</dt><dd>{{ repo_statistik["häufige_sprachen"] }}</dd></div>
+      <div><dt>GitHub-Topics</dt><dd>{{ repo_statistik.themen }}</dd></div>
+      <div><dt>Aktivität</dt><dd>{{ repo_statistik["aktivität"] }}</dd></div>
+      <div><dt>Quelle</dt><dd>{{ repo_statistik.quelle }} · {{ repo_statistik.abgerufen_um }}</dd></div>
     </dl>
+    {% if not repo_statistik.live %}
+    <p class="repo-fallback-note">
+      GitHub war beim letzten Abruf nicht erreichbar. Es werden lokale Ersatzdaten angezeigt.
+    </p>
+    {% endif %}
+    {% if not repo_statistik.private_repos_verfügbar %}
+    <p class="repo-fallback-note">
+      Private Repos kann GitHub nur mit einem passenden serverseitigen Token zählen.
+    </p>
+    {% endif %}
   </aside>
 </section>
 

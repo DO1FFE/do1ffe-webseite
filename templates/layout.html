@@ -1,14 +1,30 @@
 <!doctype html>
 <html lang="de">
   <head>
+    {% set seitentitel %}{% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}{% endset %}
+    {% set seitenbeschreibung %}{% block beschreibung %}Persönliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, GitHub-Projekte und MeshCore.{% endblock %}{% endset %}
+    {% set kanonische_url = "https://do1ffe.de" ~ request.path %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="{% block beschreibung %}Persönliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, GitHub-Projekte und MeshCore.{% endblock %}"
+      content="{{ seitenbeschreibung|trim }}"
     >
-    <title>{% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}</title>
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Erik Schauer">
+    <link rel="canonical" href="{{ kanonische_url }}">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:type" content="{% block og_typ %}website{% endblock %}">
+    <meta property="og:site_name" content="DO1FFE">
+    <meta property="og:title" content="{{ seitentitel|trim }}">
+    <meta property="og:description" content="{{ seitenbeschreibung|trim }}">
+    <meta property="og:url" content="{{ kanonische_url }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ seitentitel|trim }}">
+    <meta name="twitter:description" content="{{ seitenbeschreibung|trim }}">
+    <title>{{ seitentitel|trim }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
   </head>
   <body class="no-js">
     <header class="site-header" data-header>
@@ -23,10 +39,12 @@
       </button>
       <nav class="site-nav" id="site-nav" data-nav>
         <a class="{% if request.endpoint == 'startseite' %}is-active{% endif %}" href="{{ url_for('startseite') }}">Start</a>
-        <a class="{% if request.endpoint in ['ov_l11', 'über_mich'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
+        <a class="{% if request.endpoint == 'ueber_mich' %}is-active{% endif %}" href="{{ url_for('ueber_mich') }}">Über mich</a>
+        <a class="{% if request.endpoint == 'ov_l11' %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
         <a class="{% if request.endpoint == 'tesla_dashboard' %}is-active{% endif %}" href="{{ url_for('tesla_dashboard') }}">Tesla</a>
         <a class="{% if request.endpoint in ['github', 'projekte'] %}is-active{% endif %}" href="{{ url_for('github') }}">GitHub</a>
         <a class="{% if request.endpoint == 'meshcore' %}is-active{% endif %}" href="{{ url_for('meshcore') }}">MeshCore</a>
+        <a class="{% if request.endpoint == 'funkbruecke' %}is-active{% endif %}" href="{{ url_for('funkbruecke') }}">FunkBrücke</a>
         <a class="{% if request.endpoint == 'kontakt' %}is-active{% endif %}" href="{{ url_for('kontakt') }}">Kontakt</a>
       </nav>
     </header>
@@ -37,9 +55,14 @@
 
     <footer class="site-footer">
       <span>&copy; <span data-year>2026</span> Erik Schauer, do1ffe@darc.de</span>
-      <a href="{{ url_for('startseite') }}">Startseite</a>
+      <nav class="site-footer__links" aria-label="Rechtliches und Navigation">
+        <a href="{{ url_for('startseite') }}">Startseite</a>
+        <a href="{{ url_for('impressum') }}">Impressum</a>
+        <a href="{{ url_for('datenschutz') }}">Datenschutzerklärung</a>
+      </nav>
     </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block scripts %}{% endblock %}
   </body>
 </html>

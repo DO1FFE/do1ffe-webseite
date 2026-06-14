@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block titel %}Über Erik Schauer DO1FFE | Amateurfunk, Software und Projekte{% endblock %}
+{% block beschreibung %}Über Erik Schauer, DO1FFE aus Essen: Amateurfunk im DARC OV L11, Softwareprojekte, MeshCore, FunkBrücke, Tesla-Dashboard und technische Werkzeuge.{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Erik Schauer",
+  "alternateName": "DO1FFE",
+  "email": "do1ffe@darc.de",
+  "url": "https://do1ffe.de/ueber-mich",
+  "sameAs": [
+    "https://github.com/DO1FFE"
+  ],
+  "homeLocation": {
+    "@type": "Place",
+    "name": "Essen, Deutschland"
+  },
+  "memberOf": {
+    "@type": "Organization",
+    "name": "DARC e.V. Ortsverband L11 Essen-Mitte"
+  },
+  "knowsAbout": [
+    "Amateurfunk",
+    "Softwareentwicklung",
+    "MeshCore",
+    "LoRa",
+    "Webwerkzeuge",
+    "Funktechnik"
+  ]
+}
+</script>
+{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--code">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">Erik Schauer · DO1FFE</p>
+    <h1>Technik wird interessant, wenn sie wirklich benutzt wird.</h1>
+    <p>
+      Ich bin Erik Schauer, DO1FFE aus Essen. Mich interessieren Funk, Software
+      und die kleinen Werkzeuge, die aus einem technischen Problem eine brauchbare
+      Lösung machen.
+    </p>
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="lead">
+      Diese Webseite ist weniger Visitenkarte als Werkbank. Hier landen Projekte,
+      Notizen und Einstiege, die aus echter Nutzung entstehen: im Amateurfunk, im
+      Ortsverband L11, auf eigenen Servern, in kleinen Weboberflächen und bei
+      Experimenten mit Funknetzen.
+    </p>
+    <p>
+      Mir geht es selten um Technik als Selbstzweck. Ein gutes Projekt beantwortet
+      eine konkrete Frage: Wie melde ich mich für ein Treffen an? Wie behalte ich
+      eine Clubstation, ein Dashboard, einen Download oder ein MeshCore-Netz im
+      Blick? Wie wird aus Messwerten, Funkwegen und Geräteverhalten etwas, das man
+      verstehen und weitergeben kann?
+    </p>
+    <p>
+      Genau deshalb stehen hier Amateurfunk und Code nebeneinander. Das eine liefert
+      die physische Welt mit Antennen, Reichweite, Störungen und Betriebspraxis.
+      Das andere macht Abläufe sichtbar, wiederholbar und für andere nutzbar.
+    </p>
+  </article>
+  <aside class="fact-panel reveal" aria-label="Kurzprofil Erik Schauer">
+    <h2>Kurzprofil</h2>
+    <dl class="fact-list">
+      <div><dt>Name</dt><dd>Erik Schauer</dd></div>
+      <div><dt>Rufzeichen</dt><dd>DO1FFE</dd></div>
+      <div><dt>Standort</dt><dd>Essen</dd></div>
+      <div><dt>DOK</dt><dd>L11</dd></div>
+      <div><dt>Locator</dt><dd>JO31MK</dd></div>
+      <div><dt>Kontakt</dt><dd><a href="mailto:do1ffe@darc.de">do1ffe@darc.de</a></dd></div>
+    </dl>
+    <a class="text-link" href="https://github.com/DO1FFE" target="_blank" rel="noopener noreferrer">GitHub-Profil</a>
+  </aside>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Schwerpunkte</p>
+    <h2>Was sich hier immer wieder trifft.</h2>
+  </div>
+  <div class="detail-grid">
+    <article class="detail-card reveal">
+      <h3>Amateurfunk</h3>
+      <p>
+        Funk ist für mich Praxis: ausprobieren, messen, zuhören, verbessern und
+        Erfahrungen so erklären, dass andere einsteigen können.
+      </p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>OV L11</h3>
+      <p>
+        Der Ortsverband ist der lokale Bezugspunkt für Clubabende, Ausbildung,
+        Betriebspraxis, Besucherfragen und gemeinsame technische Ideen.
+      </p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Software</h3>
+      <p>
+        Viele Projekte sind kleine Werkzeuge: Webseiten, Dashboards, Downloads,
+        APIs und Helfer, die einen konkreten Ablauf einfacher machen.
+      </p>
+    </article>
+    <article class="detail-card reveal">
+      <h3>Mesh und Daten</h3>
+      <p>
+        MeshCore, LoRa, Fahrzeugdaten und FunkBrücke zeigen, wie spannend Netze
+        werden, wenn Reichweite, Protokolle und echte Umgebung zusammenkommen.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="next-links" aria-label="Weitere Themen">
+  <a href="{{ url_for('ov_l11') }}">Zum OV L11</a>
+  <a href="{{ url_for('github') }}">Repos ansehen</a>
+</section>
+{% endblock %}

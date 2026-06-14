@@ -1,0 +1,367 @@
+{% extends "layout.html" %}
+
+{% block titel %}FunkBrücke | DO1FFE{% endblock %}
+{% block beschreibung %}FunkBrücke: Windows-Software für den Yaesu FT-991A, FB2-Digitalbetrieb, Senden und Empfangen digitaler Amateurfunk-Nachrichten, Mesh-Weiterleitung und Downloads.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--funkbruecke">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">FT-991A · FB2 · Mesh</p>
+    <h1>FunkBrücke</h1>
+    <p>
+      Eine Windows-Software, mit der Amateurfunkstationen digitale Nachrichten senden,
+      empfangen und später über benachbarte Stationen weiterleiten können.
+    </p>
+    <div class="hero__actions">
+      {% if funkbruecke_haupt_download and funkbruecke_haupt_download.verfügbar %}
+      <a class="button button--primary" href="{{ funkbruecke_haupt_download.url }}">Windows-EXE herunterladen</a>
+      {% endif %}
+      <a class="button button--ghost" href="#anleitung">Anleitungen</a>
+      <a class="button button--ghost" href="#technik">Techniküberblick</a>
+    </div>
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="lead">
+      FunkBrücke soll aus einem Windows-PC und einem Yaesu FT-991A eine einfache digitale
+      Funkstation machen: Text eingeben, Zielrufzeichen wählen, Kanal prüfen, senden,
+      Antwort empfangen und den Funkweg nachvollziehen.
+    </p>
+    <div class="prototype-note" role="note" aria-label="Prototyp-Hinweis">
+      <strong>Derzeit noch ein Prototyp</strong>
+      <p>
+        FunkBrücke ist im Moment ein früher Entwicklungsstand. Die Software ist zum
+        Anschauen, Ausprobieren und für kontrollierte Tests gedacht, aber noch nicht
+        als fertiges Werkzeug für verlässlichen Alltagsbetrieb. Echte Aussendungen
+        gehören nur in beaufsichtigte Tests mit freier Frequenz und bewusst gesetzter Freigabe.
+      </p>
+    </div>
+    <p>
+      Die Software steuert einen Yaesu FT-991A per CAT, prüft vor dem Senden, ob die
+      Frequenz frei ist, und nutzt FB2 als neue Betriebsart für robuste Datenpakete. Im
+      fertigen Zustand soll der Nutzer nicht mit Protokolldetails arbeiten müssen: Er
+      wählt Empfänger, Nachricht und Betriebsprofil; FunkBrücke kümmert sich um Paketbau,
+      Moduswahl, Wiederholungen, Empfangsbestätigung und die passende Route.
+    </p>
+    <p>
+      Der aktuelle Prototyp führt FB2 jetzt in einen direkt bedienbaren Zwei-Stationen-Test:
+      Empfang starten, Rolle wählen, Ziel prüfen, FB2-Modus wählen, Nachricht als echten
+      FB2-Nutzdatenrahmen in die Warteschlange legen, Kanalwache lesen, Vor-TX-Prüfung
+      bestehen, bewusst senden und die Rückmeldung als OK oder Wiederholen zuordnen.
+      Zusätzlich kann der Ablauf mit zwei Programminstanzen ohne HF geprüft werden:
+      FunkBrücke erzeugt Station-A-/Station-B-Profile, schreibt einen Austauschordner
+      und kann FB2-Rahmen als Datei schreiben oder lesen. Seit v0.9.225 ist dieser
+      Austausch gegen eigene Exporte, bereits gelesene Dateien, eigene Absender und
+      falsche Zielrufzeichen geschützt. Zusätzlich zeigt der normale Direktpfad einen
+      QSO-Fahrplan für Text, Paket, Kanalprüfung, TX, RX und Antwort. Die Moduswahl
+      robust, normal und schnell bleibt profilgebunden bis 32-MFSK lauffähig und nennt
+      Bitrate, Signalbreite und Praxisgrenze direkt.
+    </p>
+    <p>
+      Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
+      eigene Nachrichten senden und empfangen, sondern bei Bedarf auch als Weiterleiter
+      dienen. Stationen tauschen sparsam aus, welche Nachbarn erreichbar sind, welche
+      Übertragungsgeschwindigkeit möglich ist und welcher Weg für ein Paket schnell und
+      zuverlässig erscheint. Dadurch kann eine Nachricht über mehrere Stationen bis zum
+      Ziel wandern, auch wenn Absender und Empfänger sich nicht direkt hören.
+    </p>
+  </article>
+  <aside class="fact-panel reveal">
+    <h2>Aktueller Stand</h2>
+    <dl class="fact-list">
+      <div><dt>Version</dt><dd>{{ funkbruecke_version.version }}</dd></div>
+      {% if funkbruecke_version.datum %}
+      <div><dt>Veröffentlicht</dt><dd>{{ funkbruecke_version.datum }}</dd></div>
+      {% endif %}
+      <div><dt>Plattform</dt><dd>Windows x64</dd></div>
+      <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
+      <div><dt>Betriebsart</dt><dd>FB2-Direkt mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
+      <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2-Direkt, Zwei-Instanzen-Austausch, Antwort, Wiederholung und harter Vor-TX-Prüfung</dd></div>
+    </dl>
+  </aside>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Sinn und Zweck</p>
+    <h2>Was FunkBrücke machen soll.</h2>
+  </div>
+  <article class="article-main reveal">
+    <p>
+      FunkBrücke ist als praktische Datenbrücke für den Amateurfunk gedacht. Statt Sprache
+      oder Morsezeichen überträgt die Station strukturierte digitale Pakete: kurze
+      Textmeldungen, Statusinformationen, Quittungen, später auch vorbereitete Formulare
+      und kleine Dateien. Für den Bediener soll sich das ähnlich klar anfühlen wie ein
+      einfacher Nachrichtenclient, technisch läuft darunter aber Funkbetrieb mit
+      Bandbreiten, Pegeln, Sendezeiten, Rufzeichen, Frequenzdisziplin und Empfangsqualität.
+    </p>
+    <p>
+      Das Programm soll besonders dort helfen, wo direkte Internetverbindungen fehlen
+      oder bewusst nicht genutzt werden: Übungen, Notfunk, Feldbetrieb, OV-Versuche,
+      portable Stationen und Tests neuer digitaler Betriebsarten. Ein PC übernimmt die
+      Benutzeroberfläche, der FT-991A stellt HF, CAT-Steuerung und Audioweg bereit. Die
+      Software soll dabei lesbar anzeigen, warum eine Aussendung erlaubt, vorbereitet oder
+      gesperrt ist. Der aktuelle Einfachbetrieb zeigt dafür bereits Sendefreigabe,
+      QSO-Fall, QSO-Lage, Antwortkarte, Rückweg, RX-Lage, FB2-RX, FB2-Direkt,
+      QSO-Ablauf, Modusplan, FB2-Testpfad, FB2-QSO-Pfad und Vor-TX-Prüfung.
+      Normale Textnachrichten werden als FB2-Nutzdatenrahmen vorbereitet; OK/Wiederholen
+      bleibt bewusst bedient und wird nicht automatisch gesendet. Neu sind der QSO-Fahrplan,
+      die RX-Härtung mit Marker, Paketgrenze und CRCs, der lokale Hintergrund-Prüflauf,
+      die Auswahl robust/normal/schnell, manuelle Wiederholung
+      nach Wiederholen oder Timeout, ein speicherbares FB2-Direkt-Protokoll,
+      profilabhängige Rufzeichen, Zwei-Instanzen-Profile, geschützte Austauschdateien,
+      Hardwarecheckliste, Funkversuchsführung, Fehlerhilfe, verständliche Bedienmeldungen
+      und eine testbare Moduswahl bis 32-MFSK.
+    </p>
+    <p>
+      Im fertigen Zustand soll FunkBrücke den gesamten Ablauf eines digitalen QSOs führen:
+      Empfänger auswählen, freie Frequenz prüfen, FB2-Rahmen erzeugen, passenden Modus
+      wählen, Paket senden, Empfangsbestätigung auswerten, bei Bedarf bewusst erneut
+      senden und den Verlauf im Protokoll ablegen. Wenn der direkte Weg nicht
+      funktioniert, soll das Mesh automatisch eine geeignete Zwischenstation wählen.
+    </p>
+  </article>
+</section>
+
+<section class="section content-section">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Ablauf</p>
+    <h2>So soll eine Nachricht über Funk laufen.</h2>
+  </div>
+  <div class="download-card-grid">
+    <article class="download-card reveal">
+      <span>1</span>
+      <h3>Station vorbereiten</h3>
+      <p>
+        Rufzeichen, Audioein- und Audioausgang, CAT-Port, Frequenzprofil und Betriebsart
+        werden eingestellt. Der Yaesu FT-991A soll über CAT gesteuert werden, damit
+        Frequenz, Betriebsart und PTT-Zustand nachvollziehbar sind.
+      </p>
+    </article>
+    <article class="download-card reveal">
+      <span>2</span>
+      <h3>Nachricht erfassen</h3>
+      <p>
+        Der Nutzer schreibt eine Nachricht, wählt das Zielrufzeichen und entscheidet, ob
+        direkt oder über das Mesh gesendet werden soll. FunkBrücke erzeugt daraus einen
+        prüfbaren Datenrahmen mit Sequenz, Absender, Empfänger und Prüfsumme.
+      </p>
+    </article>
+    <article class="download-card reveal">
+      <span>3</span>
+      <h3>Kanal prüfen</h3>
+      <p>
+        Vor einer Aussendung soll die Software auf bekannte FB-Signale hören und die
+        Sendefreigabe sichtbar bewerten. Der RX-Pegel allein entscheidet nicht; maßgeblich
+        ist, ob ein gültiger Rahmen erkannt wurde.
+      </p>
+    </article>
+    <article class="download-card reveal">
+      <span>4</span>
+      <h3>Passenden Modus wählen</h3>
+      <p>
+        FB2 soll je nach Kanal und Profil zwischen robusten schmalbandigen Modi und
+        schnelleren Varianten wählen. Auf SSB stehen schmale Modi im Vordergrund; auf FM
+        können später breitere und schnellere Modi sinnvoll sein.
+      </p>
+    </article>
+    <article class="download-card reveal">
+      <span>5</span>
+      <h3>Senden und bestätigen</h3>
+      <p>
+        Das Paket wird bewusst freigegeben und gesendet. Die Gegenstation bestätigt den
+        Empfang mit OK oder fordert mit Wiederholen eine Wiederholung an. So wird nicht nur
+        gesendet, sondern auch geprüft, ob die Nachricht wirklich angekommen ist.
+      </p>
+    </article>
+    <article class="download-card reveal">
+      <span>6</span>
+      <h3>Bei Bedarf weiterleiten</h3>
+      <p>
+        Im Mesh soll jede Station auch als Relais dienen können. Nachbarstationen tauschen
+        kurze Erreichbarkeitsinformationen aus; daraus berechnet FunkBrücke den möglichst
+        schnellen und zuverlässigen Weg bis zum Ziel.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="section article-layout">
+  <article class="article-main reveal">
+    <p class="eyebrow">Aktueller Prototyp</p>
+    <h2>Was heute schon sichtbar ist.</h2>
+    <p>
+      Die aktuelle Version zeigt bereits die Hauptstruktur der späteren Bedienung:
+      Einfachbetrieb, Hauptfluss, Zielrufzeichen, Rollenwahl, Sendefeld, Warteschlange,
+      Modusplan, Vor-TX-Prüfung, QSO-Fall, QSO-Lage, Antwortkarte, Rückweg, RX-Lage,
+      FB2-RX, FB2-Direkt, QSO-Ablauf, FB2-Testpfad, FB2-QSO-Pfad, Wasserfall, Spektrum,
+      CAT-/Audio-Bereiche, Mesh-Ansichten, FB2-Planung und Protokollfenster. Die Menüs
+      oben bündeln Einstellungen, Hilfe, Versionsinformationen und technische Werkzeuge,
+      damit der Hauptbildschirm nicht mit Nebenfunktionen überladen wird.
+    </p>
+    <p>
+      Der wichtigste Entwicklungspfad ist derzeit der kontrollierte FB2-Zwei-Stationen-Test.
+      Dabei geht es noch nicht um vollautomatischen Funkbetrieb, sondern um einen
+      überprüfbaren Ablauf: FB2-Auftrag vorbereiten, lokalen Paket-/Antwort-Prüflauf lesen,
+      den QSO-Fahrplan lesen, Gegenstation festlegen, Kanalwache beachten, bewusst senden,
+      FB2-RX mit CRC-Härtung zuordnen, Antwort vorbereiten, die Rückmeldung auf Station A
+      auswerten und bei Bedarf manuell wiederholen. Vor einem echten Funkversuch kann derselbe Ablauf über lokale
+      geschützte Austauschdateien zwischen zwei FunkBrücke-Instanzen geprobt werden. Produktive
+      Wiederholautomatik und automatische Mesh-Weiterleitung bleiben bewusst gesperrt,
+      bis der Grundbetrieb stabil nachgewiesen ist.
+    </p>
+  </article>
+  <aside class="fact-panel reveal">
+    <h2>Geplantes Zielbild</h2>
+    <ul class="check-list">
+      <li>Einfaches Senden und Empfangen ohne sichtbare Protokollarbeit.</li>
+      <li>FB2 als eigene digitale Betriebsart mit robuster Moduswahl.</li>
+      <li>FB2-Direktauftrag mit sichtbarer RX-Zuordnung und bewusster Antwort.</li>
+      <li>QSO-Fahrplan für Text, Paket, Kanalprüfung, TX, RX und Antwort.</li>
+      <li>RX-Härtung für FB2-Rahmen mit Marker, Paketgrenze, CRCs, Ziel und OK/Wiederholen.</li>
+      <li>Zwei-Instanzen-Test mit lokalen, geschützten FB2-Austauschdateien vor dem ersten HF-Test.</li>
+      <li>Bewusste Empfangsbestätigung und nachvollziehbare manuelle Wiederholung.</li>
+      <li>QSO-Lage für Empfangserwartung, Antwort und Wiederholhinweis.</li>
+      <li>QSO-Fall, Antwortkarte, Rückweg, RX-Lage und QSO-Ablauf für das erste Zwei-Stationen-QSO.</li>
+      <li>FB2-Testpfad und FB2-QSO-Pfad für den beaufsichtigten ersten FB2-Test.</li>
+      <li>Modusplan bis 32-MFSK und harte Vor-TX-Prüfung vor jeder Aussendung.</li>
+      <li>Mesh-Routing über Nachbarstationen, wenn der direkte Weg fehlt.</li>
+      <li>Klare Sendefreigabe und geführte Vorbereitung vor jeder Aussendung.</li>
+      <li>Dokumentation, Screenshots und Downloads immer passend zur aktuellen Version.</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="section funkbruecke-showcase">
+  <div class="funkbruecke-showcase__text reveal">
+    <p class="eyebrow">Programmoberfläche</p>
+    <h2>Alles Wichtige bleibt im Blick.</h2>
+    <p>
+      Die Oberfläche bündelt Stationsprofil, CAT-Verbindung, Testabläufe,
+      Mesh-Hinweise, Sendepuffer, Hauptfluss, Rollenwahl, QSO-Fall, Antwortkarte,
+      Rückweg, RX-Lage, FB2-RX, FB2-Direkt, QSO-Lage, Moduswahl, Wiederholung,
+      QSO-Fahrplan, RX-Härtung, Feldtestprotokoll, FB2-QSO-Pfad, Vor-TX-Prüfung und Dokumentation. Die wichtigsten
+      Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
+      Nächster Schritt und die FB2-Direkt-Karte durch Prüfung, Senden, Empfangen und
+      Antworten.
+    </p>
+  </div>
+  <div class="funkbruecke-showcase__media reveal">
+    <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Screenshot der FunkBrücke Windows-Oberfläche">
+  </div>
+</section>
+
+<section class="section funkbruecke-screenshots">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Aktuelle Ansichten</p>
+    <h2>Der Prototyp zeigt Freigaben statt versteckter Automatik.</h2>
+  </div>
+  <div class="funkbruecke-screenshot-grid">
+    <figure class="reveal">
+      <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, QSO-Fall, Rückweg, FB2-Direkt, QSO-Fahrplan, lokaler Prüfung und FB2-QSO-Pfad.</figcaption>
+    </figure>
+    <figure class="reveal">
+      <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter FB2-Direkt-Testbereich">
+      <figcaption>FB2-Direkt: Modus robust/normal/schnell wählen, 32-MFSK-Grenze sehen, QSO-Fahrplan lesen, ohne Funk im Hintergrund testen, Datei schreiben/lesen, Antwort zuordnen und Wiederholung bewusst vorbereiten.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section content-section mesh-download">
+  <div class="download-panel download-panel--funkbruecke reveal">
+    <div>
+      <p class="eyebrow">Download</p>
+      <h2>Aktuelle Windows-Version herunterladen.</h2>
+      <p>
+        Die EXE im Downloadbereich ist immer die neueste veröffentlichte Version.
+        Ältere Dateien liegen im Archivordner und werden auf der Downloadseite nicht
+        mehr als aktuelle Ausgabe angezeigt.
+      </p>
+      <p class="download-prototype-note">
+        Bitte als Prototyp behandeln: nutzbar für erste Tests, aber noch mit
+        bewusst eingeschränktem Funktionsumfang.
+      </p>
+      {% if funkbruecke_haupt_download and funkbruecke_haupt_download.verfügbar %}
+      <dl class="download-meta download-meta--compact">
+        <div><dt>Datei</dt><dd>{{ funkbruecke_haupt_download.dateiname }}</dd></div>
+        <div><dt>Größe</dt><dd>{{ funkbruecke_haupt_download.größe }}</dd></div>
+        <div><dt>Stand</dt><dd>{{ funkbruecke_haupt_download.geändert }}</dd></div>
+      </dl>
+      {% else %}
+      <p class="download-warning">Aktuell ist keine Windows-EXE im Downloadordner sichtbar.</p>
+      {% endif %}
+    </div>
+    <div class="download-panel__actions">
+      {% if funkbruecke_haupt_download and funkbruecke_haupt_download.verfügbar %}
+      <a class="button button--primary" href="{{ funkbruecke_haupt_download.url }}">EXE herunterladen</a>
+      {% endif %}
+      <a class="download-changelog-link" href="{{ funkbruecke_download_basis_url }}/Changelog.txt">Changelog ansehen</a>
+    </div>
+  </div>
+</section>
+
+<section class="section content-section" id="anleitung">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Dateien</p>
+    <h2>Anleitungen, Changelog, Frequenzprofile und Protokollnotizen.</h2>
+  </div>
+  <div class="download-card-grid">
+    {% for dokument in funkbruecke_dokumente %}
+    <article class="download-card reveal">
+      <span>{{ dokument.typ }}</span>
+      <h3>{{ dokument.titel }}</h3>
+      <p>{{ dokument.beschreibung }}</p>
+      {% if dokument.verfügbar %}
+      <dl>
+        <div><dt>Größe</dt><dd>{{ dokument.größe }}</dd></div>
+        <div><dt>Stand</dt><dd>{{ dokument.geändert }}</dd></div>
+      </dl>
+      <a href="{{ dokument.url }}">Öffnen</a>
+      {% else %}
+      <strong>Nicht bereitgestellt</strong>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="feature feature--funkbruecke" id="technik">
+  <div class="feature__content reveal">
+    <p class="eyebrow">FB2 und Mesh</p>
+    <h2>Die Stationen wählen den Funkweg gemeinsam.</h2>
+    <p>
+      FB2 ist als flexibler Werkzeugkasten geplant: robuste FSK-Modi, schnellere
+      MFSK-Varianten und OFDM für breitere, saubere Kanäle. Der MVP-Pfad arbeitet
+      bereits mit 4-FSK bis 32-MFSK im passenden Profil, übernimmt FB2-Paketrahmen als
+      Nutzdaten in die Nachrichtenliste und bereitet beaufsichtigte Zwei-Stationen-Tests
+      mit geschütztem Datei-Austausch vor. Die RX-Härtung nennt Marker, Paketgrenze,
+      Kopf-CRC, Nutzdaten-CRC und Ziel, damit ein erkannter Rahmen nachvollziehbar bleibt.
+      Im Mesh sollen Nachbarstationen später helfen, die
+      schnellste und zuverlässigste Übertragung passend zur aktuellen Verbindung auszuwählen.
+    </p>
+    <ul class="check-list">
+      <li>Vor jeder Aussendung wird auf belegte Frequenzen und bekannte FB-Signale geachtet.</li>
+      <li>Der RX-Pegel allein entscheidet nicht; ein gültiger Rahmen ist maßgeblich.</li>
+      <li>FB2-RX zeigt die technische Härtung gültiger und verworfener Rahmen.</li>
+      <li>QSO-Fall und Rückweg zeigen, welche Gegenstation und welche Antwort gerade relevant sind.</li>
+      <li>FB2-Direkt überspringt eigene, alte und falsch adressierte Austauschdateien.</li>
+      <li>Ein FB2-Test-TX startet nur als genau ein bewusst freigegebener Einzelschuss.</li>
+      <li>Produktive Automatik, Wiederholung und Mesh-Weiterleitung bleiben im Testpfad gesperrt.</li>
+      <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
+      <li>Mesh-Kurzpakete halten Nachbarn, Geschwindigkeit und Erreichbarkeit aktuell.</li>
+    </ul>
+  </div>
+  <div class="feature__media reveal">
+    <img src="{{ url_for('static', filename='assets/funkbruecke-wasserfall.png') }}" alt="Wasserfallübersicht der geplanten FunkBrücke-Sendemodi von FSK bis OFDM">
+  </div>
+</section>
+
+<section class="next-links" aria-label="Weitere Themen">
+  <a href="{{ url_for('meshcore') }}">MeshCore lesen</a>
+  <a href="{{ url_for('github') }}">Weitere GitHub-Projekte</a>
+</section>
+{% endblock %}

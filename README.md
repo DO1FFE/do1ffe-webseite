@@ -6,6 +6,7 @@ DARC e.V. OV L11, Tesla-Dashboard, GitHub-Repositories und MeshCore.
 ## Seitenstruktur
 
 - `/` Startseite als Technik-Notizbuch und Themenübersicht
+- `/ueber-mich` persönliche Seite zu Erik Schauer, DO1FFE
 - `/ov-l11` DARC e.V. Ortsverband L11, Clubleben, Termine und Frequenzen
 - `/tesla-dashboard` Erklärung zum Dashboard unter `tesla.do1ffe.de`
 - `/github` Auswahl öffentlicher GitHub-Repositories
@@ -15,7 +16,7 @@ DARC e.V. OV L11, Tesla-Dashboard, GitHub-Repositories und MeshCore.
 - `/downloads/meshcore-repeater-konfigurator/v<version>.apk` historische APK-Version
 - `/kontakt` Kontakt und weiterführende Einstiege
 
-Die alten Einstiege `/ueber-mich` und `/projekte` bleiben als kompatible Routen erreichbar.
+Der alte Einstieg `/projekte` bleibt als kompatible Route zur GitHub-Seite erreichbar.
 
 ## Downloads
 

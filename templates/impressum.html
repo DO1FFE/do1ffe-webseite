@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{% block titel %}Impressum | DO1FFE{% endblock %}
+{% block beschreibung %}Impressum der Webseite DO1FFE von Erik Schauer mit Anbieterkennzeichnung, Kontakt und rechtlichen Hinweisen.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--code">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">Rechtliches</p>
+    <h1>Impressum</h1>
+    <p>
+      Anbieterkennzeichnung und Kontakt für diese Webseite und die hier
+      bereitgestellten Inhalte.
+    </p>
+  </div>
+</section>
+
+<section class="section legal-layout">
+  <article class="legal-stack reveal">
+    <section class="legal-card">
+      <h2>Angaben gemäß § 5 DDG</h2>
+      <address class="legal-address">
+        Erik Schauer<br>
+        Franziskanerhöhe 9<br>
+        45139 Essen<br>
+        Deutschland
+      </address>
+      <p>
+        Diese Seite ist eine persönliche Webseite zu Amateurfunk, Softwareprojekten
+        und technischen Themen.
+      </p>
+    </section>
+
+    <section class="legal-card">
+      <h2>Kontakt</h2>
+      <p>
+        E-Mail:
+        <a href="mailto:do1ffe@darc.de">do1ffe@darc.de</a>
+      </p>
+      <p>
+        Rufzeichen: DO1FFE
+      </p>
+    </section>
+
+    <section class="legal-card">
+      <h2>Verantwortlich für den Inhalt</h2>
+      <p>
+        Verantwortlich nach § 18 Abs. 2 MStV:
+      </p>
+      <address class="legal-address">
+        Erik Schauer<br>
+        Franziskanerhöhe 9<br>
+        45139 Essen
+      </address>
+    </section>
+
+    <section class="legal-card">
+      <h2>Haftung für Inhalte</h2>
+      <p>
+        Die Inhalte dieser Webseite wurden mit Sorgfalt erstellt. Für die Richtigkeit,
+        Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen
+        werden. Gesetzliche Verpflichtungen zur Entfernung oder Sperrung der Nutzung
+        von Informationen bleiben unberührt.
+      </p>
+    </section>
+
+    <section class="legal-card">
+      <h2>Haftung für Links</h2>
+      <p>
+        Diese Webseite enthält Links zu externen Webseiten Dritter, auf deren Inhalte
+        kein Einfluss besteht. Für diese fremden Inhalte ist der jeweilige Anbieter
+        oder Betreiber der verlinkten Seite verantwortlich.
+      </p>
+    </section>
+
+    <section class="legal-card">
+      <h2>Urheberrecht</h2>
+      <p>
+        Die auf dieser Webseite erstellten Inhalte und Werke unterliegen dem deutschen
+        Urheberrecht. Beiträge Dritter werden als solche gekennzeichnet. Eine Nutzung
+        außerhalb der Grenzen des Urheberrechts bedarf der vorherigen Zustimmung des
+        jeweiligen Rechteinhabers.
+      </p>
+    </section>
+  </article>
+
+  <aside class="fact-panel legal-side reveal" aria-label="Kurzangaben zum Impressum">
+    <h2>Kurzinfo</h2>
+    <dl class="fact-list">
+      <div><dt>Betreiber</dt><dd>Erik Schauer</dd></div>
+      <div><dt>Kontakt</dt><dd><a href="mailto:do1ffe@darc.de">do1ffe@darc.de</a></dd></div>
+      <div><dt>Rufzeichen</dt><dd>DO1FFE</dd></div>
+      <div><dt>Stand</dt><dd>14.06.2026</dd></div>
+    </dl>
+    <a class="text-link" href="{{ url_for('datenschutz') }}">Zur Datenschutzerklärung</a>
+  </aside>
+</section>
+{% endblock %}

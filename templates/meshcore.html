@@ -2,6 +2,9 @@
 
 {% block titel %}MeshCore | DO1FFE{% endblock %}
 {% block beschreibung %}MeshCore bei DO1FFE: LoRa-Mesh, Off-Grid-Kommunikation, Nodes, Monitoring und Funkexperimente.{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
 
 {% block inhalt %}
 {% if repeater_apk %}
@@ -24,6 +27,7 @@
     <div class="hero__actions">
       <a class="button button--primary" href="https://meshcore-essen.de/" target="_blank" rel="noopener noreferrer">MeshCore-Essen</a>
       <a class="button button--ghost" href="#app">Repeater-Konfigurator APK</a>
+      <a class="button button--ghost" href="#ble-updater">BLE-Updater</a>
       <a class="button button--ghost" href="https://corescope.lima11.de/#/home" target="_blank" rel="noopener noreferrer">CoreScope Essen live</a>
       <a class="button button--ghost" href="https://docs.meshcore.io/faq/" target="_blank" rel="noopener noreferrer">MeshCore Docs</a>
     </div>
@@ -146,10 +150,119 @@
     </div>
     <div class="download-panel__actions">
       <div class="download-qr" aria-label="QR-Code für den APK-Download">
-        <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}" alt="QR-Code für den APK-Download der Android-App">
+        <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}?v={{ repeater_apk.version if repeater_apk else 'aktuell' }}" alt="QR-Code für den APK-Download der Android-App">
         <span>Mit dem Android-Handy scannen</span>
       </div>
       <a class="button button--primary" href="{{ repeater_apk_button_url }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>
+      {% if repeater_changelog_verfügbar %}
+      <a class="download-changelog-link" href="{{ url_for('meshcore_repeater_konfigurator_changelog') }}">Changelog</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if regionenkarte_punkte %}
+<section class="section content-section mesh-region-map-section" id="appkarte">
+  <div class="section__heading reveal">
+    <p class="eyebrow">Regionenkarte</p>
+    <h2>Aktive Stadtprofile in der App.</h2>
+  </div>
+  <div class="mesh-region-map reveal">
+    <div id="meshcore-regionenkarte" class="mesh-region-map__canvas" aria-label="Karte der aktiven MeshCore-Stadtprofile"></div>
+    <div class="mesh-region-map__legend" aria-label="Legende der aktiven Stadtprofile">
+      {% for region in regionenkarte_punkte %}
+      <span style="--region-color: {{ region.farbe }};">
+        <i aria-hidden="true"></i>
+        {{ region.stadt }}
+      </span>
+      {% endfor %}
+    </div>
+    <div class="mesh-region-map__commands" aria-label="Kompakte Einrichtungskommandos der Stadtprofile">
+      {% for region in regionenkarte_punkte %}
+      <details style="--region-color: {{ region.farbe }};">
+        <summary>
+          <i aria-hidden="true"></i>
+          <strong>{{ region.stadt }}</strong>
+          <span>{{ region.kommandos|length }} Kommandos</span>
+        </summary>
+        <div class="mesh-region-command-table" role="table" aria-label="Einrichtungskommandos für {{ region.stadt }}">
+          <div class="mesh-region-command-table__head" role="row">
+            <span role="columnheader">Kommando</span>
+            <span role="columnheader">Erklärung</span>
+          </div>
+          {% for eintrag in region.kommandoDetails %}
+          <div class="mesh-region-command-table__row" role="row">
+            <code role="cell">{{ eintrag.kommando }}</code>
+            <span role="cell">{{ eintrag.erklärung }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section content-section mesh-download">
+  <div class="download-panel download-panel--updater reveal" id="ble-updater">
+    <div>
+      <p class="eyebrow">Android · Windows · iOS</p>
+      <h2>Meshcore BLE Updater herunterladen.</h2>
+      <p>
+        Der BLE-Updater installiert passende MeshCore-Repeater-Firmware per Nordic BLE DFU.
+        In der App werden Gerätetyp, Firmware-Quelle und BLE-Gerät ausgewählt; Android und
+        Windows sind direkt nutzbar, iOS steht als Xcode-Build bereit.
+      </p>
+      <p class="download-note">
+        Die iOS-IPA ist aktuell unsigned und benötigt eine eigene Apple-Signierung, bevor sie
+        auf normalen iPhones installiert werden kann.
+      </p>
+      <p class="download-warning">
+        Hinweis: Der Meshcore BLE Updater befindet sich noch in der Entwicklung und kann
+        ungetestete Funktionen enthalten. Feedback ist willkommen.
+      </p>
+      <dl class="download-meta">
+        {% if meshcore_ble_updater and meshcore_ble_updater.verfügbar %}
+        <div>
+          <dt>Aktuelle Version</dt>
+          <dd>V{{ meshcore_ble_updater.version }}</dd>
+        </div>
+        {% for download in meshcore_ble_updater.downloads %}
+        <div>
+          <dt>{{ download.plattform }}</dt>
+          <dd>{% if download.verfügbar %}{{ download.downloads }}{% else %}-{% endif %}</dd>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div>
+          <dt>Status</dt>
+          <dd>Updater noch nicht bereitgestellt</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+    <div class="download-panel__actions download-panel__actions--wide">
+      <div class="download-platforms" aria-label="Meshcore BLE Updater Downloads">
+        {% for download in meshcore_ble_updater.downloads %}
+        <div class="download-platform">
+          <strong>{{ download.titel }}</strong>
+          {% if download.verfügbar %}
+          <span>V{{ download.version }} · {{ download.größe }}</span>
+          <small>{{ download.hinweis }}</small>
+          <a
+            class="button button--primary"
+            href="{{ url_for(download.endpoint, version=download.version) }}?quelle=button"
+            data-download-version="{{ download.version }}"
+          >{{ download.plattform }} herunterladen</a>
+          {% else %}
+          <span>Nicht bereitgestellt</span>
+          <small>{{ download.hinweis }}</small>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <a class="download-changelog-link" href="https://github.com/DO1FFE/Meshcore-BLE-Updater" target="_blank" rel="noopener noreferrer">GitHub-Repository</a>
     </div>
   </div>
 </section>
@@ -196,4 +309,137 @@
   <a href="{{ url_for('ov_l11') }}">Zurück zum OV L11</a>
   <a href="{{ url_for('github') }}">GitHub-Repositories</a>
 </section>
+{% endblock %}
+
+{% block scripts %}
+  {% if regionenkarte_punkte %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const regionenkarteDaten = {{ regionenkarte_punkte|tojson }};
+
+    function meshcoreHtml(wert) {
+      return String(wert ?? "").replace(/[&<>"']/g, (zeichen) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[zeichen]);
+    }
+
+    function regionenTooltip(region) {
+      const allow = region.allow && region.allow.length ? region.allow.join(", ") : "-";
+      const disallow = region.disallow && region.disallow.length ? region.disallow.join(", ") : "-";
+      const kommandos = region.kommandos && region.kommandos.length ? `${region.kommandos.length} Einrichtungskommandos` : "-";
+      return [
+        `<strong>${meshcoreHtml(region.stadt)}</strong>`,
+        `<span>Allow: ${meshcoreHtml(allow)}</span>`,
+        `<span>Disallow: ${meshcoreHtml(disallow)}</span>`,
+        `<span>Home / Default: ${meshcoreHtml(region.home || "-")} / ${meshcoreHtml(region.default || "-")}</span>`,
+        `<span>${meshcoreHtml(kommandos)}</span>`,
+      ].join("");
+    }
+
+    async function ladeRegionenGrenze(region) {
+      const parameter = new URLSearchParams({
+        format: "geojson",
+        polygon_geojson: "1",
+        limit: "1",
+        dedupe: "1",
+        city: region.stadtName || region.stadt,
+        country: region.land,
+      });
+      if (region.bundesland) {
+        parameter.set("state", region.bundesland);
+      }
+      const antwort = await fetch(`https://nominatim.openstreetmap.org/search?${parameter.toString()}`, {
+        headers: { "Accept": "application/geo+json, application/json" },
+      });
+      if (!antwort.ok) {
+        return null;
+      }
+      const geojson = await antwort.json();
+      return geojson?.features?.find((feature) =>
+        feature?.geometry?.type === "Polygon" || feature?.geometry?.type === "MultiPolygon"
+      ) || null;
+    }
+
+    async function initialisiereMeshcoreRegionenkarte() {
+      const element = document.getElementById("meshcore-regionenkarte");
+      if (!element || !window.L || !regionenkarteDaten.length) {
+        return;
+      }
+
+      const karte = L.map(element, {
+        scrollWheelZoom: false,
+        zoomControl: true,
+      }).setView([51.25, 7.2], 9);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap-Mitwirkende",
+      }).addTo(karte);
+
+      const flächen = await Promise.all(regionenkarteDaten.map(async (region) => {
+        try {
+          const feature = await ladeRegionenGrenze(region);
+          if (!feature) {
+            return null;
+          }
+          const fläche = L.geoJSON(feature, {
+            style: {
+              color: region.farbe,
+              fillColor: region.farbe,
+              fillOpacity: 0.26,
+              opacity: 0.92,
+              weight: 3,
+            },
+          });
+
+          fläche.bindTooltip(regionenTooltip(region), {
+            className: "mesh-region-tooltip",
+            direction: "top",
+            sticky: true,
+          });
+          fläche.bindPopup(regionenTooltip(region), {
+            className: "mesh-region-popup",
+          });
+          fläche.on("mouseover", () => fläche.setStyle({ fillOpacity: 0.38, weight: 4 }));
+          fläche.on("mouseout", () => fläche.setStyle({ fillOpacity: 0.26, weight: 3 }));
+
+          return fläche;
+        } catch (fehler) {
+          console.debug("Regionengrenze konnte nicht geladen werden", region.stadt, fehler);
+          return null;
+        }
+      }));
+
+      const geladeneFlächen = flächen.filter(Boolean);
+      if (!geladeneFlächen.length) {
+        return;
+      }
+
+      const gruppe = L.featureGroup(geladeneFlächen).addTo(karte);
+      const passeKartenansichtAn = () => {
+        karte.invalidateSize();
+        const grenzen = gruppe.getBounds();
+        if (grenzen.isValid()) {
+          karte.fitBounds(grenzen.pad(0.3), {
+            maxZoom: 10,
+            padding: [42, 42],
+          });
+        }
+      };
+
+      let größenTimer = 0;
+      requestAnimationFrame(passeKartenansichtAn);
+      window.addEventListener("resize", () => {
+        window.clearTimeout(größenTimer);
+        größenTimer = window.setTimeout(passeKartenansichtAn, 160);
+      });
+    }
+
+    initialisiereMeshcoreRegionenkarte();
+  </script>
+  {% endif %}
 {% endblock %}
