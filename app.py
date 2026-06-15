@@ -47,7 +47,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Bedienungsanleitung",
         "dateiname": "FunkBruecke-Bedienungsanleitung-latest.pdf",
         "typ": "PDF",
-        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, FB1-Live-RX, FB2-Auto-RX, Gesprächszustand, RX-Sortierung, Sendemotor-Praxisstatus, geschütztem Zwei-Fenster-Test und wichtigsten Handgriffen.",
+        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, FB1-Live-RX, FB2-Auto-RX, Warteschlange, Sendeautomatik, Auto-OK, Gesprächszustand, RX-Sortierung und wichtigsten Handgriffen.",
         "primär": False,
     },
     {
@@ -63,7 +63,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "FB2-Übertragung",
         "dateiname": "FB2-Uebertragung.md",
         "typ": "Markdown",
-        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, Sendemotor-Praxisstatus, Moduswahl bis 32-MFSK und Mesh-Anbindung.",
+        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, Warteschlangen-Sendeautomatik, Moduswahl bis 32-MFSK und Mesh-Anbindung.",
         "primär": False,
     },
     {
