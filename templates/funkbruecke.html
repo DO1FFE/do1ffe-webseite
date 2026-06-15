@@ -83,6 +83,9 @@
       Sendesicherheit. Auto-OK läuft über einen geprüften FB2-Steuerrahmen mit
       Warteschlangenkennzeichen; automatische Wiederholungen sind pro Sequenz auf drei
       Vormerkungen begrenzt.
+      Seit v0.9.236 ist der direkte Audio-QSO-Nachweis erweitert: Paket aus der
+      Warteschlange, Gegenstations-RX, Auto-OK-Rückweg und QSO-Abschluss werden über
+      echte Audio-Samples von 2-FSK robust bis 32-MFSK geprüft.
       Die Moduswahl robust, normal und schnell bleibt
       profilgebunden bis 32-MFSK lauffähig und nennt Bitrate, Signalbreite und Praxisgrenze
       direkt.
@@ -107,7 +110,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2 senden/empfangen, Warteschlange, gehärteter Sendeautomatik, Auto-OK, Drei-Versuche-Limit, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Zwei-Stationen-Livepraxis, Mesh-Andockpunkt ohne automatische Weiterleitung, Gesprächszustand, RX-Sortierung, Zwei-Fenster-Rundlauf mit Abnahme und Schrittliste, Technik-und-Diagnose-Bereich, FT-991A-Praxistest mit Fokusblock, Zwei-Stationen-Plan mit Pflichtnachweisen und harter Vor-TX-Prüfung</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2 senden/empfangen, Warteschlange, gehärteter Sendeautomatik, Auto-OK, Audio-QSO-Kette von 2-FSK bis 32-MFSK, Drei-Versuche-Limit, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Zwei-Stationen-Livepraxis, Mesh-Andockpunkt ohne automatische Weiterleitung, Gesprächszustand, RX-Sortierung, Zwei-Fenster-Rundlauf mit Abnahme und Schrittliste, Technik-und-Diagnose-Bereich, FT-991A-Praxistest mit Fokusblock, Zwei-Stationen-Plan mit Pflichtnachweisen und harter Vor-TX-Prüfung</dd></div>
     </dl>
   </aside>
 </section>
@@ -147,7 +150,9 @@
       und eine testbare Moduswahl bis 32-MFSK. Seit v0.9.234 kommen Warteschlangen-Sendeautomatik,
       Auto-OK und eindeutige Wiederholungsvormerkung dazu; seit v0.9.235 zusätzlich
       konkrete Automatikstatus, geprüfter Auto-OK-Rückweg und ein Drei-Versuche-Limit
-      für automatische FB2-Wiederholungen; seit v0.9.233 gibt es außerdem ein eindeutiges
+      für automatische FB2-Wiederholungen; seit v0.9.236 zusätzlich eine echte
+      Audio-QSO-Kette von 2-FSK robust bis 32-MFSK für Paket, Gegenstations-RX,
+      Auto-OK-Rückweg und Abschluss; seit v0.9.233 gibt es außerdem ein eindeutiges
       Abnahmeergebnis mit Schrittliste für den Zwei-Fenster-Rundlauf, ein erweiterter
       FT-991A-Praxistest mit Fokusblock und ein geführter Sieben-Schritt-Ablauf mit
       Pflichtnachweisen für den ersten Zwei-Stationen-Versuch. Zusätzlich zeigt
@@ -283,6 +288,7 @@
       <li>Abnahmeergebnis für den Zwei-Fenster-Rundlauf: laufend, bestanden oder fehlgeschlagen.</li>
       <li>Vier sichtbare Zwei-Fenster-Schritte mit Status und nächster Aktion.</li>
       <li>Praxisnahe FB2-Audioflussprüfung für Paket und OK-Antwort bis 32-MFSK.</li>
+      <li>Audio-QSO-Kette für Paket, Gegenstations-RX, Auto-OK-Rückweg und Abschluss von 2-FSK robust bis 32-MFSK.</li>
       <li>Siebenstufige FB2-Live-RX-Praxiskette von Audioquelle bis Mesh-Andockpunkt.</li>
       <li>Zwei-Stationen-Livepraxis für Sicherheit, RX-Kette, Test-TX, Gegenstations-RX, ACK/Wiederholen-RX, Auftragsbindung und Mesh-Beobachtung.</li>
       <li>Direkt bedienbarer FB2-Gesprächsblock für RX, Warteschlange, Sendeautomatik, OK/Wiederholen, Antwort und Fehlerprüfung.</li>
@@ -405,7 +411,7 @@
     <p>
       FB2 ist als flexibler Werkzeugkasten geplant: robuste FSK-Modi, schnellere
       MFSK-Varianten und OFDM für breitere, saubere Kanäle. Der MVP-Pfad arbeitet
-      bereits mit 4-FSK bis 32-MFSK im passenden Profil, übernimmt FB2-Paketrahmen als
+      bereits mit 2-FSK robust bis 32-MFSK im passenden Profil, übernimmt FB2-Paketrahmen als
       Nutzdaten in die Nachrichtenliste und bereitet beaufsichtigte Zwei-Stationen-Tests
       mit geschütztem Datei-Austausch vor. Die RX-Härtung nennt Marker, Paketgrenze,
       Kopf-CRC, Nutzdaten-CRC und Ziel, damit ein erkannter Rahmen nachvollziehbar bleibt.
@@ -427,6 +433,7 @@
       <li>Die Live-RX-Praxiskette zeigt Audioquelle, TX-Sperre, Suchmodi, Suchfenster, Decoder, RX-Übernahme und Mesh-Andockpunkt.</li>
       <li>Die Zwei-Stationen-Livepraxis zeigt, ob Test-TX, Gegenstations-RX, ACK/Wiederholen-RX und Auftragsbindung zum gleichen Rundlauf passen.</li>
       <li>FB2 senden/empfangen bietet direkte Aktionen für RX, Warteschlange, Sendeautomatik, OK/Wiederholen, Antwort und Problemprüfung; Wartegründe und Wiederholungslimit sind sichtbar.</li>
+      <li>Der direkte Audio-QSO-Nachweis prüft Paket und Auto-OK von 2-FSK robust bis 32-MFSK.</li>
       <li>Der Zwei-Fenster-Rundlauf meldet laufend, bestanden oder fehlgeschlagen.</li>
       <li>Der FT-991A-Praxistest führt bis FB2-Trockenauftrag, Fokusblock und Protokoll.</li>
       <li>Der Feldversuch zeigt sieben Pflichtnachweise vor dem ersten echten Zwei-Stationen-Test.</li>
