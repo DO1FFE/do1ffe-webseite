@@ -52,13 +52,16 @@
       bestehen, bewusst senden und die Rückmeldung als OK oder Wiederholen zuordnen.
       Zusätzlich kann der Ablauf mit zwei Programminstanzen ohne HF geprüft werden:
       FunkBrücke erzeugt Station-A-/Station-B-Profile, schreibt einen Austauschordner
-      und kann FB2-Rahmen als Datei schreiben oder lesen. Seit v0.9.227 bewertet der
-      Direktpfad eingehende Rahmen als Nutzdaten, OK, Wiederholen, Duplikat, falsches Ziel
-      oder beschädigten Rahmen. Der Gesprächszustand zeigt, ob eine Antwort erwartet wird,
-      ob das QSO abgeschlossen ist oder ob bewusst erneut gesendet werden muss. Der
-      Zwei-Fenster-Rundlauf zeigt den Testfortschritt von Export, Import, Antwort und
-      Rückimport. Die Moduswahl robust, normal und schnell bleibt profilgebunden bis
-      32-MFSK lauffähig und nennt Bitrate, Signalbreite und Praxisgrenze direkt.
+      und kann FB2-Rahmen als Datei schreiben oder lesen. Seit v0.9.228 trennt die
+      Oberfläche FB1-Live-RX und FB2-Auto-RX deutlicher: FB1 hört gezielt auf bekannte
+      FB1-Rahmen, während der FB2-Dauerempfang denselben Audiopuffer nutzt und stumme
+      Fenster vor der MFSK-Suche verwirft. Der Direktpfad bewertet eingehende Rahmen als
+      Nutzdaten, OK, Wiederholen, Duplikat, falsches Ziel oder beschädigten Rahmen. Der
+      Gesprächszustand zeigt, ob eine Antwort erwartet wird, ob das QSO abgeschlossen ist
+      oder ob bewusst erneut gesendet werden muss. Der Zwei-Fenster-Rundlauf ist jetzt als
+      zentraler Vier-Schritt-Test geführt: A schreibt, B liest, B antwortet, A liest
+      zurück. Die Moduswahl robust, normal und schnell bleibt profilgebunden bis 32-MFSK
+      lauffähig und nennt Bitrate, Signalbreite und Praxisgrenze direkt.
     </p>
     <p>
       Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
@@ -80,7 +83,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2 senden/empfangen, Gesprächszustand, RX-Sortierung, Zwei-Fenster-Rundlauf, Antwort, Wiederholung und harter Vor-TX-Prüfung</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit FB2 senden/empfangen, FB1-Live-RX, FB2-Auto-RX, Gesprächszustand, RX-Sortierung, Zwei-Fenster-Rundlauf, Antwort, Wiederholung und harter Vor-TX-Prüfung</dd></div>
     </dl>
   </aside>
 </section>
@@ -107,7 +110,8 @@
       Software soll dabei lesbar anzeigen, warum eine Aussendung erlaubt, vorbereitet oder
       gesperrt ist. Der aktuelle Einfachbetrieb zeigt dafür bereits Sendefreigabe,
       Zielrufzeichen, Rolle, Antwort, Rückweg, Empfangen, Empfang einsortieren,
-      FB2 senden/empfangen, Gespräch, Modusplan, Zwei-Fenster-Test und Vor-TX-Prüfung.
+      FB2 senden/empfangen, FB1-Live-RX, FB2-Auto-RX, Gespräch, Modusplan,
+      Zwei-Fenster-Test und Vor-TX-Prüfung.
       Normale Textnachrichten werden als FB2-Nutzdatenrahmen vorbereitet; OK/Wiederholen
       bleibt bewusst bedient und wird nicht automatisch gesendet. Neu sind der sichtbare
       Gesprächszustand, die RX-Sortierung für Nutzdaten, OK, Wiederholen, Duplikate,
@@ -212,8 +216,10 @@
       FB2-RX mit CRC-Härtung einsortieren, den Gesprächszustand lesen, Antwort vorbereiten,
       die Rückmeldung auf Station A auswerten und bei Bedarf manuell wiederholen. Vor einem
       echten Funkversuch kann derselbe Ablauf über lokale geschützte Austauschdateien
-      zwischen zwei FunkBrücke-Fenstern geprobt werden. Der Rundlaufstatus zeigt dabei,
-      welcher Import oder Export als nächstes erwartet wird. Produktive
+      zwischen zwei FunkBrücke-Fenstern geprobt werden. Der Rundlaufstatus zeigt dabei
+      den einfachen Ablauf A schreibt, B liest, B antwortet, A liest zurück. Der
+      FB2-Auto-RX prüft vor der MFSK-Suche, ob der Audiopuffer überhaupt ein auswertbares
+      Signal enthält. Produktive
       Wiederholautomatik und automatische Mesh-Weiterleitung bleiben bewusst gesperrt,
       bis der Grundbetrieb stabil nachgewiesen ist.
     </p>
@@ -233,6 +239,7 @@
       <li>Gesprächsanzeige für Empfangserwartung, Antwort und Wiederholhinweis.</li>
       <li>Antwortkarte, Rückweg, Empfangen und Ablaufanzeige für das erste Zwei-Stationen-QSO.</li>
       <li>Zwei-Fenster-Rundlauf für den beaufsichtigten ersten FB2-Test.</li>
+      <li>Klare Trennung zwischen FB1-Live-RX und FB2-Auto-RX mit Audiopufferprüfung.</li>
       <li>Modusplan bis 32-MFSK und harte Vor-TX-Prüfung vor jeder Aussendung.</li>
       <li>Mesh-Routing über Nachbarstationen, wenn der direkte Weg fehlt.</li>
       <li>Klare Sendefreigabe und geführte Vorbereitung vor jeder Aussendung.</li>
@@ -250,7 +257,7 @@
       Mesh-Hinweise, Sendepuffer, Hauptfluss, Rollenwahl, Antwortkarte,
       Rückweg, Empfangen, Empfang einsortieren, FB2 senden/empfangen, Gespräch,
       Moduswahl, Wiederholung, RX-Härtung, Gesprächsabschluss, Auto-RX-Status,
-      Sendemotor-Praxisstatus, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
+      FB1-Live-RX, FB2-Auto-RX, Sendemotor-Praxisstatus, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
       Vor-TX-Prüfung und Dokumentation. Die wichtigsten
       Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
       Nächster Schritt und die FB2-Karte durch Prüfung, Senden, Empfangen und
@@ -270,7 +277,7 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Rückweg, FB2 senden/empfangen, Gesprächszustand, Auto-RX und Zwei-Fenster-Rundlauf.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Rückweg, FB2 senden/empfangen, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX und Zwei-Fenster-Rundlauf.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
@@ -348,8 +355,9 @@
       Nutzdaten in die Nachrichtenliste und bereitet beaufsichtigte Zwei-Stationen-Tests
       mit geschütztem Datei-Austausch vor. Die RX-Härtung nennt Marker, Paketgrenze,
       Kopf-CRC, Nutzdaten-CRC und Ziel, damit ein erkannter Rahmen nachvollziehbar bleibt.
-      Der aktuelle Direktpfad ergänzt Gesprächszustand, RX-Sortierung, Auto-RX-Status,
-      Sendemotor-Praxisstatus und einen kurzen Zwei-Fenster-Rundlauf.
+      Der aktuelle Direktpfad ergänzt Gesprächszustand, RX-Sortierung, FB1-Live-RX,
+      FB2-Auto-RX mit Stummfenster-Prüfung, Sendemotor-Praxisstatus und einen kurzen
+      Zwei-Fenster-Rundlauf.
       Im Mesh sollen Nachbarstationen später helfen, die
       schnellste und zuverlässigste Übertragung passend zur aktuellen Verbindung auszuwählen.
     </p>
@@ -358,6 +366,7 @@
       <li>Der RX-Pegel allein entscheidet nicht; ein gültiger Rahmen ist maßgeblich.</li>
       <li>FB2-RX zeigt die technische Härtung gültiger und verworfener Rahmen.</li>
       <li>Gespräch und Rückweg zeigen, welche Gegenstation und welche Antwort gerade relevant sind.</li>
+      <li>FB2-Auto-RX überspringt stumme Audiopuffer, bevor mehrere MFSK-Modi geprüft werden.</li>
       <li>FB2 senden/empfangen überspringt eigene, alte und falsch adressierte Austauschdateien.</li>
       <li>Ein FB2-Test-TX startet nur als genau ein bewusst freigegebener Einzelschuss.</li>
       <li>Produktive Automatik, Wiederholung und Mesh-Weiterleitung bleiben im Testpfad gesperrt.</li>

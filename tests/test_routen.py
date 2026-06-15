@@ -146,6 +146,7 @@ def test_alle_hauptseiten_erreichbar():
         "/datenschutz",
         "/ueber-mich",
         "/projekte",
+        "/Funkbruecke",
     ]:
         antwort = klient.get(route)
         assert antwort.status_code == 200
@@ -188,6 +189,19 @@ def test_footer_verlinkt_impressum_und_datenschutz():
     assert "/impressum" in html
     assert "/datenschutz" in html
     assert "Datenschutzerklärung" in html
+
+
+def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
+    klient = app.test_client()
+    antwort = klient.get("/Funkbruecke")
+    html = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 200
+    assert "Derzeit noch ein Prototyp" in html
+    assert "v0.9.228" in html
+    assert "FB1-Live-RX" in html
+    assert "FB2-Auto-RX" in html
+    assert "A schreibt, B liest, B antwortet, A liest zurück" in html
 
 
 def test_layout_setzt_seo_metadaten():
