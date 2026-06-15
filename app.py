@@ -62,7 +62,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Bedienungsanleitung",
         "dateiname": "FunkBruecke-Bedienungsanleitung-latest.pdf",
         "typ": "PDF",
-        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, FB1-Live-RX, FB2-Auto-RX, Warteschlange, gehärteter Sendeautomatik, Auto-OK, Audio-QSO-Kette von 2-FSK bis 32-MFSK, FB2-Mesh-Automatik bis 16-MFSK, Rückweg-ACK bis zum Ursprung, Praxisrundlauf, Mesh-Audio-Abnahme, Gesprächszustand, RX-Sortierung und wichtigsten Handgriffen.",
+        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, FB1-Live-RX, FB2-Auto-RX, Warteschlange, gehärteter Sendeautomatik, Auto-OK, Audio-QSO-Kette von 2-FSK bis 32-MFSK, FB2-Mesh-Automatik bis 16-MFSK, Rückweg-ACK und Fehlerantwort bis zum Ursprung, Praxisrundlauf, Mesh-Audio-Abnahme, Gesprächszustand, RX-Sortierung und wichtigsten Handgriffen.",
         "primär": False,
     },
     {
@@ -78,7 +78,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "FB2-Übertragung",
         "dateiname": "FB2-Uebertragung.md",
         "typ": "Markdown",
-        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik, Audio-QSO-Kette von 2-FSK bis 32-MFSK, Timeout-Wiederholung, FB2-Mesh-Automatik bis 16-MFSK, Ende-zu-Ende-Zustellbestätigung, Mesh-Audio-Abnahme und Ersatzroute.",
+        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik, Audio-QSO-Kette von 2-FSK bis 32-MFSK, Timeout-Wiederholung, FB2-Mesh-Automatik bis 16-MFSK, Ende-zu-Ende-Zustellbestätigung, Fehlerantwort, Mesh-Audio-Abnahme und Ersatzroute.",
         "primär": False,
     },
     {
