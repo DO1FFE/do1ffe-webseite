@@ -60,9 +60,9 @@
       Paketgrenze und CRCs und zeigt, ob ein Rahmen Nutzdaten, OK, Wiederholen, ein
       Duplikat, ein falsches Ziel oder beschädigt ist. Fremde FB2-Ziele werden bereits
       als Mesh-Kandidaten mit Route und nächstem Hop erkannt. Eine Freigabekette nennt,
-      ob Feldnachweis, Bedienfreigabe, Kanalprüfung, FB1-Horchfenster, Sendesicherheit
-      oder freie TX-Lage noch fehlen; die echte automatische FB2-Mesh-Weiterleitung
-      bleibt im Prototyp noch gesperrt.
+      ob ein gespeicherter Feldnachweis für genau diese Nachbarstation, Bedienfreigabe,
+      Kanalprüfung, FB1-Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen;
+      die echte automatische FB2-Mesh-Weiterleitung bleibt im Prototyp noch gesperrt.
     </p>
     <p>
       Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
@@ -84,7 +84,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, Zwei-Instanzen-Test, FT-991A-Praxistest und Mesh-Freigabekette ohne automatische Weiterleitung</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, Zwei-Instanzen-Test, FT-991A-Praxistest, Feldnachweis-Speicherung und Mesh-Freigabekette ohne automatische Weiterleitung</dd></div>
     </dl>
   </aside>
 </section>
@@ -217,9 +217,11 @@
     <p>
       Die App zeigt außerdem, ob der FB2-Empfang läuft, ob ein Rahmen sauber erkannt wurde,
       ob eine Wiederholung fällig ist und ob ein fremdes Ziel später über das Mesh
-      erreichbar wäre. Für fremde Ziele wird zusätzlich sichtbar, welche Mesh-Freigabe
-      noch fehlt. Breite Feldfreigabe und automatische Mesh-Nutzdatenweiterleitung bleiben
-      separate Schritte, bis der Grundbetrieb stabil nachgewiesen ist.
+      erreichbar wäre. Für fremde Ziele wird zusätzlich sichtbar, ob ein echter,
+      testleiterbestätigter FB2-Feldnachweis für den nächsten Hop vorhanden ist und welche
+      Mesh-Freigabe noch fehlt. Breite Feldfreigabe und automatische
+      Mesh-Nutzdatenweiterleitung bleiben separate Schritte, bis der Grundbetrieb stabil
+      nachgewiesen ist.
     </p>
   </article>
   <aside class="fact-panel reveal">
@@ -247,7 +249,7 @@
       Rückweg, Empfangen, Empfang einsortieren, FB2 senden/empfangen, Gespräch,
       Moduswahl, Wiederholungslimit, RX-Härtung, Gesprächsabschluss, Auto-RX-Status,
       FB1-Live-RX, FB2-Auto-RX, Sendeautomatik-Praxisstatus, Zwei-Stationen-Livepraxis, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
-      direkte FB2-Gesprächsaktionen, Mesh-Freigabekette, Technik und Diagnose,
+      direkte FB2-Gesprächsaktionen, Feldnachweis-Speicherung, Mesh-Freigabekette, Technik und Diagnose,
       Vor-TX-Prüfung und Dokumentation. Die wichtigsten
       Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
       Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung, Senden, Empfangen
@@ -267,7 +269,7 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Warteschlange, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Mesh-Freigabekette, Zwei-Stationen-Livepraxis, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Warteschlange, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Feldnachweis, Mesh-Freigabekette, Zwei-Stationen-Livepraxis, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
@@ -349,7 +351,9 @@
       Zwei-Fenster-Rundlauf mit Abnahme und Schrittliste, den direkt bedienbaren
       FB2-Gesprächsblock mit nachgeordneter Technikdiagnose, den erweiterten
       FT-991A-Praxistest mit Fokusblock und eine geführte Zwei-Stationen-Versuchsvorbereitung
-      mit Pflichtnachweisen. Für fremde FB2-Ziele zeigt die Mesh-Freigabekette zusätzlich,
+      mit Pflichtnachweisen. Ein gespeicherter FB2-Feldnachweis zählt für Mesh erst, wenn
+      er ein echtes, abgeschlossenes und testleiterbestätigtes QSO zur nächsten
+      Nachbarstation belegt. Für fremde FB2-Ziele zeigt die Mesh-Freigabekette zusätzlich,
       ob Feldnachweis, Bedienfreigabe, Kanalprüfung, FB1-Horchfenster, Sendesicherheit
       oder freie TX-Lage noch fehlen.
       Im Mesh sollen Nachbarstationen später helfen, die
@@ -369,10 +373,11 @@
       <li>Der Zwei-Fenster-Rundlauf meldet laufend, bestanden oder fehlgeschlagen.</li>
       <li>Der FT-991A-Praxistest führt bis FB2-Trockenauftrag, Fokusblock und Protokoll.</li>
       <li>Der Feldversuch zeigt sieben Pflichtnachweise vor dem ersten echten Zwei-Stationen-Test.</li>
+      <li>FB2-Feldnachweise können lokal gespeichert werden und zählen für Mesh nur nach echtem, bestätigtem QSO mit dem nächsten Hop.</li>
       <li>FB2 senden/empfangen überspringt eigene, alte und falsch adressierte Austauschdateien.</li>
       <li>Ein FB2-Test-TX startet nur als genau ein bewusst freigegebener Einzelschuss.</li>
       <li>FB2-/FB2L-Treffer werden für Mesh-Beobachtung angedockt, aber nicht automatisch weitergeleitet.</li>
-      <li>Fremde FB2-Ziele werden als Mesh-Kandidaten bewertet; die Freigabekette prüft Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit und freie TX-Lage.</li>
+      <li>Fremde FB2-Ziele werden als Mesh-Kandidaten bewertet; die Freigabekette prüft gespeicherten Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit und freie TX-Lage.</li>
       <li>Produktive Mesh-Nutzdatenweiterleitung bleibt trotz Freigabekette ein separater Freigabeschritt.</li>
       <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
       <li>Mesh-Kurzpakete halten Nachbarn, Geschwindigkeit und Erreichbarkeit aktuell.</li>
