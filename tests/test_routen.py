@@ -199,7 +199,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.243" in html
+    assert "v0.9.244" in html
     assert "FB1-Live-RX" in html
     assert "FB2-Auto-RX" in html
     assert "Text eingeben, Zielrufzeichen wählen" in html
@@ -211,6 +211,11 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Mesh-Freigabekette" in html
     assert "FB2-Mesh-Automatik" in html
     assert "Rückweg-ACK" in html
+    assert "FB2-Mesh-Live" in html
+    assert "Live-Ausgangskorb" in html
+    assert "Retry über Sendemotor" in html
+    assert "Berichtsexport" in html
+    assert "Lastprüfung" in html
     assert "Praxisrundlauf" in html
     assert "Mesh-Audio-Abnahme" in html
     assert "Ersatzroute" in html
