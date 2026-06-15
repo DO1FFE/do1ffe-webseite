@@ -613,6 +613,11 @@ h3 {
   margin: 0 0 20px;
 }
 
+.v2l-explanation {
+  max-width: 920px;
+  margin-top: 34px;
+}
+
 .article-main a,
 .detail-card a,
 .fact-list a {
