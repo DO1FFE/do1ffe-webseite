@@ -64,9 +64,9 @@
       Duplikat, ein falsches Ziel oder beschädigt ist. Fremde FB2-Ziele werden bereits
       als Mesh-Kandidaten mit Route und nächstem Hop erkannt. Eine Freigabekette nennt,
       ob ein gespeicherter Feldnachweis für genau diese Nachbarstation, Bedienfreigabe,
-      Kanalprüfung, FB1-Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen;
-      die Feldnachweis-Lage ist zusätzlich im Mesh-Bereich sichtbar. Die echte
-      automatische FB2-Mesh-Weiterleitung bleibt im Prototyp noch gesperrt.
+      Kanalprüfung, FB1-Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
+      Wenn diese Kette passt und die FB2-Mesh-Automatik bewusst freigegeben ist, reiht
+      FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag bis 16-MFSK in die Warteschlange ein.
     </p>
     <p>
       Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
@@ -88,7 +88,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, Zwei-Instanzen-Test, FT-991A-Praxistest, Feldnachweisvorschlag, Feldnachweis-Speicherung und Mesh-Freigabekette ohne automatische Weiterleitung</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, Zwei-Instanzen-Test, FT-991A-Praxistest, Feldnachweisvorschlag, Feldnachweis-Speicherung und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK</dd></div>
     </dl>
   </aside>
 </section>
@@ -225,9 +225,9 @@
       testleiterbestätigter FB2-Feldnachweis für den nächsten Hop vorhanden ist und welche
       Mesh-Freigabe noch fehlt. Der normale FB2-Gesprächsbereich kann einen solchen
       Nachweis nach passendem Paket und OK vorschlagen, laden und bewusst speichern.
-      Breite Feldfreigabe und automatische
-      Mesh-Nutzdatenweiterleitung bleiben separate Schritte, bis der Grundbetrieb stabil
-      nachgewiesen ist.
+      Bei aktivierter FB2-Mesh-Automatik wird ein passender Transitauftrag automatisch
+      bis 16-MFSK in die Warteschlange gelegt; breitere Modi bleiben weiter ein
+      Labor- und Feldfreigabethema.
     </p>
   </article>
   <aside class="fact-panel reveal">
@@ -239,7 +239,7 @@
       <li>Empfangene Pakete verständlich als Nachricht, OK, Wiederholen oder Problem anzeigen.</li>
       <li>Bei fehlender Antwort eine eindeutige Wiederholung vorbereiten, statt blind erneut zu senden.</li>
       <li>Vor echten Funkversuchen denselben Ablauf lokal mit zwei Programmfenstern testen.</li>
-      <li>Mesh-Routen vorbereiten, damit Stationen später automatisch weiterleiten können.</li>
+      <li>Mesh-Routen nutzen, damit Stationen bei Freigabe automatisch bis 16-MFSK weiterleiten können.</li>
       <li>Dokumentation, Screenshots und Downloads passend zum aktuellen Prototypstand bereitstellen.</li>
     </ul>
   </aside>
@@ -255,7 +255,7 @@
       Rückweg, Empfangen, Empfang einsortieren, FB2 senden/empfangen, Gespräch,
       Moduswahl, Wiederholungslimit, RX-Härtung, Gesprächsabschluss, Auto-RX-Status,
       FB1-Live-RX, FB2-Auto-RX, Sendeautomatik-Praxisstatus, Zwei-Stationen-Livepraxis, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
-      direkte FB2-Gesprächsaktionen, Feldnachweisvorschlag, Feldnachweis-Speicherung, Mesh-Freigabekette, Technik und Diagnose,
+      direkte FB2-Gesprächsaktionen, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Technik und Diagnose,
       Vor-TX-Prüfung und Dokumentation. Die wichtigsten
       Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
       Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung, Senden, Empfangen
@@ -275,7 +275,7 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Warteschlange, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Feldnachweisvorschlag, Feldnachweis-Speicherung, Mesh-Freigabekette, Zwei-Stationen-Livepraxis, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Warteschlange, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Zwei-Stationen-Livepraxis, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
@@ -362,9 +362,11 @@
       er ein echtes, abgeschlossenes und testleiterbestätigtes QSO zur nächsten
       Nachbarstation belegt. Für fremde FB2-Ziele zeigt die Mesh-Freigabekette zusätzlich,
       ob Feldnachweis, Bedienfreigabe, Kanalprüfung, FB1-Horchfenster, Sendesicherheit
-      oder freie TX-Lage noch fehlen.
-      Im Mesh sollen Nachbarstationen später helfen, die
-      schnellste und zuverlässigste Übertragung passend zur aktuellen Verbindung auszuwählen.
+      oder freie TX-Lage noch fehlen. Bei bewusst aktivierter Freigabe werden passende
+      FB2-Mesh-Aufträge automatisch bis 16-MFSK in die Warteschlange gelegt. Nicht als
+      nächster Hop adressierte Stationen hören nur mit und leiten nicht weiter.
+      Im Mesh helfen Nachbarstationen, die schnellste und zuverlässigste Übertragung
+      passend zur aktuellen Verbindung auszuwählen.
     </p>
     <ul class="check-list">
       <li>Vor jeder Aussendung wird auf belegte Frequenzen und bekannte FB-Signale geachtet.</li>
@@ -383,9 +385,10 @@
       <li>FB2-Feldnachweise werden nach passendem Paket und OK vorgeschlagen, können lokal gespeichert werden und zählen für Mesh nur nach echtem, bestätigtem QSO mit dem nächsten Hop.</li>
       <li>FB2 senden/empfangen überspringt eigene, alte und falsch adressierte Austauschdateien.</li>
       <li>Ein FB2-Test-TX startet nur als genau ein bewusst freigegebener Einzelschuss.</li>
-      <li>FB2-/FB2L-Treffer werden für Mesh-Beobachtung angedockt, aber nicht automatisch weitergeleitet.</li>
+      <li>FB2-/FB2L-Treffer werden für Mesh-Beobachtung und Nachbartabellen angedockt.</li>
       <li>Fremde FB2-Ziele werden als Mesh-Kandidaten bewertet; die Freigabekette prüft gespeicherten Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit und freie TX-Lage.</li>
-      <li>Produktive Mesh-Nutzdatenweiterleitung bleibt trotz Freigabekette ein separater Freigabeschritt.</li>
+      <li>Bei bewusster Freigabe werden FB2-Mesh-Textaufträge und Transitpakete automatisch bis 16-MFSK in die Warteschlange gelegt.</li>
+      <li>Nur die als nächster Hop adressierte Station verarbeitet ein FB2-Mesh-Paket aktiv; andere Stationen beobachten den Rahmen nur.</li>
       <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
       <li>Mesh-Kurzpakete halten Nachbarn, Geschwindigkeit und Erreichbarkeit aktuell.</li>
     </ul>
