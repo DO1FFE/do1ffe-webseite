@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone
+from xml.etree import ElementTree
 
 import pytest
 
@@ -222,10 +223,52 @@ def test_layout_setzt_seo_metadaten():
     antwort = klient.get("/ov-l11")
     html = antwort.get_data(as_text=True)
 
-    assert '<meta name="robots" content="index,follow">' in html
+    assert (
+        '<meta name="robots" '
+        'content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">'
+    ) in html
     assert '<link rel="canonical" href="https://do1ffe.de/ov-l11">' in html
     assert '<meta property="og:site_name" content="DO1FFE">' in html
     assert '<meta name="twitter:card" content="summary">' in html
+
+
+def test_robots_txt_erlaubt_vollständige_indexierung():
+    klient = app.test_client()
+    antwort = klient.get("/robots.txt")
+    text = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 200
+    assert antwort.content_type == "text/plain; charset=utf-8"
+    assert "User-agent: *" in text
+    assert "Allow: /" in text
+    assert "Disallow" not in text
+    assert "Sitemap: https://do1ffe.de/sitemap.xml" in text
+
+
+def test_sitemap_listet_indexierbare_hauptseiten():
+    klient = app.test_client()
+    antwort = klient.get("/sitemap.xml")
+
+    assert antwort.status_code == 200
+    assert antwort.content_type == "application/xml; charset=utf-8"
+
+    wurzel = ElementTree.fromstring(antwort.get_data(as_text=True))
+    namensraum = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+    urls = [element.text for element in wurzel.findall(f"{namensraum}url/{namensraum}loc")]
+
+    assert urls == [
+        "https://do1ffe.de/",
+        "https://do1ffe.de/ov-l11",
+        "https://do1ffe.de/tesla-dashboard",
+        "https://do1ffe.de/github",
+        "https://do1ffe.de/meshcore",
+        "https://do1ffe.de/Funkbruecke",
+        "https://do1ffe.de/kontakt",
+        "https://do1ffe.de/impressum",
+        "https://do1ffe.de/datenschutz",
+        "https://do1ffe.de/ueber-mich",
+        "https://do1ffe.de/projekte",
+    ]
 
 
 def test_ov_l11_zeigt_sommerpause_und_anmeldung():

@@ -10,6 +10,7 @@ import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+from xml.sax.saxutils import escape
 from zoneinfo import ZoneInfo
 
 from flask import Flask, abort, redirect, render_template, request, send_file
@@ -17,6 +18,20 @@ from flask import Flask, abort, redirect, render_template, request, send_file
 app = Flask(__name__)
 
 
+KANONISCHE_BASIS_URL = "https://do1ffe.de"
+INDEXIERBARE_PFADE = (
+    "/",
+    "/ov-l11",
+    "/tesla-dashboard",
+    "/github",
+    "/meshcore",
+    "/Funkbruecke",
+    "/kontakt",
+    "/impressum",
+    "/datenschutz",
+    "/ueber-mich",
+    "/projekte",
+)
 BERLINER_ZEITZONE = ZoneInfo("Europe/Berlin")
 MESHCORE_REPEATER_APK_ORDNER = Path("/home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator")
 MESHCORE_REPEATER_ARCHIV_ORDNER = Path("/home/do1ffe/meshcore-repeater-konfigurator/artifacts")
@@ -1253,6 +1268,41 @@ def sende_meshcore_ble_updater_datei(artefakt_schlüssel, datei):
 
 def download_soll_gezählt_werden():
     return download_quelle() in DOWNLOAD_ZÄHLER_QUELLEN
+
+
+def kanonische_url(pfad):
+    return f"{KANONISCHE_BASIS_URL}{pfad}"
+
+
+@app.route("/robots.txt")
+def crawler_regeln():
+    inhalt = "\n".join(
+        [
+            "User-agent: *",
+            "Allow: /",
+            f"Sitemap: {kanonische_url('/sitemap.xml')}",
+            "",
+        ]
+    )
+    return inhalt, 200, {"Content-Type": "text/plain; charset=utf-8"}
+
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    zeilen = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    for pfad in INDEXIERBARE_PFADE:
+        zeilen.extend(
+            [
+                "  <url>",
+                f"    <loc>{escape(kanonische_url(pfad))}</loc>",
+                "  </url>",
+            ]
+        )
+    zeilen.append("</urlset>")
+    return "\n".join(zeilen) + "\n", 200, {"Content-Type": "application/xml; charset=utf-8"}
 
 
 @app.route("/")
