@@ -55,10 +55,13 @@
       eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange. Wenn ein
       Paket und ein OK technisch eindeutig zusammenpassen, schlägt die Oberfläche einen
       FB2-Feldnachweis vor; gespeichert wird er erst nach bewusster Bestätigung, dass
-      der Versuch wirklich über Funk und beaufsichtigt lief. Der direkte Audiopfad wird
-      lokal mit zwei Programminstanzen von 2-FSK robust bis 32-MFSK geprüft: Paket aus
-      der Warteschlange, Empfang bei der Gegenstation, automatisches OK, Rückweg-Audio
-      und Abschluss beim ursprünglichen Sender.
+      der Versuch wirklich über Funk und beaufsichtigt lief. Der Dauer-RX wird nicht
+      durch eine reine CAT-PTT-Freigabe blockiert; erst ein laufender Sendepfad pausiert
+      den Empfang. Nach einer Aussendung stellt FunkBrücke den Empfang automatisch
+      wieder bereit. Der direkte Audiopfad wird lokal mit zwei Programminstanzen von
+      2-FSK robust bis 32-MFSK geprüft: Paket aus der Warteschlange, Empfang bei der
+      Gegenstation, automatisches OK, Rückweg-Audio und Abschluss beim ursprünglichen
+      Sender.
     </p>
     <p>
       Für Tests kann der Ablauf lokal mit zwei Programminstanzen ohne HF geprobt werden.
@@ -75,7 +78,9 @@
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
       und zusätzlich als Mesh-Audio-Abnahme über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK.
       Der Live-RX-Andockpunkt zeigt dabei, ob ein Rahmen direktes QSO, Mesh-Mithören,
-      Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist.
+      Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist. Aktiv
+      verarbeitet wird ein Mesh-Paket nur durch die Station, die als nächster Hop
+      adressiert ist; alle anderen Stationen beobachten den Rahmen nur.
       Der echte Ausgangskorb zeigt, ob ein Paket auf den Rückweg-ACK wartet, ob ein
       ACK-Timeout fällig ist, ob eine Ersatzroute bereitsteht oder ob ein Fehlerstatus
       nötig ist. Harte Weiterleitungsfehler wie Hop-Limit, Schleife oder fehlende
@@ -104,7 +109,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Feldnachweisvorschlag, Feldnachweis-Speicherung und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
     </dl>
   </aside>
 </section>
@@ -232,9 +237,11 @@
       Der wichtigste Entwicklungspfad ist derzeit der kontrollierte FB2-Zwei-Stationen-Test.
       Dabei geht es um einen überprüfbaren Automatiklauf: Nachricht einreihen, Kanalwache
       beachten, automatisch senden, Gegenstation empfangen lassen, OK oder Wiederholen
-      zurückführen und den Gesprächszustand abschließen. Vor einem echten Funkversuch kann
-      derselbe Ablauf über lokale geschützte Austauschdateien oder als kompletter
-      Audio-QSO-Lauf zwischen zwei FunkBrücke-Instanzen geprobt werden.
+      zurückführen, nach TX wieder auf Empfang gehen und den Gesprächszustand abschließen.
+      Ein eigener Zwei-Stationen-Testplan beschreibt Rollen, Voraussetzungen,
+      Abbruchkriterien und Protokollpunkte. Vor einem echten Funkversuch kann derselbe
+      Ablauf über lokale geschützte Austauschdateien oder als kompletter Audio-QSO-Lauf
+      zwischen zwei FunkBrücke-Instanzen geprobt werden.
     </p>
     <p>
       Die App zeigt außerdem, ob der FB2-Empfang läuft, ob ein Rahmen sauber erkannt wurde,
@@ -283,7 +290,7 @@
       Mesh-Hinweise, Sendepuffer, Hauptfluss, Rollenwahl, Antwortkarte,
       Rückweg, Empfangen, Empfang einsortieren, FB2 senden/empfangen, Gespräch,
       Moduswahl, Wiederholungslimit, RX-Härtung, Gesprächsabschluss, Auto-RX-Status,
-      FB1-Live-RX, FB2-Auto-RX, Sendeautomatik-Praxisstatus, Zwei-Stationen-Livepraxis, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
+      FB1-Live-RX, FB2-Auto-RX, automatischen RX nach TX, Sendeautomatik-Praxisstatus, Zwei-Stationen-Livepraxis, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
       direkte FB2-Gesprächsaktionen, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Technik und Diagnose,
       Vor-TX-Prüfung, Rückweg-ACK, Fehlerantwort, FB2-Mesh-Live, 6-Hop-Praxisrundlauf,
       Berichtsexport, Lastprüfung, direkter Audio-QSO-Abnahme bis 32-MFSK, Mesh-Audio-Abnahme,
@@ -384,7 +391,7 @@
       mit geschütztem Datei-Austausch vor. Die RX-Härtung nennt Marker, Paketgrenze,
       Kopf-CRC, Nutzdaten-CRC und Ziel, damit ein erkannter Rahmen nachvollziehbar bleibt.
       Der aktuelle Direktpfad ergänzt Gesprächszustand, RX-Sortierung, FB1-Live-RX,
-      FB2-Auto-RX mit Stummfenster-Prüfung, Live-RX-Praxiskette, Zwei-Stationen-Livepraxis, Sendeautomatik-Praxisstatus, einen kurzen
+      FB2-Auto-RX mit Stummfenster-Prüfung, automatischen RX nach TX, Live-RX-Praxiskette, Zwei-Stationen-Livepraxis, Sendeautomatik-Praxisstatus, einen kurzen
       Zwei-Fenster-Rundlauf mit Abnahme und Schrittliste, den direkt bedienbaren
       FB2-Gesprächsblock mit nachgeordneter Technikdiagnose, den erweiterten
       FT-991A-Praxistest mit Fokusblock und eine geführte Zwei-Stationen-Versuchsvorbereitung
@@ -416,6 +423,7 @@
       <li>Die Live-RX-Praxiskette zeigt Audioquelle, TX-Sperre, Suchmodi, Suchfenster, Decoder, RX-Übernahme und Mesh-Andockpunkt.</li>
       <li>Die Zwei-Stationen-Livepraxis zeigt, ob Test-TX, Gegenstations-RX, ACK/Wiederholen-RX und Auftragsbindung zum gleichen Rundlauf passen.</li>
       <li>FB2 senden/empfangen bietet direkte Aktionen für RX, Warteschlange, Sendeautomatik, OK/Wiederholen, Antwort und Problemprüfung; Wartegründe und Wiederholungslimit sind sichtbar.</li>
+      <li>Nach einer Aussendung wird der FB2-Dauer-RX automatisch wieder vorbereitet, damit die Antwort ohne manuelles Umschalten erkannt werden kann.</li>
       <li>FB2 senden/empfangen zeigt den Hintergrundzustand für RX, Auftrag, Antwort, laufende Sendung, offene Antwort und Timeout.</li>
       <li>Der direkte Audio-QSO-Nachweis prüft Paket und Auto-OK von 2-FSK robust bis 32-MFSK.</li>
       <li>Der Zwei-Fenster-Rundlauf meldet laufend, bestanden oder fehlgeschlagen.</li>
