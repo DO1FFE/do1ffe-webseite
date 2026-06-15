@@ -69,6 +69,10 @@
       FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag bis 16-MFSK in die Warteschlange ein.
       Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
+      Der aktuelle Stand prüft diesen Ablauf lokal als Drei-Stationen-Praxisrundlauf
+      und zusätzlich als Mesh-Audio-Abnahme über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK.
+      ACKs und Fehlerantworten haben Vorrang vor normalen Mesh-Nutzdaten; Timeout,
+      Hin- und Rückweg-Feldnachweise sowie Ersatzroute sind als eigene Regeln vorbereitet.
     </p>
     <p>
       Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
@@ -90,7 +94,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, Zwei-Instanzen-Test, FT-991A-Praxistest, Feldnachweisvorschlag, Feldnachweis-Speicherung und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK bis zum Ursprung</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, Zwei-Instanzen-Test, FT-991A-Praxistest, Feldnachweisvorschlag, Feldnachweis-Speicherung und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK bis zum Ursprung, Praxisrundlauf, Mesh-Audio-Abnahme und Ersatzroute</dd></div>
     </dl>
   </aside>
 </section>
@@ -231,6 +235,9 @@
       bis 16-MFSK in die Warteschlange gelegt; breitere Modi bleiben weiter ein
       Labor- und Feldfreigabethema. Zustellbestätigungen laufen als FB2-Mesh-Rückweg
       bis zum Ursprung zurück und schließen dort den offenen Auftrag sichtbar ab.
+      Dieser Rückweg ist jetzt als Praxisrundlauf mit drei Stationen und als Audio-Abnahme
+      bis 16-MFSK geprüft; zusätzlich gibt es Regeln für ACK-Priorität, Timeout,
+      Feldnachweise in beide Richtungen und Ersatzrouten nach fehlgeschlagenem Hop.
     </p>
   </article>
   <aside class="fact-panel reveal">
@@ -242,7 +249,7 @@
       <li>Empfangene Pakete verständlich als Nachricht, OK, Wiederholen oder Problem anzeigen.</li>
       <li>Bei fehlender Antwort eine eindeutige Wiederholung vorbereiten, statt blind erneut zu senden.</li>
       <li>Vor echten Funkversuchen denselben Ablauf lokal mit zwei Programmfenstern testen.</li>
-      <li>Mesh-Routen nutzen, damit Stationen bei Freigabe automatisch bis 16-MFSK weiterleiten und Zustellbestätigungen zurückführen können.</li>
+      <li>Mesh-Routen nutzen, damit Stationen bei Freigabe automatisch bis 16-MFSK weiterleiten, Zustellbestätigungen zurückführen und bei Fehlern eine Ersatzroute prüfen können.</li>
       <li>Dokumentation, Screenshots und Downloads passend zum aktuellen Prototypstand bereitstellen.</li>
     </ul>
   </aside>
@@ -259,7 +266,7 @@
       Moduswahl, Wiederholungslimit, RX-Härtung, Gesprächsabschluss, Auto-RX-Status,
       FB1-Live-RX, FB2-Auto-RX, Sendeautomatik-Praxisstatus, Zwei-Stationen-Livepraxis, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
       direkte FB2-Gesprächsaktionen, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Technik und Diagnose,
-      Vor-TX-Prüfung, Rückweg-ACK und Dokumentation. Die wichtigsten
+      Vor-TX-Prüfung, Rückweg-ACK, Praxisrundlauf, Mesh-Audio-Abnahme und Dokumentation. Die wichtigsten
       Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
       Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung, Senden, Empfangen
       und Antworten.
@@ -278,11 +285,11 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Warteschlange, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Rückweg-ACK, Zwei-Stationen-Livepraxis, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Hauptfluss, Sendefreigabe, Warteschlange, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Rückweg-ACK, Drei-Stationen-Praxisrundlauf, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
-      <figcaption>FB2 senden/empfangen: RX starten, Nachricht einreihen, Sendeautomatik prüfen, OK/Wiederholen zuordnen, Feldnachweisvorschlag speichern oder laden und Probleme prüfen; Technik und Diagnose bleiben für Nachweise und Fehlersuche erreichbar.</figcaption>
+      <figcaption>FB2 senden/empfangen und Mesh-Praxis: RX starten, Nachricht einreihen, Sendeautomatik prüfen, Rückweg-ACK beobachten, Feldnachweise speichern oder laden, Praxisrundlauf und Audio-Abnahme prüfen; Technik und Diagnose bleiben für Nachweise und Fehlersuche erreichbar.</figcaption>
     </figure>
   </div>
 </section>
@@ -370,6 +377,10 @@
       nächster Hop adressierte Stationen hören nur mit und leiten nicht weiter.
       Erreicht ein Paket sein Ziel, entsteht eine Zustellbestätigung als eigenes
       Mesh-Paket zurück zum Ursprung; Steuerpakete erzeugen keine ACK-Kette.
+      Der Praxisrundlauf prüft genau diesen Weg über drei Stationen, und die lokale
+      Mesh-Audio-Abnahme überträgt ihn über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK.
+      Wenn ein Hop trotz Freigabe nicht bestätigt wird, trennen die Regeln zwischen
+      Warten, Wiederholung, Ersatzroute und endgültiger Fehlerantwort.
       Im Mesh helfen Nachbarstationen, die schnellste und zuverlässigste Übertragung
       passend zur aktuellen Verbindung auszuwählen.
     </p>
@@ -394,6 +405,9 @@
       <li>Fremde FB2-Ziele werden als Mesh-Kandidaten bewertet; die Freigabekette prüft gespeicherten Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit und freie TX-Lage.</li>
       <li>Bei bewusster Freigabe werden FB2-Mesh-Textaufträge und Transitpakete automatisch bis 16-MFSK in die Warteschlange gelegt.</li>
       <li>FB2-Mesh-Zustellbestätigungen laufen über denselben Freigabepfad zurück bis zum Ursprung.</li>
+      <li>Der Drei-Stationen-Praxisrundlauf prüft Hinweg, Zielzustellung, Rückweg-ACK und Abschluss am Ursprung.</li>
+      <li>Die Mesh-Audio-Abnahme prüft denselben Ablauf über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK.</li>
+      <li>ACK-Timeout, Feldnachweis für Hin- und Rückweg sowie Ersatzroute sind als eigene Entscheidungsregeln vorbereitet.</li>
       <li>Nur die als nächster Hop adressierte Station verarbeitet ein FB2-Mesh-Paket aktiv; andere Stationen beobachten den Rahmen nur.</li>
       <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
       <li>Mesh-Kurzpakete halten Nachbarn, Geschwindigkeit und Erreichbarkeit aktuell.</li>
