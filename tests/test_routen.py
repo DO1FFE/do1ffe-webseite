@@ -171,59 +171,73 @@ def test_ueber_mich_erzählt_persönlich_ohne_private_repos():
     klient = app.test_client()
     antwort = klient.get("/ueber-mich")
     html = antwort.get_data(as_text=True)
+    text = " ".join(html.split())
 
     assert antwort.status_code == 200
-    assert "Erik Schauer, DO1FFE aus Essen" in html
-    assert "Rufzeichen" in html
-    assert "JO31MK" in html
-    assert "Amateurfunk" in html
-    assert "Softwareentwicklung" in html
-    assert "Tesla Model S 90D von 2016" in html
-    assert "free Supercharging" in html
-    assert "ohne dass mir der Strom separat berechnet wird" in html
-    assert "rund 525 PS kombinierte Motorleistung" in html
-    assert "Allradantrieb durch zwei Elektromotoren" in html
-    assert "0 auf 100 km/h in etwa 4,4 Sekunden" in html
-    assert "bis zu 250 km/h Höchstgeschwindigkeit" in html
-    assert "große 90-kWh-Akkuklasse" in html
-    assert "Yaesu FTM-500D" in html
-    assert "Glasklebeantenne für 2 m und 70 cm" in html
-    assert "V2L-Adapter" in html
-    assert "220/230 V" in html
-    assert "Vehicle-to-Load" in html
-    assert "V2L ganz einfach erklärt" in html
-    assert "Auto wird zur" in html
-    assert "Steckdose" in html
-    assert "Haushaltsstecker" in html
-    assert "Ladesäule" in html
-    assert "Das Auto gibt Strom wieder ab" in html
-    assert "Kaffee-Vollautomat" in html
-    assert "bis zu 4 kW Ausgangsleistung" in html
-    assert "Kühlschrank" in html
-    assert "Beleuchtung" in html
-    assert "20 Prüfungen" in html
-    assert "einschalten, nutzen, sauber ausschalten" in html
-    assert "tragbares Gehäuse mit Griff" in html
-    assert "Backup-USB für Softwareupdates" in html
-    assert "Tesla-Updates die Entladefunktion beeinflussen" in html
-    assert "zwischen 20 % und 95 %" in html
-    assert "Tesla Model 3, Model Y, Model S und Model X" in html
-    assert "CCS-Funktion" in html
-    assert "drei 18650-Akkuzellen" in html
-    assert "Gleichstrom aus dem Fahrzeug" in html
-    assert "Wechselrichter" in html
-    assert "Haushalts-Wechselstrom" in html
-    assert "DC zu AC" in html
-    assert "keine Ersatz-Stromversorgung für ein ganzes Haus" in html
-    assert "wie viel" in html
-    assert "Leistung der Adapter liefern darf" in html
-    assert "Auto da, Adapter dran" in html
-    assert "Gerät läuft" in html
-    assert "Kompressor-Kühlbox" in html
-    assert "Siemens EQ-700 classic" in html
-    assert "Vollausstattung" in html
-    assert "https://github.com/DO1FFE" in html
-    assert "Private Repos" not in html
+    assert "Erik Schauer, DO1FFE aus Essen" in text
+    assert "Rufzeichen" in text
+    assert "JO31MK" in text
+    assert "Amateurfunk" in text
+    assert "Softwareentwicklung" in text
+    assert "Tesla Model S 90D von 2016" in text
+    assert "rollender Technikträger" in text
+    assert "free Supercharging" in text
+    assert "ohne dass mir der Strom separat berechnet wird" in text
+    assert "rund 525 PS kombinierte Motorleistung" in text
+    assert "Allradantrieb durch zwei Elektromotoren" in text
+    assert "0 auf 100 km/h in etwa 4,4 Sekunden" in text
+    assert "bis zu 250 km/h Höchstgeschwindigkeit" in text
+    assert "große 90-kWh-Akkuklasse" in text
+    assert "Yaesu FTM-500D" in text
+    assert "Glasklebeantenne für 2 m und 70 cm" in text
+    assert "mobile Einsätze schnell verfügbar" in text
+    assert "Relais und Direktverbindungen" in text
+    assert "festes Mobilgerät statt losem Handfunkgerät" in text
+    assert "ohne auffällige Außenmontage" in text
+    assert "V2L-Adapter" in text
+    assert "220/230 V" in text
+    assert "mobilen Energiequelle" in text
+    assert "bis zu 4 kW Ausgangsleistung laut Adapterangabe" in text
+    assert "Kühlbox, Licht, Ladegeräte, Funkzubehör und kleine Werkzeuge" in text
+    assert "tragbar mit Griff für Camping" in text
+    assert "Vehicle-to-Load" in text
+    assert "V2L ganz einfach erklärt" in text
+    assert "Auto wird zur" in text
+    assert "Steckdose" in text
+    assert "Haushaltsstecker" in text
+    assert "Ladesäule" in text
+    assert "Das Auto gibt Strom wieder ab" in text
+    assert "Kaffee-Vollautomat" in text
+    assert "bis zu 4 kW Ausgangsleistung" in text
+    assert "Kühlschrank" in text
+    assert "Beleuchtung" in text
+    assert "20 Prüfungen" in text
+    assert "einschalten, nutzen, sauber ausschalten" in text
+    assert "tragbares Gehäuse mit Griff" in text
+    assert "Backup-USB für Softwareupdates" in text
+    assert "Tesla-Updates die Entladefunktion beeinflussen" in text
+    assert "zwischen 20 % und 95 %" in text
+    assert "Tesla Model 3, Model Y, Model S und Model X" in text
+    assert "CCS-Funktion" in text
+    assert "drei 18650-Akkuzellen" in text
+    assert "Gleichstrom aus dem Fahrzeug" in text
+    assert "Wechselrichter" in text
+    assert "Haushalts-Wechselstrom" in text
+    assert "DC zu AC" in text
+    assert "keine Ersatz-Stromversorgung für ein ganzes Haus" in text
+    assert "wie viel" in text
+    assert "Leistung der Adapter liefern darf" in text
+    assert "Auto da, Adapter dran" in text
+    assert "Gerät läuft" in text
+    assert "Kompressor-Kühlbox" in text
+    assert "Siemens EQ-700 classic" in text
+    assert "Vollausstattung" in text
+    assert "kalte Getränke auch bei warmem Wetter" in text
+    assert "Kaffee-Vollautomat statt Thermoskanne" in text
+    assert "Stromversorgung über den V2L-Adapter möglich" in text
+    assert "Fieldday-ähnliche Einsätze" in text
+    assert "https://github.com/DO1FFE" in text
+    assert "Private Repos" not in text
 
 
 def test_footer_verlinkt_impressum_und_datenschutz():
