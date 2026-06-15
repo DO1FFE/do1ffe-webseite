@@ -178,6 +178,16 @@ def test_ueber_mich_erzählt_persönlich_ohne_private_repos():
     assert "JO31MK" in html
     assert "Amateurfunk" in html
     assert "Softwareentwicklung" in html
+    assert "Tesla Model S 90D von 2016" in html
+    assert "free Supercharging" in html
+    assert "ohne dass mir der Strom separat berechnet wird" in html
+    assert "Yaesu FTM-500D" in html
+    assert "Glasklebeantenne für 2 m und 70 cm" in html
+    assert "V2L-Adapter" in html
+    assert "220/230 V" in html
+    assert "Kompressor-Kühlbox" in html
+    assert "Siemens EQ-700 classic" in html
+    assert "Vollausstattung" in html
     assert "https://github.com/DO1FFE" in html
     assert "Private Repos" not in html
 
