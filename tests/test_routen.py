@@ -198,10 +198,13 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.228" in html
+    assert "v0.9.229" in html
     assert "FB1-Live-RX" in html
     assert "FB2-Auto-RX" in html
     assert "A schreibt, B liest, B antwortet, A liest zurück" in html
+    assert "Abnahme" in html
+    assert "FT-991A-Praxistest" in html
+    assert "Sieben-Schritt" in html
 
 
 def test_layout_setzt_seo_metadaten():
