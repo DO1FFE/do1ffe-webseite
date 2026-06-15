@@ -257,7 +257,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.246" in html
+    assert "v0.9.247" in html
     assert "FB1-Live-RX" in html
     assert "FB2-Auto-RX" in html
     assert "Text eingeben, Zielrufzeichen wählen" in html
@@ -297,6 +297,9 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "4-FSK" in html
     assert "8-FSK" in html
     assert "32-MFSK" in html
+    assert "direkter Audio-QSO" in html
+    assert "Live-RX-Andockpunkt" in html
+    assert "lokale Zustellung" in html
     assert "Changelog" not in html
     assert "Changelog ansehen" not in html
     assert "Seit v0.9." not in html
