@@ -78,7 +78,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "FB2-Übertragung",
         "dateiname": "FB2-Uebertragung.md",
         "typ": "Markdown",
-        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik, Audio-QSO-Kette von 2-FSK bis 32-MFSK und Mesh-Anbindung.",
+        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik, Audio-QSO-Kette von 2-FSK bis 32-MFSK, Timeout-Wiederholung und Mesh-Vorentscheidung.",
         "primär": False,
     },
     {

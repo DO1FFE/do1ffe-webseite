@@ -199,30 +199,22 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.236" in html
+    assert "v0.9.237" in html
     assert "FB1-Live-RX" in html
     assert "FB2-Auto-RX" in html
-    assert "A schreibt, B liest, B antwortet, A liest zurück" in html
-    assert "Abnahme" in html
+    assert "Text eingeben, Zielrufzeichen wählen" in html
+    assert "Der Nutzer schreibt eine Nachricht und legt sie in die Warteschlange" in html
+    assert "Nachricht einreihen, Kanalwache" in html
     assert "FT-991A-Praxistest" in html
-    assert "Sieben-Schritt" in html
-    assert "Pflichtnachweisen" in html
-    assert "Audiofluss" in html
-    assert "Live-RX-Praxiskette" in html
-    assert "Zwei-Stationen-Livepraxis" in html
-    assert "ACK/Wiederholen-RX" in html
-    assert "Mesh-Andockpunkt" in html
-    assert "Test-TX-Praxisstatus" in html
     assert "Sendeautomatik" in html
-    assert "Auto-OK" in html
-    assert "Auto-OK-Rückweg" in html
-    assert "Drei-Versuche-Limit" in html
-    assert "Wartegründe" in html
-    assert "Wiederholungsvormerkung" in html
-    assert "Audio-QSO-Kette" in html
+    assert "Timeout-Wiederholung" in html
+    assert "Mesh-Vorentscheidung" in html
+    assert "nächstem Hop" in html
+    assert "Anleitungen, Frequenzprofile und technische Dokumente." in html
     assert "2-FSK robust" in html
     assert "32-MFSK" in html
-    assert "Gegenstations-RX" in html
+    assert "Changelog ansehen" not in html
+    assert "Seit v0.9." not in html
 
 
 def test_layout_setzt_seo_metadaten():
