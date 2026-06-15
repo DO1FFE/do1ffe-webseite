@@ -198,6 +198,22 @@ def test_ueber_mich_erzählt_persönlich_ohne_private_repos():
     assert "Ladesäule" in html
     assert "Das Auto gibt Strom wieder ab" in html
     assert "Kaffee-Vollautomat" in html
+    assert "bis zu 4 kW Ausgangsleistung" in html
+    assert "Kühlschrank" in html
+    assert "Beleuchtung" in html
+    assert "20 Prüfungen" in html
+    assert "einschalten, nutzen, sauber ausschalten" in html
+    assert "tragbares Gehäuse mit Griff" in html
+    assert "Backup-USB für Softwareupdates" in html
+    assert "Tesla-Updates die Entladefunktion beeinflussen" in html
+    assert "zwischen 20 % und 95 %" in html
+    assert "Tesla Model 3, Model Y, Model S und Model X" in html
+    assert "CCS-Funktion" in html
+    assert "drei 18650-Akkuzellen" in html
+    assert "Gleichstrom aus dem Fahrzeug" in html
+    assert "Wechselrichter" in html
+    assert "Haushalts-Wechselstrom" in html
+    assert "DC zu AC" in html
     assert "keine Ersatz-Stromversorgung für ein ganzes Haus" in html
     assert "wie viel" in html
     assert "Leistung der Adapter liefern darf" in html
