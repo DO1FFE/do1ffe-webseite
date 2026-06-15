@@ -181,6 +181,11 @@ def test_ueber_mich_erzählt_persönlich_ohne_private_repos():
     assert "Tesla Model S 90D von 2016" in html
     assert "free Supercharging" in html
     assert "ohne dass mir der Strom separat berechnet wird" in html
+    assert "rund 525 PS kombinierte Motorleistung" in html
+    assert "Allradantrieb durch zwei Elektromotoren" in html
+    assert "0 auf 100 km/h in etwa 4,4 Sekunden" in html
+    assert "bis zu 250 km/h Höchstgeschwindigkeit" in html
+    assert "große 90-kWh-Akkuklasse" in html
     assert "Yaesu FTM-500D" in html
     assert "Glasklebeantenne für 2 m und 70 cm" in html
     assert "V2L-Adapter" in html
