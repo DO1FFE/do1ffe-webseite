@@ -69,7 +69,12 @@
       CAT/PTT, echte CAT-PTT, Sendesicherheit, Warteschlange und Abbruchregel gemeinsam.
       Die Anzeige unterscheidet dabei Empfang bereit, Trockenlauf prüfbar und
       automatisches Senden bereit. Ohne bewusste CAT-PTT-Freigabe kann der Ablauf
-      trocken geprüft werden, aber es startet keine HF-Aussendung.
+      trocken geprüft werden, aber es startet keine HF-Aussendung. Dieselbe
+      Praxisstartbewertung wird auch vor TX, in der Fehlerhilfe, in der
+      Sendeautomatik und im Feldtestprotokoll verwendet. Dadurch bleibt die
+      Sicherheitslinie gleich: Wenn nur Empfang oder Trockenlauf bereit ist, bleibt
+      ein FB2-Auftrag in der Warteschlange, bis die echte CAT-PTT-Freigabe und alle
+      Pflichtpunkte bewusst erfüllt sind.
     </p>
     <p>
       Zusätzlich sammelt FunkBrücke Stationsprofile für das Mesh: Rufzeichen, Name,
@@ -109,7 +114,11 @@
       Warteschlange gelegt: zuerst erneut über den Primärweg, danach bei Bedarf über
       eine unabhängige Ersatzroute. Ohne vollständige Hin- und Rückweg-Feldnachweise
       sperrt FunkBrücke automatische Wiederholungen und Ersatzrouten; dann wird die
-      Route angezeigt, aber nicht selbstständig erneut gesendet.
+      Route angezeigt, aber nicht selbstständig erneut gesendet. Der
+      FB2-Mesh-Live-Ausgangskorb beginnt deshalb mit einem normalen Bedienhinweis:
+      Entweder wartet die Automatik weiter, sie bleibt bis zu vollständigen
+      Feldnachweisen stehen, sie nutzt eine Ersatzroute oder sie stoppt den Auftrag
+      mit Fehlerantwort.
     </p>
     <p>
       Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
@@ -131,7 +140,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, TX-Automatik, Empfang, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Ablauf zeigen, Fehlerhilfe, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung, Feldnachweis-Sperre für automatische Mesh-Wiederholung, Mesh-Stationsprofilen, lokaler Mesh-Karte und bewusst freigebbarer FB2-Mesh-Automatikgrenze bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, TX-Automatik, Empfang, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, gleicher Sicherheitslinie in Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, Ablauf zeigen, Fehlerhilfe, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung, Feldnachweis-Sperre für automatische Mesh-Wiederholung, Mesh-Stationsprofilen, lokaler Mesh-Karte und bewusst freigebbarer FB2-Mesh-Automatikgrenze bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb mit normalem Bedienhinweis, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
     </dl>
   </aside>
 </section>
@@ -260,6 +269,9 @@
       Dabei geht es um einen überprüfbaren Automatiklauf: Nachricht einreihen, Kanalwache
       beachten, automatisch senden, Gegenstation empfangen lassen, OK oder Wiederholen
       zurückführen, nach TX wieder auf Empfang gehen und den Gesprächszustand abschließen.
+      Start prüfen, Vor-TX-Prüfung, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll
+      nutzen dieselbe Sicherheitslinie. Ein Auftrag bleibt deshalb geordnet in der
+      Warteschlange, wenn nur Empfang bereit oder nur Trockenlauf prüfbar ist.
       Ein eigener Zwei-Stationen-Testplan beschreibt Rollen, Voraussetzungen,
       Abbruchkriterien und Protokollpunkte. Vor einem echten Funkversuch kann derselbe
       Ablauf über lokale geschützte Austauschdateien oder als kompletter Audio-QSO-Lauf
@@ -289,7 +301,9 @@
       Rückweg-ACKs schließen den Auftrag, Timeouts erzeugen bei passender Freigabe einen
       FB2-Mesh-Retry zuerst über Primär-Hop und danach über Ersatz-Hop. Wenn ein Relais
       nicht weiterleiten kann, läuft eine FB2-Mesh-Fehlerantwort zurück zum Ursprung und
-      stoppt den Auftrag nachvollziehbar.
+      stoppt den Auftrag nachvollziehbar. Vor den technischen Details steht ein
+      normaler Bedienhinweis, damit klar bleibt, ob die Automatik wartet, wegen
+      Feldnachweisen stehen bleibt, eine Ersatzroute nutzt oder den Fehler zurückmeldet.
     </p>
   </article>
   <aside class="fact-panel reveal">
@@ -322,7 +336,7 @@
       Berichtsexport, Lastprüfung, direkter Audio-QSO-Abnahme bis 32-MFSK, Mesh-Audio-Abnahme,
       Audio-Fehlerrückweg, Live-RX-Andockpunkt und Dokumentation. Die wichtigsten
       Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
-      Start prüfen mit Praxisstartstufe, Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung, Senden, Empfangen
+      Start prüfen mit Praxisstartstufe, Sicherheitslinie, Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung, Senden, Empfangen
       und Antworten.
     </p>
   </div>
@@ -343,7 +357,7 @@
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
-      <figcaption>FB2 senden/empfangen und Mesh-Praxis: RX starten, Nachricht einreihen, Sendeautomatik prüfen, Rückweg-ACK oder Fehlerantwort beobachten, Feldnachweise speichern oder laden, FB2-Mesh-Live prüfen, Praxisbericht exportieren und Audio-Abnahme prüfen; Technik und Diagnose bleiben für Nachweise und Fehlersuche erreichbar.</figcaption>
+      <figcaption>FB2 senden/empfangen und Mesh-Praxis: RX starten, Nachricht einreihen, Sendeautomatik prüfen, gleiche Sicherheitslinie beachten, Rückweg-ACK oder Fehlerantwort beobachten, Feldnachweise speichern oder laden, FB2-Mesh-Live mit normalem Bedienhinweis prüfen, Praxisbericht exportieren und Audio-Abnahme prüfen; Technik und Diagnose bleiben für Nachweise und Fehlersuche erreichbar.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Markierte Mesh-Karte mit Stationen, Locator, Linkmodus und Stationsliste">
@@ -425,7 +439,10 @@
       Zwei-Fenster-Rundlauf mit Abnahme und Schrittliste, den direkt bedienbaren
       FB2-Gesprächsblock mit nachgeordneter Technikdiagnose, den erweiterten
       FT-991A-Praxistest mit Fokusblock und eine geführte Zwei-Stationen-Versuchsvorbereitung
-      mit Pflichtnachweisen. Der normale FB2-Bereich kann nach einem passenden Paket-/OK-Paar
+      mit Pflichtnachweisen. Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll
+      verwenden dieselbe Praxisstartbewertung und Sicherheitslinie; ohne echte
+      CAT-PTT-Freigabe bleibt ein Auftrag sichtbar in der Warteschlange, statt
+      unklar zu senden. Der normale FB2-Bereich kann nach einem passenden Paket-/OK-Paar
       einen Feldnachweisvorschlag anzeigen. Ein gespeicherter FB2-Feldnachweis zählt für Mesh erst, wenn
       er ein echtes, abgeschlossenes und testleiterbestätigtes QSO zur nächsten
       Nachbarstation belegt. Für fremde FB2-Ziele zeigt die Mesh-Freigabekette zusätzlich,
@@ -442,7 +459,8 @@
       denselben Ablauf über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK.
       Wenn ein Hop trotz Freigabe nicht bestätigt wird, zeigt der Live-Ausgangskorb
       Warten, ACK-Timeout, Ersatzroute oder Fehlerantwort an und legt eine freigegebene
-      Wiederholung wieder in die normale TX-Warteschlange.
+      Wiederholung wieder in die normale TX-Warteschlange. Der erste Text ist dabei ein
+      normaler Bedienhinweis; die technischen Gründe bleiben darunter nachvollziehbar.
       Im Mesh helfen Nachbarstationen, die schnellste und zuverlässigste Übertragung
       passend zur aktuellen Verbindung auszuwählen.
     </p>
@@ -459,6 +477,8 @@
       <li>FB2 senden/empfangen zeigt den Hintergrundzustand für RX, Auftrag, Antwort, laufende Sendung, offene Antwort und Timeout.</li>
       <li>Der direkte Audio-QSO-Nachweis prüft Paket und Auto-OK von 2-FSK robust bis 32-MFSK.</li>
       <li>Start prüfen trennt Empfang bereit, Trockenlauf prüfbar und echtes automatisches Senden mit bewusster CAT-PTT-Freigabe.</li>
+      <li>Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll nutzen dieselbe Sicherheitslinie.</li>
+      <li>Wenn nur Empfang oder Trockenlauf bereit ist, bleibt der FB2-Auftrag in der Warteschlange.</li>
       <li>Der Zwei-Fenster-Rundlauf meldet laufend, bestanden oder fehlgeschlagen.</li>
       <li>Der FT-991A-Praxistest führt bis FB2-Trockenauftrag, Fokusblock und Protokoll.</li>
       <li>Der Feldversuch zeigt sieben Pflichtnachweise vor dem ersten echten Zwei-Stationen-Test.</li>
@@ -471,6 +491,7 @@
       <li>FB2-Mesh-Live zeigt die Automatikgrenze bis 16-MFSK; breitere Modi bleiben Labor- oder manuelle Feldfreigabestufen.</li>
       <li>FB2-Mesh-Zustellbestätigungen laufen über denselben Freigabepfad zurück bis zum Ursprung.</li>
       <li>Der FB2-Mesh-Live-Ausgangskorb zeigt Rückweg-ACK, ACK-Timeout, Ersatzroute, Fehlerantwort und Wiederholung.</li>
+      <li>Der FB2-Mesh-Live-Ausgangskorb beginnt mit einem normalen Bedienhinweis vor den technischen Details.</li>
       <li>Der 6-Hop-Praxisrundlauf prüft Hinweg, Zielzustellung, Rückweg-ACK und Abschluss am Ursprung.</li>
       <li>Ein Praxisbericht kann exportiert werden; die Lastprüfung bewertet offene Mesh-Aufträge im Hintergrund.</li>
       <li>Die Mesh-Audio-Abnahme prüft denselben Ablauf über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK.</li>
