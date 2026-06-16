@@ -1268,6 +1268,14 @@ h3 {
   max-width: 860px;
 }
 
+.funkbruecke-hero-logo {
+  width: min(420px, 76vw);
+  height: auto;
+  margin: 0 0 22px;
+  border-radius: 6px;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+}
+
 .page-hero h1 {
   max-width: 920px;
 }
@@ -1806,6 +1814,10 @@ h3 {
   .page-hero {
     min-height: auto;
     padding-top: 118px;
+  }
+
+  .funkbruecke-hero-logo {
+    width: min(360px, 82vw);
   }
 
   .fact-panel {

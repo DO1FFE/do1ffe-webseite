@@ -257,7 +257,10 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.248" in html
+    assert "v0.9.254" in html
+    assert "funkbruecke-logo.png" in html
+    assert "FunkBrücke Logo" in html
+    assert "FB-Monogramm" in html
     assert "FB1-Live-RX" in html
     assert "FB2-Auto-RX" in html
     assert "Text eingeben, Zielrufzeichen wählen" in html
@@ -265,7 +268,11 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Nachricht einreihen, Kanalwache" in html
     assert "FT-991A-Praxistest" in html
     assert "Sendeautomatik" in html
+    assert "TX-Automatik" in html
     assert "Timeout-Wiederholung" in html
+    assert "Start prüfen" in html
+    assert "Ablauf zeigen" in html
+    assert "Fehlerhilfe" in html
     assert "Dauer-RX" in html
     assert "automatischem RX nach TX" in html
     assert "Mesh-Freigabekette" in html
@@ -273,6 +280,11 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Rückweg-ACK" in html
     assert "FB2-Mesh-Live" in html
     assert "Live-Ausgangskorb" in html
+    assert "Mesh-Karte" in html
+    assert "funkbruecke-mesh-karte.png" in html
+    assert "Stationssuche" in html
+    assert "Stationsprofile" in html
+    assert "Locator" in html
     assert "Retry über Sendemotor" in html
     assert "Fehlerantwort" in html
     assert "Audio-Fehlerrückweg" in html
@@ -290,6 +302,8 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "nächster Hop adressierte Station" in html
     assert "Feldnachweis" in html
     assert "Feldnachweisvorschlag" in html
+    assert "Feldnachweis-Sperre" in html
+    assert "Wiederholungen und Ersatzrouten" in html
     assert "Nachweis nach passendem Paket und OK vorschlagen" in html
     assert "gespeicherter Feldnachweis" in html
     assert "testleiterbestätigter FB2-Feldnachweis" in html
