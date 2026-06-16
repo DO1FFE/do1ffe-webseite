@@ -257,7 +257,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.255" in html
+    assert "v0.9.256" in html
     assert "funkbruecke-logo.png" in html
     assert "FunkBrücke Logo" in html
     assert "FB-Monogramm" in html
@@ -274,6 +274,9 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Empfang bereit" in html
     assert "Trockenlauf prüfbar" in html
     assert "echte CAT-PTT" in html
+    assert "Sicherheitslinie" in html
+    assert "Feldtestprotokoll" in html
+    assert "bleibt der FB2-Auftrag in der Warteschlange" in html
     assert "Automatikgrenze" in html
     assert "Ablauf zeigen" in html
     assert "Fehlerhilfe" in html
@@ -284,6 +287,8 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Rückweg-ACK" in html
     assert "FB2-Mesh-Live" in html
     assert "Live-Ausgangskorb" in html
+    assert "normalem Bedienhinweis" in html
+    assert "Automatik wartet" in html
     assert "Mesh-Karte" in html
     assert "funkbruecke-mesh-karte.png" in html
     assert "Stationssuche" in html
