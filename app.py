@@ -62,7 +62,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Bedienungsanleitung",
         "dateiname": "FunkBruecke-Bedienungsanleitung-latest.pdf",
         "typ": "PDF",
-        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, FB1-Live-RX, FB2-Auto-RX, Warteschlange, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, gleicher Sicherheitslinie in Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, automatischem RX nach TX, Auto-OK, direkter Audio-QSO-Kette von 2-FSK bis 32-MFSK, FB2-Mesh-Automatikgrenze bis 16-MFSK, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Feldnachweis-Sperre für automatische Mesh-Wiederholungen, 6-Hop-Praxisrundlauf, Mesh-Audio-Abnahme, normalen Mesh-Live-Bedienhinweisen, Live-RX-Andockpunkt, Gesprächszustand, RX-Sortierung und wichtigsten Handgriffen.",
+        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, FB1-Live-RX, FB2-Auto-RX, Warteschlange, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gleicher Sicherheitslinie in Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, automatischem RX nach TX, Auto-OK, direkter Audio-QSO-Kette von 2-FSK bis 32-MFSK, FB2-Mesh-Automatikgrenze bis 16-MFSK, Rückweg-ACK, bidirektionalen Nachbar-Feldnachweisen, Fehlerantwort bis zum Ursprung, Feldnachweis-Sperre für automatische Mesh-Wiederholungen, 6-Hop-Praxisrundlauf, Mesh-Audio-Abnahme, normalen Mesh-Live-Bedienhinweisen, Live-RX-Andockpunkt, Gesprächszustand, RX-Sortierung und wichtigsten Handgriffen.",
         "primär": False,
     },
     {
@@ -79,7 +79,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "FB2-Übertragung",
         "dateiname": "FB2-Uebertragung.md",
         "typ": "Markdown",
-        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Praxisstartstufe, echter CAT-PTT, gemeinsamer Sicherheitslinie für Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik, automatischem RX nach TX, direkter Audio-QSO-Kette von 2-FSK bis 32-MFSK, Timeout-Wiederholung, FB2-Mesh-Automatikgrenze bis 16-MFSK, Ende-zu-Ende-Zustellbestätigung, Fehlerantwort, Feldnachweis-Sperre für automatische Wiederholung und Ersatzroute, 6-Hop-Praxisrundlauf, Mesh-Audio-Abnahme, Live-RX-Andockpunkt, normalen Mesh-Live-Bedienhinweisen und Ersatzroute.",
+        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Praxisstartstufe, echter CAT-PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gemeinsamer Sicherheitslinie für Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik, automatischem RX nach TX, direkter Audio-QSO-Kette von 2-FSK bis 32-MFSK, Timeout-Wiederholung, FB2-Mesh-Automatikgrenze bis 16-MFSK, bidirektionalen Nachbar-Feldnachweisen, Ende-zu-Ende-Zustellbestätigung, Fehlerantwort, Feldnachweis-Sperre für automatische Wiederholung und Ersatzroute, 6-Hop-Praxisrundlauf, Mesh-Audio-Abnahme, Live-RX-Andockpunkt, normalen Mesh-Live-Bedienhinweisen und Ersatzroute.",
         "primär": False,
     },
     {
