@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block titel %}FunkBrücke | DO1FFE{% endblock %}
-{% block beschreibung %}FunkBrücke: Windows-Software für den Yaesu FT-991A, FB2-Digitalbetrieb, Senden und Empfangen digitaler Amateurfunk-Nachrichten, Mesh-Weiterleitung und Downloads.{% endblock %}
+{% block beschreibung %}FunkBrücke: Windows-Software für den Yaesu FT-991A, FB2-Digitalbetrieb, Warteschlange, Sendeautomatik, Mesh-Weiterleitung und Downloads.{% endblock %}
 
 {% block inhalt %}
 <section class="page-hero page-hero--funkbruecke">
@@ -119,7 +119,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung, Mesh-Stationsprofilen, lokaler Mesh-Karte und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, TX-Automatik, Empfang, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung, Mesh-Stationsprofilen, lokaler Mesh-Karte und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
     </dl>
   </aside>
 </section>
@@ -151,7 +151,7 @@
       sondern der Gesprächsfluss: Ziel wählen, Text schreiben, in die Warteschlange legen,
       Empfang laufen lassen und den Status beobachten. FunkBrücke zeigt Sendefreigabe,
       Antwortlage, Wiederholungshinweis, RX-Zuordnung, Moduswahl und die wichtigsten
-      Sicherheitsgründe. Oben in der Einfachansicht stehen Senden, Empfangen,
+      Sicherheitsgründe. Oben in der Einfachansicht stehen TX-Automatik, Empfangen,
       Warteschlange und Status direkt nebeneinander. Die technische Diagnose bleibt
       erreichbar, soll aber den normalen Ablauf nicht überladen.
     </p>
@@ -236,7 +236,7 @@
     <p>
       Die aktuelle Version zeigt bereits die Hauptstruktur der späteren Bedienung:
       Einfachbetrieb, Hauptfluss, Zielrufzeichen, Rollenwahl, Sendefeld, Warteschlange,
-      die vier Statusfelder Senden, Empfangen, Warteschlange und Status,
+      die vier Statusfelder TX-Automatik, Empfangen, Warteschlange und Status,
       Modusplan, Vor-TX-Prüfung, Antwort, Rückweg, Empfangen, Empfang einsortieren,
       FB2 senden/empfangen, Gespräch, Zwei-Fenster-Test, Wasserfall, Spektrum,
       CAT-/Audio-Bereiche, Mesh-Ansichten, Mesh-Karte, Feldnachweisblock, FB2-Planung und Protokollfenster. Die Menüs
@@ -323,7 +323,7 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, Senden, Empfangen, Warteschlange, Status, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Live-RX-Andockpunkt, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Rückweg-ACK, Fehlerantwort, FB2-Mesh-Live, 6-Hop-Praxisrundlauf, Berichtsexport, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, TX-Automatik, Empfangen, Warteschlange, Status, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Live-RX-Andockpunkt, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Rückweg-ACK, Fehlerantwort, FB2-Mesh-Live, 6-Hop-Praxisrundlauf, Berichtsexport, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
