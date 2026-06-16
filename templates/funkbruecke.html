@@ -64,6 +64,16 @@
       Sender.
     </p>
     <p>
+      Zusätzlich sammelt FunkBrücke Stationsprofile für das Mesh: Rufzeichen, Name,
+      Locator, QTH, TRX, Antenne und Zusatzangaben können als kurze Profilpakete
+      ausgetauscht werden. Eine lokale Mesh-Karte zeigt bekannte Stationen anhand ihres
+      Locators, zeichnet Nachbar- und Routenlinien mit Modus und Qualität und kann eine
+      angeklickte Station direkt als Ziel übernehmen. Sechsstellige Locator werden als
+      Gebiet dargestellt; acht- und zehnstellige Locator erscheinen genauer als Punkt.
+      Alte Stations- und Linkinformationen bleiben für die Karte bis zu 24 Stunden als
+      Verlauf sichtbar, werden aber nicht mehr als aktuelle Route verwendet.
+    </p>
+    <p>
       Für Tests kann der Ablauf lokal mit zwei Programminstanzen ohne HF geprobt werden.
       Der Empfang unterscheidet FB1-Live-RX und FB2-Auto-RX, prüft FB2-Rahmen mit Marker,
       Paketgrenze und CRCs und zeigt, ob ein Rahmen Nutzdaten, OK, Wiederholen, ein
@@ -109,7 +119,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, automatischem Senden und Empfangen, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung, Mesh-Stationsprofilen, lokaler Mesh-Karte und bewusst freigebbarer FB2-Mesh-Automatik bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
     </dl>
   </aside>
 </section>
@@ -229,7 +239,7 @@
       die vier Statusfelder Senden, Empfangen, Warteschlange und Status,
       Modusplan, Vor-TX-Prüfung, Antwort, Rückweg, Empfangen, Empfang einsortieren,
       FB2 senden/empfangen, Gespräch, Zwei-Fenster-Test, Wasserfall, Spektrum,
-      CAT-/Audio-Bereiche, Mesh-Ansichten, Feldnachweisblock, FB2-Planung und Protokollfenster. Die Menüs
+      CAT-/Audio-Bereiche, Mesh-Ansichten, Mesh-Karte, Feldnachweisblock, FB2-Planung und Protokollfenster. Die Menüs
       oben bündeln Einstellungen, Hilfe, Versionsinformationen und technische Werkzeuge,
       damit der Hauptbildschirm nicht mit Nebenfunktionen überladen wird.
     </p>
