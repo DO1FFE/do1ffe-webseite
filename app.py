@@ -54,7 +54,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Windows-Programm",
         "dateiname": "FunkBruecke-latest-win-x64.exe",
         "typ": "EXE",
-        "beschreibung": "Aktuelle Windows-x64-Version mit gebündelter Laufzeit.",
+        "beschreibung": "Aktuelle Windows-x64-Version mit gebündelter Laufzeit und eingebettetem FunkBrücke-Icon.",
         "primär": True,
     },
     {

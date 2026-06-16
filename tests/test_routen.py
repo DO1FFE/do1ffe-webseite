@@ -257,7 +257,10 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.253" in html
+    assert "v0.9.254" in html
+    assert "funkbruecke-logo.png" in html
+    assert "FunkBrücke Logo" in html
+    assert "FB-Monogramm" in html
     assert "FB1-Live-RX" in html
     assert "FB2-Auto-RX" in html
     assert "Text eingeben, Zielrufzeichen wählen" in html
