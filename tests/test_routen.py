@@ -257,7 +257,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.257" in html
+    assert "v0.9.261" in html
     assert "funkbruecke-logo.png" in html
     assert "FunkBrücke Logo" in html
     assert "FB-Monogramm" in html
@@ -265,7 +265,10 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "FB2-Auto-RX" in html
     assert "Text eingeben, Zielrufzeichen wählen" in html
     assert "Der Nutzer schreibt eine Nachricht und legt sie in die Warteschlange" in html
-    assert "Nachricht einreihen, Kanalwache" in html
+    assert "Nachricht einreihen, Empfang" in html
+    assert "Auto-QSO-Bedienfluss" in html
+    assert "Auto-QSO-Status" in html
+    assert "Kompressionsbilanz" in html
     assert "FT-991A-Praxistest" in html
     assert "Sendeautomatik" in html
     assert "TX-Automatik" in html
@@ -315,6 +318,9 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Feldnachweis" in html
     assert "Feldnachweisvorschlag" in html
     assert "bidirektionalen Nachbar-Feldnachweisen" in html
+    assert "Nachbar-Feldnachweis zum nächsten Hop" in html
+    assert "Feldtestprotokoll und Exportübersicht" in html
+    assert "Beim Einreihen einer FB2-Direktnachricht" in html
     assert "bidirektional" in html
     assert "Feldnachweis-Sperre" in html
     assert "Wiederholungen und Ersatzrouten" in html
