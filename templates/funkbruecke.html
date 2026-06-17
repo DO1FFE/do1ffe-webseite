@@ -65,7 +65,9 @@
       wieder bereit. Der direkte Audiopfad wird lokal mit zwei Programminstanzen von
       2-FSK robust bis 32-MFSK geprüft: Paket aus der Warteschlange, Empfang bei der
       Gegenstation, automatisches OK, Rückweg-Audio und Abschluss beim ursprünglichen
-      Sender. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
+      Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
+      bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
+      Brotli mit weniger Funkdaten übertragen wurde. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
       Frequenz, Betriebsart, Leistung, Audio-RX, FB2-Auto-RX, Audio-TX, Kanalwache,
       CAT/PTT, echte CAT-PTT, Sendesicherheit, Warteschlange und Abbruchregel gemeinsam.
       Die Anzeige unterscheidet dabei Empfang bereit, Trockenlauf prüfbar und
@@ -316,6 +318,8 @@
       zurück. Der direkte Audio-QSO ist lokal bis 32-MFSK geprüft; die Mesh-Audio-Abnahme
       bleibt bis 16-MFSK geprüft. Der Live-RX-Andockpunkt unterscheidet Direkt-QSO,
       Mesh-Mithören, Weiterleitung, lokale Zustellung, Link-Bake und eigenes Echo.
+      Die RX-/TX-Anzeigen nennen dabei auch die Kompressionsbilanz, ohne dass der Nutzer
+      dafür Protokolldetails kennen muss.
       Der Live-Ausgangskorb nutzt diese Regeln im laufenden Betrieb:
       Rückweg-ACKs schließen den Auftrag, Timeouts erzeugen bei passender Freigabe einen
       FB2-Mesh-Retry zuerst über Primär-Hop und danach über Ersatz-Hop. Wenn ein Relais

@@ -257,7 +257,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.258" in html
+    assert "v0.9.261" in html
     assert "funkbruecke-logo.png" in html
     assert "FunkBrücke Logo" in html
     assert "FB-Monogramm" in html
@@ -268,6 +268,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Nachricht einreihen, Empfang" in html
     assert "Auto-QSO-Bedienfluss" in html
     assert "Auto-QSO-Status" in html
+    assert "Kompressionsbilanz" in html
     assert "FT-991A-Praxistest" in html
     assert "Sendeautomatik" in html
     assert "TX-Automatik" in html
