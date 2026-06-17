@@ -257,7 +257,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.256" in html
+    assert "v0.9.257" in html
     assert "funkbruecke-logo.png" in html
     assert "FunkBrücke Logo" in html
     assert "FB-Monogramm" in html
@@ -277,6 +277,9 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Sicherheitslinie" in html
     assert "Feldtestprotokoll" in html
     assert "bleibt der FB2-Auftrag in der Warteschlange" in html
+    assert "Zwei-Stationen-Praxisstart" in html
+    assert "FT-991A-Hardwarepfad" in html
+    assert "keine manuelle PTT" in html
     assert "Automatikgrenze" in html
     assert "Ablauf zeigen" in html
     assert "Fehlerhilfe" in html
@@ -311,6 +314,8 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "nächster Hop adressierte Station" in html
     assert "Feldnachweis" in html
     assert "Feldnachweisvorschlag" in html
+    assert "bidirektionalen Nachbar-Feldnachweisen" in html
+    assert "bidirektional" in html
     assert "Feldnachweis-Sperre" in html
     assert "Wiederholungen und Ersatzrouten" in html
     assert "Nachweis nach passendem Paket und OK vorschlagen" in html
