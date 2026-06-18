@@ -51,7 +51,10 @@
     </p>
     <p>
       Der aktuelle Prototyp zeigt den gewünschten Grundablauf bereits sichtbar:
-      Der Nutzer schreibt eine Nachricht und legt sie in die Warteschlange. FunkBrücke
+      Der Nutzer liest den Chatverlauf, wählt `ALLE` oder eine bekannte Gegenstation,
+      schreibt eine Nachricht und legt sie in die Warteschlange. Im Chat erscheinen
+      eigene Sendungen, empfangene Nachrichten an das eigene Rufzeichen und Rundrufe
+      an `ALLE`; fremde Ziele bleiben im separaten Monitor sichtbar. FunkBrücke
       bereitet Empfang, Kanalprüfung, FB1-Horchfenster, Audioausgabe, Sendesicherheit
       und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
       werden RX, Kanalwache, FB1-Horchfenster und FB2-Dauer-RX direkt vorbereitet.
@@ -70,7 +73,9 @@
       Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
       bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
       Brotli mit weniger Funkdaten übertragen wurde. Das Hauptfenster wird bewusst
-      schlank gehalten: Gerätebedienung, Automatik, Details, Einstellungen und
+      schlank gehalten: Der Wasserfall bleibt als schmaler Kontrollstreifen sichtbar,
+      während Chat, Zielauswahl und TX-Eingabe den normalen Ablauf tragen.
+      Gerätebedienung, Automatik, Monitor, Details, Einstellungen und
       Über-Informationen öffnen in eigenen Fenstern. Schwere Statusketten, CAT-Portscan
       und Audiogerätesuche laufen erst nach dem sichtbaren Fensterstart, damit die
       Oberfläche früh bedienbar bleibt. Das Automatikfenster bündelt die Arbeitspunkte
@@ -168,7 +173,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, TX-Automatik, Empfang, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis 32-MFSK inklusive verrauschtem Testsignal, Mesh-Automatikgrenze bis 16-MFSK, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis 32-MFSK inklusive verrauschtem Testsignal, Mesh-Automatikgrenze bis 16-MFSK, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -197,7 +202,7 @@
     </p>
     <p>
       Im aktuellen Prototyp stehen deshalb nicht Protokollbegriffe im Vordergrund,
-      sondern der Gesprächsfluss: Ziel wählen, Text schreiben, in die Warteschlange legen,
+      sondern der Gesprächsfluss: Chat lesen, Ziel wählen, Text schreiben, in die Warteschlange legen,
       Empfang laufen lassen und den Status beobachten. FunkBrücke zeigt Sendefreigabe,
       Antwortlage, Wiederholungshinweis, RX-Zuordnung, Moduswahl und die wichtigsten
       Sicherheitsgründe. Oben in der Einfachansicht stehen TX-Automatik, Empfangen,
@@ -284,17 +289,19 @@
     <h2>Was heute schon sichtbar ist.</h2>
     <p>
       Die aktuelle Version zeigt bereits die Hauptstruktur der späteren Bedienung:
-      Einfachbetrieb, Hauptfluss, Zielrufzeichen, Rollenwahl, Sendefeld, Warteschlange,
-      die vier Statusfelder TX-Automatik, Empfangen, Warteschlange und Status,
+      Einfachbetrieb als Chatverlauf, Zielauswahl `ALLE` oder Gegenstation,
+      TX-Eingabe, Warteschlange,
+      die Statusfelder TX-Automatik, Empfangen, Warteschlange und Status,
       Modusplan, Vor-TX-Prüfung, Antwort, Rückweg, Empfangen, Empfang einsortieren,
       FB2 senden/empfangen, Gespräch, Start prüfen, Ablauf zeigen, Fehlerhilfe, Zwei-Fenster-Test, Wasserfall, Spektrum,
       CAT-/Audio-Bereiche, Mesh-Ansichten, Mesh-Karte, Feldnachweisblock, FB2-Planung und Protokollfenster.
       Damit der Hauptbildschirm nicht mehr mit allen Bereichen gleichzeitig überladen wird,
-      ist die Bedienung auf mehrere Fenster verteilt: Das Hauptfenster bleibt für Wasserfall,
-      Warteschlange und einfachen Nachrichtenbetrieb zuständig. CAT, Frequenz, Audio,
+      ist die Bedienung auf mehrere Fenster verteilt: Das Hauptfenster bleibt für den
+      schmalen Wasserfallstreifen, Chat, Zielauswahl, TX-Eingabe und einfachen
+      Nachrichtenbetrieb zuständig. CAT, Frequenz, Audio,
       Kanalprüfung und Sicherheit liegen im Gerätefenster. Warteschlange, RX/Kanalwache,
       FB2-Direkt, FB2-Mesh-Live und Paketmonitor liegen zusätzlich im Automatikfenster.
-      Netz, Mesh, TX, Dateien, Makros, Audio, Test und Protokoll liegen im Detailfenster. Ein eigener
+      Monitor, Netz, Mesh, TX, Dateien, Makros, Audio, Test und Protokoll liegen im Detailfenster. Ein eigener
       UI-Prüflauf kontrolliert Haupt-, Geräte-, Automatik- und Detailfenster mit Screenshots
       und Tab-Klickzeiten, damit Überlappungen und träge Bedienpfade früh auffallen.
     </p>
@@ -376,10 +383,11 @@
     <h2>Alles Wichtige bleibt im Blick.</h2>
     <p>
       Die Oberfläche ist jetzt bewusst aufgeräumter aufgebaut. Das Hauptfenster zeigt die
-      laufende Funklage mit Frequenz, Profil, Wasserfall, Warteschlange und Automatik.
+      laufende Funklage mit Frequenz, Profil, schmalem Wasserfall, Chatverlauf,
+      Zielauswahl, TX-Eingabe, Warteschlange und Automatik.
       Alles, was viel Platz braucht, öffnet in eigenen Fenstern: Gerätebedienung für
       CAT, Audio und Sicherheit, Automatikübersicht für Warteschlange, RX/Kanalwache,
-      FB2-Direkt und Mesh-Live sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
+      FB2-Direkt und Mesh-Live, Monitor für alle RX/TX-Daten sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
       Tests und Protokoll. Die wichtigsten Einstellungen liegen oben in der Menüzeile; im
       Einfachbetrieb führen Hauptleiste, Start prüfen mit Praxisstartstufe,
       Sicherheitslinie, Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung,
@@ -394,16 +402,16 @@
 <section class="section funkbruecke-screenshots">
   <div class="section__heading reveal">
     <p class="eyebrow">Aktuelle Ansichten</p>
-    <h2>Der Prototyp zeigt Warteschlange und Sendeautomatik.</h2>
+    <h2>Der Prototyp zeigt Chat, Warteschlange und Sendeautomatik.</h2>
   </div>
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Kopfstatus, Wasserfall, Warteschlange und Automatik. Geräte-, Automatik- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Kopfstatus, schmalem Wasserfall, Chatverlauf, Zielauswahl und TX-Eingabe. Geräte-, Automatik-, Monitor- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
-      <figcaption>Detailfenster für TX, Mesh und Tests: Sendeautomatik, Kanalprüfung, Warteschlange, ARQ, Trockenlauf und Mesh-Status bleiben sichtbar, ohne die Hauptansicht zu überladen.</figcaption>
+      <figcaption>Normale Nachrichteneingabe: Chat lesen, Ziel `ALLE` oder Gegenstation wählen, Text schreiben und einreihen. Der separate Monitor zeigt zusätzlich alle RX/TX-Daten, auch fremde Ziele.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Markierte Mesh-Karte mit Stationen, Locator, Linkmodus und Stationsliste">
