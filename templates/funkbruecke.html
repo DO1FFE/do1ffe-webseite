@@ -111,13 +111,14 @@
       Kanalprüfung, FB1-Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
       Wenn diese Kette passt und die FB2-Mesh-Automatik bewusst freigegeben ist, reiht
       FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag bis 16-MFSK in die Warteschlange ein.
-      Diese Automatikgrenze ist im Live-Status sichtbar; 32-MFSK, 64-MFSK und OFDM
-      bleiben für Mesh-Automatik weiterhin Labor- oder manuelle Feldfreigabestufen.
+      Diese Automatikgrenze ist im Live-Status sichtbar und umfasst 2-FSK robust,
+      4-FSK, 8-FSK und 16-MFSK; 32-MFSK, 64-MFSK und OFDM bleiben für Mesh-Automatik
+      weiterhin Labor- oder manuelle Feldfreigabestufen.
       Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
-      und zusätzlich als Mesh-Audio-Abnahme über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK,
-      einschließlich komprimierter 16-MFSK-Nutzdaten.
+      und zusätzlich als Mesh-Audio-Abnahme mit automatisch aus der Mesh-Bewertung
+      gewähltem Übertragungsmodus, Relais, Zielzustellung und Rückweg-ACK.
       Der Live-RX-Andockpunkt zeigt dabei, ob ein Rahmen direktes QSO, Mesh-Mithören,
       Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist. Aktiv
       verarbeitet wird ein Mesh-Paket nur durch die Station, die als nächster Hop
@@ -500,9 +501,9 @@
       Erreicht ein Paket sein Ziel, entsteht eine Zustellbestätigung als eigenes
       Mesh-Paket zurück zum Ursprung; Steuerpakete erzeugen keine ACK-Kette.
       Der Praxisrundlauf prüft genau diesen Weg über sechs Funkhops bis zur Zielstation
-      und den Rückweg als Ende-zu-Ende-ACK; die lokale Mesh-Audio-Abnahme überträgt
-      denselben Ablauf über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK, einschließlich
-      komprimierter 16-MFSK-Nutzdaten.
+      und den Rückweg als Ende-zu-Ende-ACK; die lokale Mesh-Audio-Abnahme wählt den
+      Modus aus der Mesh-Bewertung und überträgt denselben Ablauf mit Relais,
+      Zielzustellung und Rückweg-ACK.
       Wenn ein Hop trotz Freigabe nicht bestätigt wird, zeigt der Live-Ausgangskorb
       Warten, ACK-Timeout, Ersatzroute oder Fehlerantwort an und legt eine freigegebene
       Wiederholung wieder in die normale TX-Warteschlange. Der erste Text ist dabei ein
@@ -550,7 +551,7 @@
       <li>Der FB2-Mesh-Live-Status nennt den bidirektionalen Nachbar-Feldnachweis zum nächsten Hop.</li>
       <li>Der 6-Hop-Praxisrundlauf prüft Hinweg, Zielzustellung, Rückweg-ACK und Abschluss am Ursprung.</li>
       <li>Ein Praxisbericht kann exportiert werden; die Lastprüfung bewertet offene Mesh-Aufträge im Hintergrund.</li>
-      <li>Die Mesh-Audio-Abnahme prüft denselben Ablauf über 2-FSK robust, 4-FSK, 8-FSK und 16-MFSK, einschließlich komprimierter 16-MFSK-Nutzdaten.</li>
+      <li>Die Mesh-Audio-Abnahme wählt den Modus aus der Mesh-Bewertung und prüft denselben Ablauf mit Relais, Zielzustellung und Rückweg-ACK.</li>
       <li>ACK-Timeout, Feldnachweis für Hin- und Rückweg sowie Ersatzroute steuern den Live-Retry über die Warteschlange.</li>
       <li>Nur die als nächster Hop adressierte Station verarbeitet ein FB2-Mesh-Paket aktiv; andere Stationen beobachten den Rahmen nur.</li>
       <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
