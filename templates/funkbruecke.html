@@ -56,8 +56,8 @@
       und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
       werden RX, Kanalwache, FB1-Horchfenster und FB2-Dauer-RX direkt vorbereitet.
       Der passende FB2-Rahmen wird automatisch gesendet, sobald die Sicherheitslinie
-      erfüllt ist, und die Rückmeldung wird als
-      OK oder Wiederholen ein. Offene direkte QSOs werden auf Timeout geprüft und
+      erfüllt ist, und die Rückmeldung wird als OK oder Wiederholen eingeordnet.
+      Offene direkte QSOs werden auf Timeout geprüft und
       eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange. Wenn ein
       Paket und ein OK technisch eindeutig zusammenpassen, schlägt die Oberfläche einen
       FB2-Feldnachweis vor; gespeichert wird er erst nach bewusster Bestätigung, dass
@@ -69,10 +69,13 @@
       Gegenstation, automatisches OK, Rückweg-Audio und Abschluss beim ursprünglichen
       Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
       bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
-      Brotli mit weniger Funkdaten übertragen wurde. Die Startnachladung beginnt erst nach
-      geöffnetem Hauptfenster; Profil und leichte Statusdaten werden danach gestaffelt
-      geladen, während CAT-Portscan und Audiogerätesuche verzögert im Hintergrund laufen,
-      damit die Oberfläche zuerst bedienbar bleibt. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
+      Brotli mit weniger Funkdaten übertragen wurde. Das Hauptfenster wird bewusst
+      schlank gehalten: Gerätebedienung, Automatik, Details, Einstellungen und
+      Über-Informationen öffnen in eigenen Fenstern. Schwere Statusketten, CAT-Portscan
+      und Audiogerätesuche laufen erst nach dem sichtbaren Fensterstart, damit die
+      Oberfläche früh bedienbar bleibt. Das Automatikfenster bündelt die Arbeitspunkte
+      für RX, Dauer-RX, Einreihen, Automatikprüfung, Sendefreigabe, Zwei-Stationen-Live
+      und Mesh-Route. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
       Frequenz, Betriebsart, Leistung, Audio-RX, FB2-Auto-RX, Audio-TX, Kanalwache,
       CAT/PTT, echte CAT-PTT, Sendesicherheit, Warteschlange und Abbruchregel gemeinsam.
       Die Anzeige unterscheidet dabei Empfang bereit, Trockenlauf prüfbar und
@@ -85,7 +88,9 @@
       Pflichtpunkte bewusst erfüllt sind. Für den echten Zwei-Stationen-Start prüft
       FunkBrücke zusätzlich gleiche Version, Frequenz, Profil, Modus, RX beider
       Stationen, Kanalwache, genau einen Warteschlangenauftrag, Auto-OK und dass keine
-      manuelle PTT benutzt wird. Der FT-991A-Hardwarepfad bündelt CAT, DATA-Modus,
+      manuelle PTT benutzt wird. Dieser Schutz ist Absicht: Der Nutzer legt nur in die
+      Warteschlange, die Software übernimmt Senden und Empfangen nach bestandener Prüfung.
+      Der FT-991A-Hardwarepfad bündelt CAT, DATA-Modus,
       Leistung, PTT-Aus, Not-Aus, Audio-RX/TX, freie Frequenz, Horchfenster,
       CAT-PTT und Protokollpflicht. Das Feldtestprotokoll nennt dazu Praxisstart,
       Zwei-Stationen-Praxisstart, echten FT-991A-Hardwarepfad, Auto-QSO und die
@@ -118,7 +123,9 @@
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
       und zusätzlich als Mesh-Audio-Abnahme mit automatisch aus der Mesh-Bewertung
-      gewähltem Übertragungsmodus, Relais, Zielzustellung und Rückweg-ACK.
+      gewähltem Übertragungsmodus, Relais, Zielzustellung und Rückweg-ACK. Für den
+      Direktpfad werden auch leicht verrauschte Audiosignale bis 32-MFSK geprüft; die
+      automatische Mesh-Aussendung bleibt bewusst bis 16-MFSK begrenzt.
       Der Live-RX-Andockpunkt zeigt dabei, ob ein Rahmen direktes QSO, Mesh-Mithören,
       Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist. Aktiv
       verarbeitet wird ein Mesh-Paket nur durch die Station, die als nächster Hop
@@ -161,7 +168,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, TX-Automatik, Empfang, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gleicher Sicherheitslinie in Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, Ablauf zeigen, Fehlerhilfe, FB2-RX bis 32-MFSK, direktem Zwei-Instanzen-Audio-QSO bis 32-MFSK, FT-991A-Praxistest, Zwei-Stationen-Testplan, Feldnachweisvorschlag, Feldnachweis-Speicherung, bidirektionalen Nachbar-Feldnachweisen, Feldnachweis-Sperre für automatische Mesh-Wiederholung, Mesh-Stationsprofilen, lokaler Mesh-Karte und bewusst freigebbarer FB2-Mesh-Automatikgrenze bis 16-MFSK mit Rückweg-ACK und Fehlerantwort bis zum Ursprung, Live-RX-Andockpunkt, Live-Ausgangskorb mit normalem Bedienhinweis und Nachbar-Feldnachweis zum nächsten Hop, Retry über Sendemotor, Praxisrundlauf, Berichtsexport, Mesh-Audio-Abnahme, Audio-Fehlerrückweg und Ersatzroute</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Einfachbetrieb mit Warteschlange, TX-Automatik, Empfang, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis 32-MFSK inklusive verrauschtem Testsignal, Mesh-Automatikgrenze bis 16-MFSK, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
