@@ -257,10 +257,13 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
 
     assert antwort.status_code == 200
     assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.263" in html
+    assert "v0.9.264" in html
     assert "Makros, Audio, Test und Protokoll liegen im Detailfenster" in html
-    assert "UI-Prüflauf kontrolliert Haupt-, Geräte- und Detailfenster" in html
-    assert "komprimierten 16-MFSK-Rundlauf" in html
+    assert "Automatikfenster" in html
+    assert "FB2-Mesh-Live und Paketmonitor" in html
+    assert "UI-Prüflauf kontrolliert Haupt-, Geräte-, Automatik- und Detailfenster" in html
+    assert "Mesh-Audio-Abnahme" in html
+    assert "Übertragungsmodus aus der Mesh-Bewertung" in html
     assert "funkbruecke-logo.png" in html
     assert "FunkBrücke Logo" in html
     assert "FB-Monogramm" in html
@@ -271,6 +274,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Nachricht einreihen, Empfang" in html
     assert "Auto-QSO-Bedienfluss" in html
     assert "Auto-QSO-Status" in html
+    assert "CAT-Portscan und Audiogerätesuche verzögert im Hintergrund laufen" in html
     assert "Kompressionsbilanz" in html
     assert "FT-991A-Praxistest" in html
     assert "Sendeautomatik" in html
