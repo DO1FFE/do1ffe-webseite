@@ -54,7 +54,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Windows-Programm",
         "dateiname": "FunkBruecke-latest-win-x64.exe",
         "typ": "EXE",
-        "beschreibung": "Aktuelle Windows-x64-Version mit gebündelter Laufzeit, eingebettetem FunkBrücke-Icon, leerem Startzustand ohne Beispielstationen, Chat-Hauptfenster mit Zielauswahl, sichtbarem Sendemodus je TX-Paket, separatem Monitor für alle RX/TX-Daten, Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenstern sowie verzögerter CAT-/Audiogerätesuche nach dem sichtbaren Grundstart.",
+        "beschreibung": "Aktuelle Windows-x64-Version mit gebündelter Laufzeit, eingebettetem FunkBrücke-Icon, leerem Startzustand ohne Beispielstationen, verdichtetem Chat-Hauptfenster mit Zielauswahl, sichtbarem Sendemodus je TX-Paket, FB2-Live-Ereignissen, nachvollziehbarer Mesh-Modusentscheidung, separatem Monitor für alle RX/TX-Daten, Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenstern sowie verzögerter CAT-/Audiogerätesuche nach dem sichtbaren Grundstart.",
         "primär": True,
     },
     {
@@ -62,7 +62,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Bedienungsanleitung",
         "dateiname": "FunkBruecke-Bedienungsanleitung-latest.pdf",
         "typ": "PDF",
-        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, Chat-Hauptfenster, Zielauswahl ALLE/Gegenstation, TX-Eingabe, sichtbarem Sendemodus je TX-Paket, separatem Monitor für alle RX/TX-Daten, Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, FB1-Live-RX, FB2-Auto-RX, Warteschlange, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gleicher Sicherheitslinie in Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, automatischem RX nach TX, Auto-OK ohne manuelle PTT, direkter Audio-QSO-Kette von 2-FSK robust bis OFDM schnell, profilabhängiger FB2-Mesh-Automatik bis OFDM schnell, Rückweg-ACK und 6-Hop-Praxisrundlauf.",
+        "beschreibung": "Kurzer Einstieg mit echten Programmansichten, Chat-Hauptfenster, Zielauswahl ALLE/Gegenstation, TX-Eingabe, sichtbarem Sendemodus je TX-Paket, FB2-Live-Ereignismonitor, Mesh-Modusentscheidung mit Primär-Hop und Ersatz-Hop, separatem Monitor für alle RX/TX-Daten, Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, FB1-Live-RX, FB2-Auto-RX, Warteschlange, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gleicher Sicherheitslinie in Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, automatischem RX nach TX, Auto-OK ohne manuelle PTT, direkter Audio-QSO-Kette von 2-FSK robust bis OFDM schnell, profilabhängiger FB2-Mesh-Automatik bis OFDM schnell, Rückweg-ACK und 6-Hop-Praxisrundlauf.",
         "primär": False,
     },
     {
@@ -79,7 +79,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "FB2-Übertragung",
         "dateiname": "FB2-Uebertragung.md",
         "typ": "Markdown",
-        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Broadcast-Ziel ALLE ohne automatisches OK/ACK, Praxisstartstufe, echter CAT-PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gemeinsamer Sicherheitslinie für Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik ohne manuelle PTT, automatischem RX nach TX, sichtbarem Sendemodus je TX-Paket, direkter Audio-QSO-Kette von 2-FSK robust bis OFDM schnell, Timeout-Wiederholung, automatischer RX-/Kanalvorbereitung beim Einreihen, profilabhängiger FB2-Mesh-Automatik bis OFDM schnell, adaptiver Moduskorrektur, Ende-zu-Ende-Zustellbestätigung und 6-Hop-Praxisrundlauf.",
+        "beschreibung": "Technischer Stand zur FB2-Modulation, Paketübertragung, Broadcast-Ziel ALLE ohne automatisches OK/ACK, Praxisstartstufe, echter CAT-PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, gemeinsamer Sicherheitslinie für Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll, Gesprächszustand, RX-Härtung, RX-Sortierung, FB2-Auto-RX mit Audiopufferprüfung, geprüfter Warteschlangen-Sendeautomatik ohne manuelle PTT, automatischem RX nach TX, FB2-Live-Ereignissen, sichtbarem Sendemodus je TX-Paket, direkter Audio-QSO-Kette von 2-FSK robust bis OFDM schnell, Timeout-Wiederholung, automatischer RX-/Kanalvorbereitung beim Einreihen, profilabhängiger FB2-Mesh-Automatik bis OFDM schnell, nachvollziehbarer Primär-/Ersatz-Hop-Moduswahl, adaptiver Moduskorrektur, Ende-zu-Ende-Zustellbestätigung und 6-Hop-Praxisrundlauf.",
         "primär": False,
     },
     {
