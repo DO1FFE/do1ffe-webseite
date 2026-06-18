@@ -274,9 +274,12 @@
       die vier Statusfelder TX-Automatik, Empfangen, Warteschlange und Status,
       Modusplan, Vor-TX-Prüfung, Antwort, Rückweg, Empfangen, Empfang einsortieren,
       FB2 senden/empfangen, Gespräch, Start prüfen, Ablauf zeigen, Fehlerhilfe, Zwei-Fenster-Test, Wasserfall, Spektrum,
-      CAT-/Audio-Bereiche, Mesh-Ansichten, Mesh-Karte, Feldnachweisblock, FB2-Planung und Protokollfenster. Die Menüs
-      oben bündeln Einstellungen, Hilfe, Versionsinformationen und technische Werkzeuge,
-      damit der Hauptbildschirm nicht mit Nebenfunktionen überladen wird.
+      CAT-/Audio-Bereiche, Mesh-Ansichten, Mesh-Karte, Feldnachweisblock, FB2-Planung und Protokollfenster.
+      Damit der Hauptbildschirm nicht mehr mit allen Bereichen gleichzeitig überladen wird,
+      ist die Bedienung auf mehrere Fenster verteilt: Das Hauptfenster bleibt für Wasserfall,
+      Warteschlange und einfachen Nachrichtenbetrieb zuständig. CAT, Frequenz, Audio,
+      Kanalprüfung und Sicherheit liegen im Gerätefenster. Netz, Mesh, TX, Dateien,
+      Makros, Audio, Test und Protokoll liegen im Detailfenster.
     </p>
     <p>
       Der wichtigste Entwicklungspfad ist derzeit der kontrollierte FB2-Zwei-Stationen-Test.
@@ -353,18 +356,14 @@
     <p class="eyebrow">Programmoberfläche</p>
     <h2>Alles Wichtige bleibt im Blick.</h2>
     <p>
-      Die Oberfläche bündelt Stationsprofil, CAT-Verbindung, Testabläufe,
-      Mesh-Hinweise, Sendepuffer, Hauptfluss, Rollenwahl, Antwortkarte,
-      Rückweg, Empfangen, Empfang einsortieren, FB2 senden/empfangen, Gespräch,
-      Moduswahl, Wiederholungslimit, RX-Härtung, Gesprächsabschluss, Auto-RX-Status,
-      FB1-Live-RX, FB2-Auto-RX, automatischen RX nach TX, Sendeautomatik-Praxisstatus, Auto-QSO-Bedienfluss, Zwei-Stationen-Livepraxis, Feldtestprotokoll, Zwei-Fenster-Rundlauf,
-      direkte FB2-Gesprächsaktionen, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Technik und Diagnose,
-      Vor-TX-Prüfung, Rückweg-ACK, Fehlerantwort, FB2-Mesh-Live, 6-Hop-Praxisrundlauf,
-      Berichtsexport, Lastprüfung, direkter Audio-QSO-Abnahme bis 32-MFSK, Mesh-Audio-Abnahme,
-      Audio-Fehlerrückweg, Live-RX-Andockpunkt und Dokumentation. Die wichtigsten
-      Einstellungen liegen oben in der Menüzeile; im Einfachbetrieb führen Hauptleiste,
-      Start prüfen mit Praxisstartstufe, Sicherheitslinie, Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung, Senden, Empfangen
-      und Antworten.
+      Die Oberfläche ist jetzt bewusst aufgeräumter aufgebaut. Das Hauptfenster zeigt die
+      laufende Funklage mit Frequenz, Profil, Wasserfall, Warteschlange und Automatik.
+      Alles, was viel Platz braucht, öffnet in eigenen Fenstern: Gerätebedienung für
+      CAT, Audio und Sicherheit sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
+      Tests und Protokoll. Die wichtigsten Einstellungen liegen oben in der Menüzeile; im
+      Einfachbetrieb führen Hauptleiste, Start prüfen mit Praxisstartstufe,
+      Sicherheitslinie, Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung,
+      Senden, Empfangen und Antworten.
     </p>
   </div>
   <div class="funkbruecke-showcase__media reveal">
@@ -380,11 +379,11 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Profil, Wasserfall, TX-Automatik, Empfangen, Warteschlange, Status, gehärteter Sendeautomatik, Gesprächszustand, FB1-Live-RX, FB2-Auto-RX, Live-RX-Praxiskette, Live-RX-Andockpunkt, Feldnachweisvorschlag, Feldnachweis-Speicherung, FB2-Mesh-Automatikfreigabe, Rückweg-ACK, Fehlerantwort, FB2-Mesh-Live, 6-Hop-Praxisrundlauf, Berichtsexport, Zwei-Fenster-Rundlauf, Schrittliste und Abnahme.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Kopfstatus, Wasserfall, Warteschlange und Automatik. Geräte- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
-      <figcaption>FB2 senden/empfangen und Mesh-Praxis: RX starten, Nachricht einreihen, Auto-QSO-Status und Sendeautomatik prüfen, gleiche Sicherheitslinie beachten, Rückweg-ACK oder Fehlerantwort beobachten, Feldnachweise speichern oder laden, FB2-Mesh-Live mit normalem Bedienhinweis und Nachbar-Feldnachweis zum nächsten Hop prüfen, Praxisbericht exportieren und Audio-Abnahme prüfen; Technik und Diagnose bleiben für Nachweise und Fehlersuche erreichbar.</figcaption>
+      <figcaption>Detailfenster für TX, Mesh und Tests: Sendeautomatik, Kanalprüfung, Warteschlange, ARQ, Trockenlauf und Mesh-Status bleiben sichtbar, ohne die Hauptansicht zu überladen.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Markierte Mesh-Karte mit Stationen, Locator, Linkmodus und Stationsliste">
