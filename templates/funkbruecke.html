@@ -19,6 +19,7 @@
       {% endif %}
       <a class="button button--ghost" href="#anleitung">Anleitungen</a>
       <a class="button button--ghost" href="#technik">Techniküberblick</a>
+      <a class="button button--ghost" href="https://fb2l.do1ffe.de">FB2L-Livekarte</a>
     </div>
   </div>
 </section>
@@ -129,6 +130,13 @@
       Verlauf sichtbar, werden aber nicht mehr als aktuelle Route verwendet.
     </p>
     <p>
+      Für den öffentlichen Liveblick kann FunkBrücke die eigene Station und frische
+      direkte Mesh-Nachbarn zusätzlich an die FB2L-Webkarte senden. Dort erscheinen
+      aktive Stationen mit Locator, Profilangaben, FunkBrücke-Version, Linkmodus und
+      Linkwerten auf einer interaktiven Leaflet-Karte. Wenn keine frischen Heartbeats
+      mehr eintreffen, verschwinden Station und Verbindung automatisch wieder.
+    </p>
+    <p>
       Für Tests kann der Ablauf lokal mit zwei Programminstanzen ohne HF geprobt werden.
       Der Empfang unterscheidet FB1-Live-RX und FB2-Auto-RX, prüft FB2-Rahmen mit Marker,
       Paketgrenze und CRCs und zeigt, ob ein Rahmen Nutzdaten, OK, Wiederholen, ein
@@ -195,6 +203,7 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
+      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt aktive Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus und Linkwerten.</dd></div>
       <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
