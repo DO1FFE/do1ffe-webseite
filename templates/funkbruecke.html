@@ -58,6 +58,8 @@
       bereitet Empfang, Kanalprüfung, FB1-Horchfenster, Audioausgabe, Sendesicherheit
       und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
       werden RX, Kanalwache, FB1-Horchfenster und FB2-Dauer-RX direkt vorbereitet.
+      Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus, bevor der
+      Sendemotor ihn abarbeitet.
       Der passende FB2-Rahmen wird automatisch gesendet, sobald die Sicherheitslinie
       erfüllt ist, und die Rückmeldung wird als OK oder Wiederholen eingeordnet.
       Offene direkte QSOs werden auf Timeout geprüft und
@@ -68,7 +70,7 @@
       durch eine reine CAT-PTT-Freigabe blockiert; erst ein laufender Sendepfad pausiert
       den Empfang. Nach einer Aussendung stellt FunkBrücke den Empfang automatisch
       wieder bereit. Der direkte Audiopfad wird lokal mit zwei Programminstanzen von
-      2-FSK robust bis 32-MFSK geprüft: Paket aus der Warteschlange, Empfang bei der
+      2-FSK robust bis OFDM schnell geprüft: Paket aus der Warteschlange, Empfang bei der
       Gegenstation, automatisches OK, Rückweg-Audio und Abschluss beim ursprünglichen
       Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
       bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
@@ -120,17 +122,20 @@
       ob ein gespeicherter Feldnachweis für genau diese Nachbarstation, Bedienfreigabe,
       Kanalprüfung, FB1-Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
       Wenn diese Kette passt und die FB2-Mesh-Automatik bewusst freigegeben ist, reiht
-      FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag bis 16-MFSK in die Warteschlange ein.
-      Diese Automatikgrenze ist im Live-Status sichtbar und umfasst 2-FSK robust,
-      4-FSK, 8-FSK und 16-MFSK; 32-MFSK, 64-MFSK und OFDM bleiben für Mesh-Automatik
-      weiterhin Labor- oder manuelle Feldfreigabestufen.
+      FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag profilabhängig in die Warteschlange ein.
+      Diese Automatikgrenze ist im Live-Status sichtbar: SSB schmal bleibt schmalbandig,
+      FM normal kann bis OFDM normal gehen, FM breit/Labor bis OFDM schnell.
+      Die Nachbarn melden ihre erreichbare Maximalgeschwindigkeit in Kurzpaketen;
+      FunkBrücke korrigiert den genutzten Modus laufend eine Stufe nach oben oder unten,
+      wenn Zuverlässigkeit, Paketverlust oder ACK-Zeit das nahelegen.
       Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
       und zusätzlich als Mesh-Audio-Abnahme mit automatisch aus der Mesh-Bewertung
       gewähltem Übertragungsmodus, Relais, Zielzustellung und Rückweg-ACK. Für den
-      Direktpfad werden auch leicht verrauschte Audiosignale bis 32-MFSK geprüft; die
-      automatische Mesh-Aussendung bleibt bewusst bis 16-MFSK begrenzt.
+      Direktpfad werden auch leicht verrauschte Audiosignale bis OFDM schnell geprüft; die
+      automatische Mesh-Aussendung bleibt an Profil, Feldnachweis, Kanalprüfung,
+      Horchfenster und Sendesicherheit gebunden.
       Der Live-RX-Andockpunkt zeigt dabei, ob ein Rahmen direktes QSO, Mesh-Mithören,
       Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist. Aktiv
       verarbeitet wird ein Mesh-Paket nur durch die Station, die als nächster Hop
@@ -171,9 +176,9 @@
       {% endif %}
       <div><dt>Plattform</dt><dd>Windows x64</dd></div>
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
-      <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis 32-MFSK, Planung bis OFDM</dd></div>
+      <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis 32-MFSK inklusive verrauschtem Testsignal, Mesh-Automatikgrenze bis 16-MFSK, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -204,7 +209,7 @@
       Im aktuellen Prototyp stehen deshalb nicht Protokollbegriffe im Vordergrund,
       sondern der Gesprächsfluss: Chat lesen, Ziel wählen, Text schreiben, in die Warteschlange legen,
       Empfang laufen lassen und den Status beobachten. FunkBrücke zeigt Sendefreigabe,
-      Antwortlage, Wiederholungshinweis, RX-Zuordnung, Moduswahl und die wichtigsten
+      Antwortlage, Wiederholungshinweis, RX-Zuordnung, geplanten Sendemodus und die wichtigsten
       Sicherheitsgründe. Oben in der Einfachansicht stehen TX-Automatik, Empfangen,
       Warteschlange und Status direkt nebeneinander. Die technische Diagnose bleibt
       erreichbar, soll aber den normalen Ablauf nicht überladen.
@@ -333,16 +338,16 @@
       Mesh-Freigabe noch fehlt. Der normale FB2-Gesprächsbereich kann einen solchen
       Nachweis nach passendem Paket und OK vorschlagen, laden und bewusst speichern.
       Bei aktivierter FB2-Mesh-Automatik wird ein passender Transitauftrag automatisch
-      bis 16-MFSK in die Warteschlange gelegt; breitere Modi bleiben weiter ein
-      Labor- und Feldfreigabethema. Der Live-Status nennt diese Automatikgrenze
-      ausdrücklich, damit 32-MFSK und OFDM nicht mit dem produktiven Mesh-Automatismus
-      verwechselt werden. Zustellbestätigungen laufen als FB2-Mesh-Rückweg
+      profilabhängig in die Warteschlange gelegt. Der Live-Status nennt diese
+      Automatikgrenze ausdrücklich: schmal auf SSB, schneller auf geeigneten FM-Profilen.
+      Die Moduswahl bleibt adaptiv und kann bei besserer oder schlechterer Linklage
+      stufenweise korrigiert werden. Zustellbestätigungen laufen als FB2-Mesh-Rückweg
       bis zum Ursprung zurück und schließen dort den offenen Auftrag sichtbar ab.
       Automatische Mesh-Wiederholungen und Ersatzrouten bleiben gesperrt, wenn die
       Feldnachweise für Hin- und Rückweg nicht vollständig sind.
       Dieser Rückweg ist jetzt als 6-Hop-Praxisrundlauf geprüft: eine Nachricht läuft
       über sechs Funkhops bis zur Zielstation, und das ACK kommt über dieselbe Kette
-      zurück. Der direkte Audio-QSO ist lokal bis 32-MFSK geprüft; die Mesh-Audio-Abnahme
+      zurück. Der direkte Audio-QSO ist lokal bis OFDM schnell geprüft; die Mesh-Audio-Abnahme
       wählt den Übertragungsmodus aus der Mesh-Bewertung und prüft Hinweg, Relais,
       Zielzustellung und Rückweg-ACK durch die Audiokette.
       Der Live-RX-Andockpunkt unterscheidet Direkt-QSO,
@@ -371,7 +376,7 @@
       <li>Empfangene Pakete verständlich als Nachricht, OK, Wiederholen oder Problem anzeigen.</li>
       <li>Bei fehlender Antwort eine eindeutige Wiederholung vorbereiten, statt blind erneut zu senden.</li>
       <li>Vor echten Funkversuchen denselben Ablauf lokal mit zwei Programmfenstern testen.</li>
-      <li>Mesh-Routen nutzen, damit Stationen bei Freigabe automatisch bis 16-MFSK weiterleiten, Zustellbestätigungen und Fehlerantworten zurückführen und bei Timeouts eine Ersatzroute prüfen können.</li>
+      <li>Mesh-Routen nutzen, damit Stationen bei Freigabe profilabhängig weiterleiten, Zustellbestätigungen und Fehlerantworten zurückführen und bei Timeouts eine Ersatzroute prüfen können.</li>
       <li>Dokumentation, Screenshots und Downloads passend zum aktuellen Prototypstand bereitstellen.</li>
     </ul>
   </aside>
@@ -484,10 +489,12 @@
     <p>
       FB2 ist als flexibler Werkzeugkasten geplant: robuste FSK-Modi, schnellere
       MFSK-Varianten und OFDM für breitere, saubere Kanäle. Der MVP-Pfad arbeitet
-      bereits mit 2-FSK robust bis 32-MFSK im passenden Profil, übernimmt FB2-Paketrahmen als
+      bereits mit 2-FSK robust bis OFDM schnell im passenden Profil, übernimmt FB2-Paketrahmen als
       Nutzdaten in die Nachrichtenliste und bereitet beaufsichtigte Zwei-Stationen-Tests
       mit geschütztem Datei-Austausch vor. Die RX-Härtung nennt Marker, Paketgrenze,
       Kopf-CRC, Nutzdaten-CRC und Ziel, damit ein erkannter Rahmen nachvollziehbar bleibt.
+      Die aktuelle Modusleiter umfasst 2-FSK robust, 4-FSK, 8-FSK, 16-MFSK,
+      32-MFSK, 64-MFSK, OFDM robust, OFDM normal und OFDM schnell.
       Der aktuelle Direktpfad ergänzt Gesprächszustand, RX-Sortierung, FB1-Live-RX,
       FB2-Auto-RX mit Stummfenster-Prüfung, automatischen RX nach TX, Live-RX-Praxiskette, Zwei-Stationen-Livepraxis, Sendeautomatik-Praxisstatus, einen kurzen
       Zwei-Fenster-Rundlauf mit Abnahme und Schrittliste, den direkt bedienbaren
@@ -509,10 +516,11 @@
       Nachbarstation belegt. Für fremde FB2-Ziele zeigt die Mesh-Freigabekette zusätzlich,
       ob Feldnachweis, Bedienfreigabe, Kanalprüfung, FB1-Horchfenster, Sendesicherheit
       oder freie TX-Lage noch fehlen. Bei bewusst aktivierter Freigabe werden passende
-      FB2-Mesh-Aufträge automatisch bis 16-MFSK in die Warteschlange gelegt. Nicht als
+      FB2-Mesh-Aufträge profilabhängig in die Warteschlange gelegt. Nicht als
       nächster Hop adressierte Stationen hören nur mit und leiten nicht weiter.
-      Der Live-Status zeigt die Automatikgrenze bis 16-MFSK; breitere Modi bleiben
-      Labor oder manuelle Feldfreigabe.
+      Der Live-Status zeigt die profilabhängige Automatikgrenze bis OFDM schnell;
+      echte Funkversuche bleiben an Feldnachweis, Kanalprüfung, Horchfenster und
+      Sendesicherheit gebunden.
       Erreicht ein Paket sein Ziel, entsteht eine Zustellbestätigung als eigenes
       Mesh-Paket zurück zum Ursprung; Steuerpakete erzeugen keine ACK-Kette.
       Der Praxisrundlauf prüft genau diesen Weg über sechs Funkhops bis zur Zielstation
@@ -528,7 +536,8 @@
       Nachbar-Feldnachweise werden bidirektional bewertet; ein A-B-QSO belegt also
       auch den Rückweg B-A für diesen Link.
       Im Mesh helfen Nachbarstationen, die schnellste und zuverlässigste Übertragung
-      passend zur aktuellen Verbindung auszuwählen.
+      passend zur aktuellen Verbindung auszuwählen und bei veränderten Bedingungen
+      stufenweise zu korrigieren.
     </p>
     <ul class="check-list">
       <li>Vor jeder Aussendung wird auf belegte Frequenzen und bekannte FB-Signale geachtet.</li>
@@ -542,7 +551,8 @@
       <li>Nach einer Aussendung wird der FB2-Dauer-RX automatisch wieder vorbereitet, damit die Antwort ohne manuelles Umschalten erkannt werden kann.</li>
       <li>Beim Einreihen einer FB2-Direktnachricht werden RX, Kanalwache, FB1-Horchfenster und Auto-QSO-Status automatisch vorbereitet.</li>
       <li>FB2 senden/empfangen zeigt den Hintergrundzustand für RX, Auftrag, Antwort, laufende Sendung, offene Antwort und Timeout.</li>
-      <li>Der direkte Audio-QSO-Nachweis prüft Paket und Auto-OK von 2-FSK robust bis 32-MFSK.</li>
+      <li>Jedes geplante TX-Paket zeigt den vorgesehenen Sendemodus in Chat, Warteschlange und Automatikstatus.</li>
+      <li>Der direkte Audio-QSO-Nachweis prüft Paket und Auto-OK von 2-FSK robust bis OFDM schnell.</li>
       <li>Start prüfen trennt Empfang bereit, Trockenlauf prüfbar und echtes automatisches Senden mit bewusster CAT-PTT-Freigabe.</li>
       <li>Vor-TX, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll nutzen dieselbe Sicherheitslinie.</li>
       <li>Wenn nur Empfang oder Trockenlauf bereit ist, bleibt der FB2-Auftrag in der Warteschlange.</li>
@@ -557,8 +567,8 @@
       <li>Ein FB2-Test-TX startet nur als genau ein bewusst freigegebener Einzelschuss.</li>
       <li>FB2-/FB2L-Treffer werden für Mesh-Beobachtung und Nachbartabellen angedockt.</li>
       <li>Fremde FB2-Ziele werden als Mesh-Kandidaten bewertet; die Freigabekette prüft gespeicherten Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit und freie TX-Lage.</li>
-      <li>Bei bewusster Freigabe werden FB2-Mesh-Textaufträge und Transitpakete automatisch bis 16-MFSK in die Warteschlange gelegt.</li>
-      <li>FB2-Mesh-Live zeigt die Automatikgrenze bis 16-MFSK; breitere Modi bleiben Labor- oder manuelle Feldfreigabestufen.</li>
+      <li>Bei bewusster Freigabe werden FB2-Mesh-Textaufträge und Transitpakete profilabhängig in die Warteschlange gelegt.</li>
+      <li>FB2-Mesh-Live zeigt die Automatikgrenze bis OFDM schnell passend zum Profil.</li>
       <li>FB2-Mesh-Zustellbestätigungen laufen über denselben Freigabepfad zurück bis zum Ursprung.</li>
       <li>Ein echter testleiterbestätigter Nachbar-Feldnachweis gilt bidirektional für den direkten Link.</li>
       <li>Der FB2-Mesh-Live-Ausgangskorb zeigt Rückweg-ACK, ACK-Timeout, Ersatzroute, Fehlerantwort und Wiederholung.</li>
@@ -567,6 +577,7 @@
       <li>Der 6-Hop-Praxisrundlauf prüft Hinweg, Zielzustellung, Rückweg-ACK und Abschluss am Ursprung.</li>
       <li>Ein Praxisbericht kann exportiert werden; die Lastprüfung bewertet offene Mesh-Aufträge im Hintergrund.</li>
       <li>Die Mesh-Audio-Abnahme wählt den Modus aus der Mesh-Bewertung und prüft denselben Ablauf mit Relais, Zielzustellung und Rückweg-ACK.</li>
+      <li>Die Mesh-Moduswahl kann bei geänderter Linklage laufend eine Stufe nach oben oder unten korrigieren.</li>
       <li>ACK-Timeout, Feldnachweis für Hin- und Rückweg sowie Ersatzroute steuern den Live-Retry über die Warteschlange.</li>
       <li>Nur die als nächster Hop adressierte Station verarbeitet ein FB2-Mesh-Paket aktiv; andere Stationen beobachten den Rahmen nur.</li>
       <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
