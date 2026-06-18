@@ -53,8 +53,10 @@
       Der aktuelle Prototyp zeigt den gewünschten Grundablauf bereits sichtbar:
       Der Nutzer schreibt eine Nachricht und legt sie in die Warteschlange. FunkBrücke
       bereitet Empfang, Kanalprüfung, FB1-Horchfenster, Audioausgabe, Sendesicherheit
-      und den Auto-QSO-Bedienfluss vor, sendet den passenden FB2-Rahmen automatisch,
-      sobald die Sicherheitslinie erfüllt ist, und ordnet die Rückmeldung als
+      und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
+      werden RX, Kanalwache, FB1-Horchfenster und FB2-Dauer-RX direkt vorbereitet.
+      Der passende FB2-Rahmen wird automatisch gesendet, sobald die Sicherheitslinie
+      erfüllt ist, und die Rückmeldung wird als
       OK oder Wiederholen ein. Offene direkte QSOs werden auf Timeout geprüft und
       eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange. Wenn ein
       Paket und ein OK technisch eindeutig zusammenpassen, schlägt die Oberfläche einen
@@ -68,8 +70,9 @@
       Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
       bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
       Brotli mit weniger Funkdaten übertragen wurde. Die Startnachladung beginnt erst nach
-      geöffnetem Hauptfenster; Geräte, Profile und leichte Statusdaten werden danach
-      gestaffelt geladen, damit die Oberfläche zuerst bedienbar bleibt. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
+      geöffnetem Hauptfenster; Profil und leichte Statusdaten werden danach gestaffelt
+      geladen, während CAT-Portscan und Audiogerätesuche verzögert im Hintergrund laufen,
+      damit die Oberfläche zuerst bedienbar bleibt. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
       Frequenz, Betriebsart, Leistung, Audio-RX, FB2-Auto-RX, Audio-TX, Kanalwache,
       CAT/PTT, echte CAT-PTT, Sendesicherheit, Warteschlange und Abbruchregel gemeinsam.
       Die Anzeige unterscheidet dabei Empfang bereit, Trockenlauf prüfbar und
@@ -281,9 +284,10 @@
       Damit der Hauptbildschirm nicht mehr mit allen Bereichen gleichzeitig überladen wird,
       ist die Bedienung auf mehrere Fenster verteilt: Das Hauptfenster bleibt für Wasserfall,
       Warteschlange und einfachen Nachrichtenbetrieb zuständig. CAT, Frequenz, Audio,
-      Kanalprüfung und Sicherheit liegen im Gerätefenster. Netz, Mesh, TX, Dateien,
-      Makros, Audio, Test und Protokoll liegen im Detailfenster. Ein eigener
-      UI-Prüflauf kontrolliert Haupt-, Geräte- und Detailfenster mit Screenshots
+      Kanalprüfung und Sicherheit liegen im Gerätefenster. Warteschlange, RX/Kanalwache,
+      FB2-Direkt, FB2-Mesh-Live und Paketmonitor liegen zusätzlich im Automatikfenster.
+      Netz, Mesh, TX, Dateien, Makros, Audio, Test und Protokoll liegen im Detailfenster. Ein eigener
+      UI-Prüflauf kontrolliert Haupt-, Geräte-, Automatik- und Detailfenster mit Screenshots
       und Tab-Klickzeiten, damit Überlappungen und träge Bedienpfade früh auffallen.
     </p>
     <p>
@@ -324,7 +328,8 @@
       Dieser Rückweg ist jetzt als 6-Hop-Praxisrundlauf geprüft: eine Nachricht läuft
       über sechs Funkhops bis zur Zielstation, und das ACK kommt über dieselbe Kette
       zurück. Der direkte Audio-QSO ist lokal bis 32-MFSK geprüft; die Mesh-Audio-Abnahme
-      bleibt bis 16-MFSK geprüft und umfasst auch einen komprimierten 16-MFSK-Rundlauf.
+      wählt den Übertragungsmodus aus der Mesh-Bewertung und prüft Hinweg, Relais,
+      Zielzustellung und Rückweg-ACK durch die Audiokette.
       Der Live-RX-Andockpunkt unterscheidet Direkt-QSO,
       Mesh-Mithören, Weiterleitung, lokale Zustellung, Link-Bake und eigenes Echo.
       Die RX-/TX-Anzeigen nennen dabei auch die Kompressionsbilanz, ohne dass der Nutzer
@@ -365,7 +370,8 @@
       Die Oberfläche ist jetzt bewusst aufgeräumter aufgebaut. Das Hauptfenster zeigt die
       laufende Funklage mit Frequenz, Profil, Wasserfall, Warteschlange und Automatik.
       Alles, was viel Platz braucht, öffnet in eigenen Fenstern: Gerätebedienung für
-      CAT, Audio und Sicherheit sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
+      CAT, Audio und Sicherheit, Automatikübersicht für Warteschlange, RX/Kanalwache,
+      FB2-Direkt und Mesh-Live sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
       Tests und Protokoll. Die wichtigsten Einstellungen liegen oben in der Menüzeile; im
       Einfachbetrieb führen Hauptleiste, Start prüfen mit Praxisstartstufe,
       Sicherheitslinie, Automatik prüfen und die FB2-Karte durch Einreihen, Prüfung,
@@ -385,7 +391,7 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Kopfstatus, Wasserfall, Warteschlange und Automatik. Geräte- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Kopfstatus, Wasserfall, Warteschlange und Automatik. Geräte-, Automatik- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
