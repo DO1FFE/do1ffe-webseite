@@ -134,7 +134,11 @@
       direkte Mesh-Nachbarn zusätzlich an die FB2L-Webkarte senden. Dort erscheinen
       aktive Stationen mit Locator, Profilangaben, FunkBrücke-Version, Linkmodus und
       Linkwerten auf einer interaktiven Leaflet-Karte. Wenn keine frischen Heartbeats
-      mehr eintreffen, verschwinden Station und Verbindung automatisch wieder.
+      mehr eintreffen, verschwinden Station und Verbindung automatisch wieder. In der
+      App kann dieser Livekarten-Heartbeat im Mesh-Detailfenster bewusst geprüft werden;
+      der Status nennt dann Zielserver, Linkanzahl und gemeldete Nachbar-Modi. Der
+      FB2L-Server nimmt nur kompakte Heartbeats an und begrenzt zu große oder zu häufige
+      Meldungen, damit die öffentliche Karte ruhig bleibt.
     </p>
     <p>
       Für Tests kann der Ablauf lokal mit zwei Programminstanzen ohne HF geprobt werden.
@@ -336,6 +340,8 @@
       Monitor, Netz, Mesh, TX, Dateien, Makros, Audio, Test und Protokoll liegen im Detailfenster. Ein eigener
       UI-Prüflauf kontrolliert Haupt-, Geräte-, Automatik- und Detailfenster mit Screenshots
       und Tab-Klickzeiten, damit Überlappungen und träge Bedienpfade früh auffallen.
+      Im Mesh-Detailfenster kann zusätzlich die FB2L-Livekarte geprüft werden, ohne
+      dafür den normalen Chatbetrieb zu verlassen.
     </p>
     <p>
       Der wichtigste Entwicklungspfad ist derzeit der kontrollierte FB2-Zwei-Stationen-Test.
