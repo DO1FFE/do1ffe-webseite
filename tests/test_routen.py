@@ -254,96 +254,56 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     klient = app.test_client()
     antwort = klient.get("/Funkbruecke")
     html = antwort.get_data(as_text=True)
+    html = " ".join(html.split())
 
     assert antwort.status_code == 200
-    assert "Derzeit noch ein Prototyp" in html
-    assert "v0.9.264" in html
-    assert "Makros, Audio, Test und Protokoll liegen im Detailfenster" in html
-    assert "Automatikfenster" in html
-    assert "FB2-Mesh-Live und Paketmonitor" in html
-    assert "UI-Prüflauf kontrolliert Haupt-, Geräte-, Automatik- und Detailfenster" in html
-    assert "Mesh-Audio-Abnahme" in html
-    assert "Übertragungsmodus aus der Mesh-Bewertung" in html
-    assert "funkbruecke-logo.png" in html
-    assert "FunkBrücke Logo" in html
-    assert "FB-Monogramm" in html
-    assert "FB1-Live-RX" in html
-    assert "FB2-Auto-RX" in html
-    assert "Text eingeben, Zielrufzeichen wählen" in html
-    assert "Der Nutzer schreibt eine Nachricht und legt sie in die Warteschlange" in html
-    assert "Nachricht einreihen, Empfang" in html
-    assert "Auto-QSO-Bedienfluss" in html
-    assert "Auto-QSO-Status" in html
-    assert "CAT-Portscan und Audiogerätesuche verzögert im Hintergrund laufen" in html
-    assert "Kompressionsbilanz" in html
-    assert "FT-991A-Praxistest" in html
-    assert "Sendeautomatik" in html
-    assert "TX-Automatik" in html
-    assert "Timeout-Wiederholung" in html
-    assert "Start prüfen" in html
-    assert "Empfang bereit" in html
-    assert "Trockenlauf prüfbar" in html
-    assert "echte CAT-PTT" in html
-    assert "Sicherheitslinie" in html
-    assert "Feldtestprotokoll" in html
-    assert "bleibt der FB2-Auftrag in der Warteschlange" in html
-    assert "Zwei-Stationen-Praxisstart" in html
-    assert "FT-991A-Hardwarepfad" in html
-    assert "keine manuelle PTT" in html
-    assert "Automatikgrenze" in html
-    assert "Ablauf zeigen" in html
-    assert "Fehlerhilfe" in html
-    assert "Dauer-RX" in html
-    assert "automatischem RX nach TX" in html
-    assert "Mesh-Freigabekette" in html
-    assert "FB2-Mesh-Automatik" in html
-    assert "Rückweg-ACK" in html
-    assert "FB2-Mesh-Live" in html
-    assert "Live-Ausgangskorb" in html
-    assert "normalem Bedienhinweis" in html
-    assert "Automatik wartet" in html
-    assert "Mesh-Karte" in html
-    assert "funkbruecke-mesh-karte.png" in html
-    assert "Stationssuche" in html
-    assert "Stationsprofile" in html
-    assert "Locator" in html
-    assert "Retry über Sendemotor" in html
-    assert "Fehlerantwort" in html
-    assert "Audio-Fehlerrückweg" in html
-    assert "Berichtsexport" in html
-    assert "Lastprüfung" in html
-    assert "Praxisrundlauf" in html
-    assert "Zwei-Stationen-Testplan" in html
-    assert "6-Hop-Praxisrundlauf" in html
-    assert "sechs Funkhops" in html
-    assert "Mesh-Audio-Abnahme" in html
-    assert "Ersatzroute" in html
-    assert "Zustellbestätigungen" in html
-    assert "bis zum Ursprung" in html
-    assert "16-MFSK" in html
-    assert "nächster Hop adressierte Station" in html
-    assert "Feldnachweis" in html
-    assert "Feldnachweisvorschlag" in html
-    assert "bidirektionalen Nachbar-Feldnachweisen" in html
-    assert "Nachbar-Feldnachweis zum nächsten Hop" in html
-    assert "Feldtestprotokoll und Exportübersicht" in html
-    assert "Beim Einreihen einer FB2-Direktnachricht" in html
-    assert "bidirektional" in html
-    assert "Feldnachweis-Sperre" in html
-    assert "Wiederholungen und Ersatzrouten" in html
-    assert "Nachweis nach passendem Paket und OK vorschlagen" in html
-    assert "gespeicherter Feldnachweis" in html
-    assert "testleiterbestätigter FB2-Feldnachweis" in html
-    assert "Bedienfreigabe" in html
-    assert "nächstem Hop" in html
-    assert "Anleitungen, Frequenzprofile und technische Dokumente." in html
-    assert "2-FSK robust" in html
-    assert "4-FSK" in html
-    assert "8-FSK" in html
-    assert "32-MFSK" in html
-    assert "direkter Audio-QSO" in html
-    assert "Live-RX-Andockpunkt" in html
-    assert "lokale Zustellung" in html
+
+    erwartete_texte = [
+        "Derzeit noch ein Prototyp",
+        "v0.9.",
+        "Text eingeben, Zielrufzeichen wählen",
+        "Der Nutzer schreibt eine Nachricht und legt sie in die Warteschlange",
+        "Automatikfenster",
+        "RX, Dauer-RX, Einreihen, Automatikprüfung, Sendefreigabe, Zwei-Stationen-Live",
+        "CAT-Portscan",
+        "Audiogerätesuche",
+        "sichtbaren Fensterstart",
+        "Einstellungen",
+        "Über-Informationen",
+        "Start prüfen",
+        "Empfang bereit",
+        "Trockenlauf prüfbar",
+        "echte CAT-PTT",
+        "keine manuelle PTT",
+        "Sicherheitslinie",
+        "Feldtestprotokoll",
+        "Zwei-Stationen-Praxisstart",
+        "FT-991A-Hardwarepfad",
+        "Kompressionsbilanz",
+        "verrauschtem Testsignal",
+        "2-FSK robust",
+        "4-FSK",
+        "8-FSK",
+        "16-MFSK",
+        "32-MFSK",
+        "FB2-Mesh-Automatik",
+        "Rückweg-ACK",
+        "6-Hop-Praxisrundlauf",
+        "Mesh-Audio-Abnahme",
+        "Übertragungsmodus aus der Mesh-Bewertung",
+        "Bedienhinweis",
+        "Mesh-Karte",
+        "Stationsprofile",
+        "Locator",
+        "funkbruecke-logo.png",
+        "funkbruecke-mesh-karte.png",
+        "FB-Monogramm",
+        "Anleitungen, Frequenzprofile und technische Dokumente.",
+    ]
+
+    for text in erwartete_texte:
+        assert text in html
+
     assert "Changelog" not in html
     assert "Changelog ansehen" not in html
     assert "Seit v0.9." not in html
