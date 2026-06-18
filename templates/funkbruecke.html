@@ -64,14 +64,18 @@
       die aktuell gewählte Mesh-Modusentscheidung.
       Der passende FB2-Rahmen wird automatisch gesendet, sobald die Sicherheitslinie
       erfüllt ist, und die Rückmeldung wird als OK oder Wiederholen eingeordnet.
+      Eine Rückmeldung zählt dabei nur, wenn Sequenz, Rufzeichen, Richtung, Modus
+      und Prüfsummen eindeutig zum vorherigen Test-TX passen.
       Offene direkte QSOs werden auf Timeout geprüft und
       eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange. Wenn ein
       Paket und ein OK technisch eindeutig zusammenpassen, schlägt die Oberfläche einen
       FB2-Feldnachweis vor; gespeichert wird er erst nach bewusster Bestätigung, dass
       der Versuch wirklich über Funk und beaufsichtigt lief. Der Dauer-RX wird nicht
       durch eine reine CAT-PTT-Freigabe blockiert; erst ein laufender Sendepfad pausiert
-      den Empfang. Nach einer Aussendung stellt FunkBrücke den Empfang automatisch
-      wieder bereit. Der direkte Audiopfad wird lokal mit zwei Programminstanzen von
+      den Empfang. Duplikate werden gezählt und als Wiederholungen protokolliert,
+      ohne den Empfangsablauf erneut auszulösen. Nach einer Aussendung stellt
+      FunkBrücke den Empfang automatisch wieder bereit. Der direkte Audiopfad wird
+      lokal mit zwei Programminstanzen von
       2-FSK robust bis OFDM schnell geprüft: Paket aus der Warteschlange, Empfang bei der
       Gegenstation, automatisches OK, Rückweg-Audio und Abschluss beim ursprünglichen
       Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
@@ -100,7 +104,8 @@
       manuelle PTT benutzt wird. Dieser Schutz ist Absicht: Der Nutzer legt nur in die
       Warteschlange, die Software übernimmt Senden und Empfangen nach bestandener Prüfung.
       Der FT-991A-Hardwarepfad bündelt CAT, DATA-Modus,
-      Leistung, PTT-Aus, Not-Aus, Audio-RX/TX, freie Frequenz, Horchfenster,
+      Leistung, PTT-Aus, Not-Aus, plausibel benannte FT-991A/USB-Audiogeräte,
+      freie Frequenz, Horchfenster,
       CAT-PTT und Protokollpflicht. Das Feldtestprotokoll nennt dazu Praxisstart,
       Zwei-Stationen-Praxisstart, echten FT-991A-Hardwarepfad, Auto-QSO und die
       Nachbar-Feldnachweise, die später automatische Mesh-Weiterleitung absichern.
@@ -342,6 +347,8 @@
       testleiterbestätigter FB2-Feldnachweis für den nächsten Hop vorhanden ist und welche
       Mesh-Freigabe noch fehlt. Der normale FB2-Gesprächsbereich kann einen solchen
       Nachweis nach passendem Paket und OK vorschlagen, laden und bewusst speichern.
+      Wenn mehrere Nachweise zur selben Nachbarspur passen, verwendet FunkBrücke
+      die neueste passende Nachbarspur für die Bewertung.
       Bei aktivierter FB2-Mesh-Automatik wird ein passender Transitauftrag automatisch
       profilabhängig in die Warteschlange gelegt. Der Live-Status nennt diese
       Automatikgrenze ausdrücklich: schmal auf SSB, schneller auf geeigneten FM-Profilen.
@@ -360,6 +367,8 @@
       Zielzustellung und Rückweg-ACK durch die Audiokette.
       Der Live-RX-Andockpunkt unterscheidet Direkt-QSO,
       Mesh-Mithören, Weiterleitung, lokale Zustellung, Link-Bake und eigenes Echo.
+      Wiederholte Dauer-RX-Rahmen werden als Duplikate gezählt, damit ein reales
+      Empfangsfenster nicht durch denselben Rahmen mehrfach ausgelöst wird.
       Die RX-/TX-Anzeigen nennen dabei auch die Kompressionsbilanz, ohne dass der Nutzer
       dafür Protokolldetails kennen muss.
       Der Live-Ausgangskorb nutzt diese Regeln im laufenden Betrieb:
@@ -516,7 +525,8 @@
       Zwei-Stationen-Praxisstart prüft zusätzlich gleiche Version,
       Frequenz, Profil, Modus, RX, Kanalwache, genau einen Auftrag, Auto-OK und keine
       manuelle PTT; der FT-991A-Hardwarepfad prüft CAT, DATA-Modus, Leistung, PTT-Aus,
-      Not-Aus, Audio-RX/TX, CAT-PTT und Protokollpflicht. Das Feldtestprotokoll und
+      Not-Aus, plausibel benannte FT-991A/USB-Audiogeräte, CAT-PTT und
+      Protokollpflicht. Das Feldtestprotokoll und
       die Exportübersicht zeigen Praxisstart, Hardwarepfad, Auto-QSO und
       Mesh-Nachbar-Feldnachweise gemeinsam. Der normale FB2-Bereich kann nach einem passenden Paket-/OK-Paar
       einen Feldnachweisvorschlag anzeigen. Ein gespeicherter FB2-Feldnachweis zählt für Mesh erst, wenn
