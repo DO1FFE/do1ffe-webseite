@@ -148,7 +148,9 @@
       mehr eintreffen, verschwinden die Verbindungen per TTL; die Stationen bleiben
       noch 60 Minuten dunkelgrau als inaktiv sichtbar. Auch reine Nachbarprofile ohne
       eigenen Heartbeat bleiben so kurz im Lagebild erhalten, ohne alte Links weiter
-      vorzutäuschen. In der
+      vorzutäuschen. Die Popups zeigen zusätzlich Quelle, Rest-TTL, gültig-bis und
+      grauer-Nachlauf-bis, damit aktive Heartbeats und reine Nachbarprofile klar
+      unterscheidbar bleiben. In der
       App kann dieser Livekarten-Heartbeat im Mesh-Detailfenster bewusst geprüft werden;
       der Status nennt dann Zielserver, Linkanzahl und gemeldete Nachbar-Modi. Der
       FB2L-Server nimmt nur kompakte Heartbeats an und begrenzt zu große oder zu häufige
@@ -173,6 +175,9 @@
       und gelten 300 Sekunden als frisch; schnellere Modi werden danach sparsam pro
       Nachbar bestätigt. FunkBrücke korrigiert den genutzten Modus laufend eine Stufe
       nach oben oder unten, wenn Zuverlässigkeit, Paketverlust oder ACK-Zeit das nahelegen.
+      Modusprobe und Modusantwort werden als eigene Steuerpakete geprüft: Sie laufen in
+      2-FSK robust, müssen zum gemeldeten Nutzdatenmodus passen und dürfen keine
+      schnelleren Modi lernen, als das gewählte Profil erlaubt.
       Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
@@ -225,8 +230,8 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt aktive Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus und Linkwerten.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt aktive Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle und Rest-TTL.</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -407,12 +412,16 @@
       stufenweise korrigiert werden. Die aktuelle Mesh-Modusentscheidung zeigt
       Primär-Hop, Ersatz-Hop, Linklage, Profilgrenze, Quelle, Rückfallmodus und Begründung, damit sichtbar
       bleibt, warum FunkBrücke gerade diesen Weg und diesen Modus bevorzugt.
+      Modussteuerpakete werden dabei nicht wie normale Nutzdaten behandelt: Nur stimmige
+      Probe-/Antwortdaten in 2-FSK robust können einen schnelleren Nachbarmodus freigeben.
       Zustellbestätigungen laufen als FB2-Mesh-Rückweg
       bis zum Ursprung zurück und schließen dort den offenen Auftrag sichtbar ab.
       Automatische Mesh-Wiederholungen und Ersatzrouten bleiben gesperrt, wenn die
       Feldnachweise für Hin- und Rückweg nicht vollständig sind. Für eine Route
       über bis zu sechs Hops muss jeder direkte Teilweg als bidirektionaler
-      Nachbarlink belegt sein; alte Kartenlinien allein reichen dafür nicht.
+      Nachbarlink belegt sein; alte Kartenlinien allein reichen dafür nicht. Der letzte
+      direkte Rest-Hop bleibt dabei wirklich der letzte Hop und wird nicht erneut auf die
+      Standard-Hopzahl zurückgesetzt.
       Dieser Rückweg ist als kleiner A-B-C-Fall und als 6-Hop-Praxisrundlauf geprüft:
       eine Nachricht läuft über Relaisstationen bis zur Zielstation, und das ACK kommt
       über die passende Kette zurück. Eine automatische 6-Hop-Route wird nur freigegeben,
