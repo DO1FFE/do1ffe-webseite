@@ -59,11 +59,15 @@
       bereitet Empfang, Kanalprüfung, Horchfenster, Audioausgabe, Sendesicherheit
       und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
       werden RX, Kanalwache, Horchfenster und FB2-Dauer-RX direkt vorbereitet.
-      Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus und den kurzen
-      Modusgrund aus dem FB2-Rahmen, bevor der
+      Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus, die Quelle der
+      Entscheidung und den robusteren Rückfallmodus, bevor der
       Sendemotor ihn abarbeitet. Der FB2-Live-Ereignismonitor zeigt kompakt,
       was gerade passiert: Paketereignisse, Feldtestschritte, RX nach TX und
       die aktuell gewählte Mesh-Modusentscheidung.
+      Vier Praxisanzeigen fassen den normalen QSO-Ablauf zusammen: Empfang, TX,
+      Antwort und Abschluss. So sieht der Nutzer, ob FunkBrücke gerade hört,
+      auf eine freie Frequenz wartet, sendebereit ist, auf OK oder Wiederholen
+      wartet oder den Austausch abgeschlossen hat.
       Der passende FB2-Rahmen wird automatisch gesendet, sobald die Sicherheitslinie
       erfüllt ist, und die Rückmeldung wird als OK oder Wiederholen eingeordnet.
       Eine Rückmeldung zählt dabei nur, wenn Sequenz, Rufzeichen, Richtung, Modus
@@ -109,7 +113,7 @@
       Stationen, Kanalwache, genau einen Warteschlangenauftrag, Auto-OK und dass keine
       manuelle PTT benutzt wird. Dieser Schutz ist Absicht: Der Nutzer legt nur in die
       Warteschlange, die Software übernimmt Senden und Empfangen nach bestandener Prüfung.
-      Der FT-991A-Hardwarepfad bündelt CAT, DATA-Modus,
+      Der FT-991A-Hardwarepfad ist als harte Startkette aufgebaut und bündelt CAT, DATA-Modus,
       Leistung, PTT-Aus, Not-Aus, frei gewählte Audio-RX/TX-Geräte mit
       Prüfhinweis bei untypischem Audioweg, freie Frequenz, Horchfenster,
       CAT-PTT und Protokollpflicht. Das Feldtestprotokoll nennt dazu Praxisstart,
@@ -359,11 +363,14 @@
       Warteschlange, wenn nur Empfang bereit oder nur Trockenlauf prüfbar ist.
       Der Praxisstart vergleicht beide Stationen: Version, Frequenz, Profil, Modus,
       RX, Kanalwache, genau ein Auftrag, Auto-OK und keine manuelle PTT. Der
-      FT-991A-Hardwarepfad prüft vor echter HF zusätzlich CAT, DATA-Modus, Leistung,
+      FT-991A-Hardwarepfad prüft vor echter HF als harte Startkette zusätzlich CAT, DATA-Modus, Leistung,
       PTT-Aus, Not-Aus, frei gewählte Audio-RX/TX-Geräte, CAT-PTT und
       Protokollpflicht.
       Der Auto-QSO-Status zeigt direkt nach dem Einreihen, ob der Ablauf als echte
       Aussendung bereit, nur als Trockenlauf prüfbar oder noch blockiert ist.
+      Im Einfachbetrieb stehen dafür die Praxisanzeigen Empfang, TX, Antwort und
+      Abschluss bereit; die Moduszeile nennt zusätzlich Quelle und Rückfall des
+      geplanten Sendemodus.
       Ein eigener Zwei-Stationen-Testplan beschreibt Rollen, Voraussetzungen,
       Abbruchkriterien und Protokollpunkte. Vor einem echten Funkversuch kann derselbe
       Ablauf über lokale geschützte Austauschdateien oder als kompletter Audio-QSO-Lauf
@@ -383,15 +390,19 @@
       Automatikgrenze ausdrücklich: schmal auf SSB, schneller auf geeigneten FM-Profilen.
       Die Moduswahl bleibt adaptiv und kann bei besserer oder schlechterer Linklage
       stufenweise korrigiert werden. Die aktuelle Mesh-Modusentscheidung zeigt
-      Primär-Hop, Ersatz-Hop, Linklage, Profilgrenze und Begründung, damit sichtbar
+      Primär-Hop, Ersatz-Hop, Linklage, Profilgrenze, Quelle, Rückfallmodus und Begründung, damit sichtbar
       bleibt, warum FunkBrücke gerade diesen Weg und diesen Modus bevorzugt.
       Zustellbestätigungen laufen als FB2-Mesh-Rückweg
       bis zum Ursprung zurück und schließen dort den offenen Auftrag sichtbar ab.
       Automatische Mesh-Wiederholungen und Ersatzrouten bleiben gesperrt, wenn die
-      Feldnachweise für Hin- und Rückweg nicht vollständig sind.
+      Feldnachweise für Hin- und Rückweg nicht vollständig sind. Für eine Route
+      über bis zu sechs Hops muss jeder direkte Teilweg als bidirektionaler
+      Nachbarlink belegt sein; alte Kartenlinien allein reichen dafür nicht.
       Dieser Rückweg ist als kleiner A-B-C-Fall und als 6-Hop-Praxisrundlauf geprüft:
       eine Nachricht läuft über Relaisstationen bis zur Zielstation, und das ACK kommt
-      über die passende Kette zurück. Der direkte Audio-QSO ist lokal bis OFDM schnell geprüft; die Mesh-Audio-Abnahme
+      über die passende Kette zurück. Eine automatische 6-Hop-Route wird nur freigegeben,
+      wenn jeder direkte Hop einen echten bidirektionalen Nachbar-Feldnachweis hat.
+      Der direkte Audio-QSO ist lokal bis OFDM schnell geprüft; die Mesh-Audio-Abnahme
       wählt den Übertragungsmodus aus der Mesh-Bewertung und prüft Hinweg, Relais,
       Zielzustellung und Rückweg-ACK durch die Audiokette.
       Der Live-RX-Andockpunkt unterscheidet Direkt-QSO,
@@ -570,11 +581,12 @@
       Der Live-Status zeigt die profilabhängige Automatikgrenze bis OFDM schnell;
       echte Funkversuche bleiben an Feldnachweis, Kanalprüfung, Horchfenster und
       Sendesicherheit gebunden. Die Modusentscheidung nennt Primär-Hop, Ersatz-Hop,
-      Linklage, Profilgrenze und Begründung, statt nur einen Modusnamen anzuzeigen.
+      Linklage, Profilgrenze, Quelle, Rückfallmodus und Begründung, statt nur einen Modusnamen anzuzeigen.
       Erreicht ein Paket sein Ziel, entsteht eine Zustellbestätigung als eigenes
       Mesh-Paket zurück zum Ursprung; Steuerpakete erzeugen keine ACK-Kette.
       Der Praxisrundlauf prüft genau diesen Weg über sechs Funkhops bis zur Zielstation
-      und den Rückweg als Ende-zu-Ende-ACK; die lokale Mesh-Audio-Abnahme wählt den
+      und den Rückweg als Ende-zu-Ende-ACK. Die 6-Hop-Freigabe verlangt dabei für jeden
+      direkten Teilweg einen bidirektionalen Nachbar-Feldnachweis; die lokale Mesh-Audio-Abnahme wählt den
       Modus aus der Mesh-Bewertung und überträgt denselben Ablauf mit Relais,
       Zielzustellung und Rückweg-ACK.
       Wenn ein Hop trotz Freigabe nicht bestätigt wird, zeigt der Live-Ausgangskorb
@@ -588,8 +600,8 @@
       Im Mesh helfen Nachbarstationen, die schnellste und zuverlässigste Übertragung
       passend zur aktuellen Verbindung auszuwählen und bei veränderten Bedingungen
       stufenweise zu korrigieren.
-      Die sichtbare Entscheidung nennt Primär-Hop, Ersatz-Hop, Linklage, Profilgrenze
-      und Begründung, damit die Automatik nicht als Blackbox wirkt.
+      Die sichtbare Entscheidung nennt Primär-Hop, Ersatz-Hop, Linklage, Profilgrenze,
+      Quelle, Rückfallmodus und Begründung, damit die Automatik nicht als Blackbox wirkt.
     </p>
     <ul class="check-list">
       <li>Vor jeder Aussendung wird auf belegte Frequenzen und bekannte FB-Signale geachtet.</li>
