@@ -157,6 +157,10 @@
       unterscheidbar bleiben. In der
       App kann dieser Livekarten-Heartbeat im Mesh-Detailfenster bewusst geprüft werden;
       der Status nennt dann Zielserver, Linkanzahl und gemeldete Nachbar-Modi. Der
+      Heartbeat enthält zusätzlich die aktuelle App-Lage der eigenen Station: Audio-RX,
+      FB2-Dauer-RX, TX, PTT, Anzahl der Warteschlangenaufträge und einen kurzen
+      Betriebsstatus. Die Livekarte kann dadurch nicht nur zeigen, wo eine Station ist,
+      sondern auch ob sie gerade hört, sendet, PTT führt oder wartend im Mesh steht. Der
       FB2L-Server nimmt nur kompakte Heartbeats an und begrenzt zu große oder zu häufige
       Meldungen, damit die öffentliche Karte ruhig bleibt.
     </p>
@@ -170,6 +174,9 @@
       Kanalprüfung, Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
       Wenn diese Kette passt und die FB2-Mesh-Automatik bewusst freigegeben ist, reiht
       FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag profilabhängig in die Warteschlange ein.
+      Dieser Warteschlangeneintrag trägt die Feldnachweis-ID und die belegte
+      Nachbarverbindung. Fehlt diese Referenz, gilt der Mesh-Auftrag nicht als praktisch
+      freigegeben, auch wenn eine theoretische Route bekannt ist.
       Die Mesh-Praxisfreigabe bündelt dafür Route, echten Nachbarlink, Bedienfreigabe,
       Kanalwache, Sendesicherheit und freie TX-Lage zu einer klaren Einreihentscheidung.
       Diese Automatikgrenze ist im Live-Status sichtbar: SSB schmal bleibt schmalbandig,
@@ -234,8 +241,8 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt vorab geprüfte Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle und Rest-TTL.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, gespeichertem mesh-tauglichem Feldnachweis, externer Feldnachweis-Route, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt vorab geprüfte Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle, Rest-TTL und App-Lage.</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, App-RX/TX-Kopplung, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, direktem FB2-Mindestabschluss, Start prüfen mit Empfang/Trockenlauf/lokalem Audiotest/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, gespeichertem mesh-tauglichem Feldnachweis, Mesh-Warteschlangeneintrag mit Feldnachweis-ID, externer Feldnachweis-Route, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -379,6 +386,10 @@
       Start prüfen, Vor-TX-Prüfung, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll
       nutzen dieselbe Sicherheitslinie. Ein Auftrag bleibt deshalb geordnet in der
       Warteschlange, wenn nur Empfang bereit oder nur Trockenlauf prüfbar ist.
+      FunkBrücke trennt dabei Trockenlauf, lokalen Audiotest und echte CAT-PTT-Aussendung.
+      Ein Trockenlauf erzeugt keinen Ton und keine PTT, ein lokaler Audiotest darf Audio
+      ausgeben, hält CAT-PTT aber gesperrt, und erst die echte Aussendung verlangt
+      bewusste CAT-PTT-Bestätigung, Aufsicht, Not-Aus und vollständige Freigabe.
       Der Praxisstart vergleicht beide Stationen: Version, Frequenz, Profil, Modus,
       RX, Kanalwache, genau ein Auftrag, Auto-OK und keine manuelle PTT. Der
       FT-991A-Hardwarepfad prüft vor echter HF als harte Startkette zusätzlich CAT, DATA-Modus, Leistung,
@@ -386,6 +397,9 @@
       Protokollpflicht.
       Der Auto-QSO-Status zeigt direkt nach dem Einreihen, ob der Ablauf als echte
       Aussendung bereit, nur als Trockenlauf prüfbar oder noch blockiert ist.
+      Die App-RX/TX-Kopplung bewertet zusätzlich Audio-RX, FB2-Dauer-RX, Kanalwache,
+      Warteschlange, automatischen Sendemotor, PTT-Lage, TX-Nachweis, Rückmeldung und
+      RX-Rückkehr als gemeinsame Lage.
       Der Praxisblock und die Hardware-TX/RX-Abnahme werden dabei im laufenden Ablauf
       nachgeführt: nach vorbereiteter Nachricht, tatsächlichem TX, Gegenstations-RX
       und OK/Wiederholen-Rückmeldung ist sichtbar, welcher Teil des Funkversuchs
@@ -393,6 +407,9 @@
       Im Einfachbetrieb stehen dafür die Praxisanzeigen Empfang, TX, Antwort und
       Abschluss bereit; die Moduszeile nennt zusätzlich Quelle und Rückfall des
       geplanten Sendemodus.
+      Ein direkter FB2-Mindestabschluss ist erst grün, wenn Warteschlangenauftrag,
+      automatischer TX, Gegenstations-RX, Auto-OK oder Wiederholen, Rückweg,
+      QSO-Abschluss und RX nach TX zusammenpassen.
       Ein eigener Zwei-Stationen-Testplan beschreibt Rollen, Voraussetzungen,
       Abbruchkriterien und Protokollpunkte. Vor einem echten Funkversuch kann derselbe
       Ablauf über lokale geschützte Austauschdateien oder als kompletter Audio-QSO-Lauf
@@ -555,6 +572,11 @@
       <span>{{ dokument.typ }}</span>
       <h3>{{ dokument.titel }}</h3>
       <p>{{ dokument.beschreibung }}</p>
+      {% if dokument.schlüssel == "bedienung" %}
+      <p>Aktueller Schwerpunkt: erstes FB2-QSO über Warteschlange und Automatik, getrennte Lagen für Trockenlauf, lokalen Audiotest und echte CAT-PTT, App-RX/TX-Kopplung, FB2-Mindestabschluss, Mesh-Feldnachweis-ID und FB2L-App-Lage.</p>
+      {% elif dokument.schlüssel == "fb2" %}
+      <p>Aktueller technischer Stand: FB2 bewertet RX/TX-Lage, direkten Mindestabschluss, Nachbar-Feldnachweis je Mesh-Warteschlangeneintrag und FB2L-Heartbeats mit App-Lage.</p>
+      {% endif %}
       {% if dokument.verfügbar %}
       <dl>
         <div><dt>Größe</dt><dd>{{ dokument.größe }}</dd></div>
