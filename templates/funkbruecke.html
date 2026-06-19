@@ -73,13 +73,14 @@
       Eine Rückmeldung zählt dabei nur, wenn Sequenz, Rufzeichen, Richtung, Modus
       und Prüfsummen eindeutig zum vorherigen Test-TX passen.
       Offene direkte QSOs werden auf Timeout geprüft und
-      eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange. Wenn ein
+      eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange, dabei aber
+      automatisch eine robustere Modusstufe zurück, soweit das Profil dies erlaubt. Wenn ein
       Paket und ein OK technisch eindeutig zusammenpassen, schlägt die Oberfläche einen
       FB2-Feldnachweis vor; gespeichert wird er erst nach bewusster Bestätigung, dass
       der Versuch wirklich über Funk und beaufsichtigt lief. Der Dauer-RX wird nicht
       durch eine reine CAT-PTT-Freigabe blockiert; erst ein laufender Sendepfad pausiert
-      den Empfang. Duplikate werden gezählt und als Wiederholungen protokolliert,
-      ohne den Empfangsablauf erneut auszulösen. Nach einer Aussendung stellt
+      den Empfang. Duplikate werden gezählt, über einen Rahmenmerker erkannt und protokolliert,
+      ohne Chat, Mesh oder Antwortlogik erneut auszulösen. Nach einer Aussendung stellt
       FunkBrücke den Empfang automatisch wieder bereit. Audioquellen werden nicht
       auf bestimmte Gerätenamen begrenzt: Jeder Windows-Eingang und jeder
       Windows-Ausgang kann gewählt werden; bei untypischen Geräten weist FunkBrücke
@@ -157,7 +158,7 @@
       Für Tests kann der Ablauf lokal mit zwei Programminstanzen ohne HF geprobt werden.
       Der Empfang unterscheidet FB1-Live-RX und FB2-Auto-RX, prüft FB2-Rahmen mit Marker,
       Paketgrenze und CRCs und zeigt, ob ein Rahmen Nutzdaten, OK, Wiederholen, ein
-      Duplikat, ein falsches Ziel oder beschädigt ist. Fremde FB2-Ziele werden bereits
+      eigenes Echo, ein Duplikat, ein falsches Ziel oder beschädigt ist. Fremde FB2-Ziele werden bereits
       als Mesh-Kandidaten mit Route und nächstem Hop erkannt. Eine Freigabekette nennt,
       ob ein gespeicherter Feldnachweis für genau diese Nachbarstation, Bedienfreigabe,
       Kanalprüfung, Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
@@ -423,8 +424,8 @@
       Mesh-Mithören, Weiterleitung, lokale Zustellung, Link-Bake und eigenes Echo.
       Link-Baken nennen dabei auch Softwareversion und erreichbaren Maximalmodus der
       Station.
-      Wiederholte Dauer-RX-Rahmen werden als Duplikate gezählt, damit ein reales
-      Empfangsfenster nicht durch denselben Rahmen mehrfach ausgelöst wird.
+      Wiederholte Dauer-RX-Rahmen werden über den RX-Rahmenmerker als Duplikate gezählt,
+      damit ein reales Empfangsfenster nicht durch denselben Rahmen mehrfach ausgelöst wird.
       Die RX-/TX-Anzeigen nennen dabei auch die Kompressionsbilanz, ohne dass der Nutzer
       dafür Protokolldetails kennen muss.
       Der Live-Ausgangskorb nutzt diese Regeln im laufenden Betrieb:
@@ -620,12 +621,15 @@
     <ul class="check-list">
       <li>Vor jeder Aussendung wird auf belegte Frequenzen und bekannte FB-Signale geachtet.</li>
       <li>Der RX-Pegel allein entscheidet nicht; ein gültiger Rahmen ist maßgeblich.</li>
+      <li>Ohne aktive Kanalprüfung und Horchfenster gibt die letzte TX-Prüfung keine Sendefreigabe.</li>
       <li>FB2-RX zeigt die technische Härtung gültiger und verworfener Rahmen.</li>
+      <li>Die FB2-RX-Pipeline unterscheidet eigenes Echo, Direktpaket, Rundruf, Mesh-Kandidat und Duplikat, bevor Chat oder Antwortlogik reagieren.</li>
       <li>Gespräch und Rückweg zeigen, welche Gegenstation und welche Antwort gerade relevant sind.</li>
       <li>FB2-Auto-RX überspringt stumme Audiopuffer, bevor mehrere MFSK-Modi geprüft werden.</li>
       <li>Die Live-RX-Praxiskette zeigt Audioquelle, TX-Sperre, Suchmodi, Suchfenster, Decoder, RX-Übernahme und Mesh-Andockpunkt.</li>
       <li>Die Zwei-Stationen-Livepraxis zeigt, ob Test-TX, Gegenstations-RX, ACK/Wiederholen-RX und Auftragsbindung zum gleichen Rundlauf passen.</li>
       <li>FB2 senden/empfangen bietet direkte Aktionen für RX, Warteschlange, Sendeautomatik, OK/Wiederholen, Antwort und Problemprüfung; Wartegründe und Wiederholungslimit sind sichtbar.</li>
+      <li>FB2-Wiederholungen nach NACK oder Timeout behalten Sequenz und Nutzdaten-CRC bei, wechseln aber automatisch auf eine robustere Modusstufe.</li>
       <li>Nach einer Aussendung wird der FB2-Dauer-RX automatisch wieder vorbereitet, damit die Antwort ohne manuelles Umschalten erkannt werden kann.</li>
       <li>Beim Einreihen einer FB2-Direktnachricht werden RX, Kanalwache, Horchfenster und Auto-QSO-Status automatisch vorbereitet.</li>
       <li>FB2 senden/empfangen zeigt den Hintergrundzustand für RX, Auftrag, Antwort, laufende Sendung, offene Antwort und Timeout.</li>
