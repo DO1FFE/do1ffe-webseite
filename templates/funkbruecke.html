@@ -93,7 +93,7 @@
       bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
       Brotli mit weniger Funkdaten übertragen wurde. Das Hauptfenster wird bewusst
       schlank gehalten: Chat, Zielauswahl und TX-Eingabe bekommen die volle Breite,
-      während der Wasserfall nur noch als kompakter Kontrollbereich gedacht ist.
+      während der Wasserfall nur noch als kompakter Kontrollbereich sichtbar ist.
       Gerätebedienung, Automatik, Monitor, weitere Fenster, Einstellungen und
       Über-Informationen öffnen in eigenen Fenstern. Schwere Statusketten, CAT-Portscan
       und Audiogerätesuche laufen erst nach dem sichtbaren Fensterstart, damit die
@@ -242,7 +242,7 @@
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
       <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt vorab geprüfte Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle, Rest-TTL und App-Lage.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, App-RX/TX-Kopplung, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, direktem FB2-Mindestabschluss, Start prüfen mit Empfang/Trockenlauf/lokalem Audiotest/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, gespeichertem mesh-tauglichem Feldnachweis, Mesh-Warteschlangeneintrag mit Feldnachweis-ID, externer Feldnachweis-Route, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, App-RX/TX-Kopplung, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, FB2-Ende-zu-Ende-Abschluss, Start prüfen mit Empfang/Trockenlauf/lokalem Audiotest/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, gespeichertem mesh-tauglichem Feldnachweis, Mesh-Warteschlangeneintrag mit Feldnachweis-ID, externer Feldnachweis-Route, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, A-B-C-Mesh-Absicherung, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -274,8 +274,8 @@
       sondern der Gesprächsfluss: Chat lesen, Ziel wählen, Text schreiben, in die Warteschlange legen,
       Empfang laufen lassen und den Status beobachten. FunkBrücke zeigt Sendefreigabe,
       Antwortlage, Wiederholungshinweis, RX-Zuordnung, geplanten Sendemodus und die wichtigsten
-      Sicherheitsgründe. Oben in der Einfachansicht stehen TX-Automatik, Empfangen,
-      Warteschlange und Status direkt nebeneinander. Die technische Diagnose bleibt
+      Sicherheitsgründe. Im Hauptfenster stehen Chat, Zielauswahl, TX-Eingabe,
+      Sendefreigabe und knapper Betriebsstatus direkt im Blick. Die technische Diagnose bleibt
       erreichbar, soll aber den normalen Ablauf nicht überladen.
     </p>
     <p>
@@ -359,9 +359,8 @@
     <h2>Was heute schon sichtbar ist.</h2>
     <p>
       Die aktuelle Version zeigt bereits die Hauptstruktur der späteren Bedienung:
-      Einfachbetrieb als Chatverlauf, Zielauswahl `ALLE` oder Gegenstation,
-      TX-Eingabe, Warteschlange,
-      die Statusfelder TX-Automatik, Empfangen, Warteschlange und Status,
+      Hauptfenster als Chatverlauf, Zielauswahl `ALLE` oder Gegenstation,
+      TX-Eingabe, Warteschlange und knappe Automatiklage,
       Modusplan, Vor-TX-Prüfung, Antwort, Rückweg, Empfangen, Empfang einsortieren,
       FB2 senden/empfangen, Gespräch, Start prüfen, Ablauf zeigen, Fehlerhilfe, Zwei-Fenster-Test, Wasserfall, Spektrum,
       CAT-/Audio-Bereiche, Mesh-Ansichten, Mesh-Karte, Feldnachweisblock, FB2-Planung und Protokollfenster.
@@ -404,12 +403,12 @@
       nachgeführt: nach vorbereiteter Nachricht, tatsächlichem TX, Gegenstations-RX
       und OK/Wiederholen-Rückmeldung ist sichtbar, welcher Teil des Funkversuchs
       schon belegt ist.
-      Im Einfachbetrieb stehen dafür die Praxisanzeigen Empfang, TX, Antwort und
+      Im Haupt- und Automatikbereich stehen dafür die Praxisanzeigen Empfang, TX, Antwort und
       Abschluss bereit; die Moduszeile nennt zusätzlich Quelle und Rückfall des
       geplanten Sendemodus.
-      Ein direkter FB2-Mindestabschluss ist erst grün, wenn Warteschlangenauftrag,
-      automatischer TX, Gegenstations-RX, Auto-OK oder Wiederholen, Rückweg,
-      QSO-Abschluss und RX nach TX zusammenpassen.
+      Ein direkter FB2-Ende-zu-Ende-Abschluss ist erst grün, wenn Warteschlangenauftrag,
+      Vor-TX-Automatik, Audio-TX, RX nach TX, Gegenstations-RX, Auto-OK oder Wiederholen,
+      Rückweg, QSO-Abschluss und gesperrte manuelle PTT zusammenpassen.
       Ein eigener Zwei-Stationen-Testplan beschreibt Rollen, Voraussetzungen,
       Abbruchkriterien und Protokollpunkte. Vor einem echten Funkversuch kann derselbe
       Ablauf über lokale geschützte Austauschdateien oder als kompletter Audio-QSO-Lauf
@@ -445,7 +444,9 @@
       Standard-Hopzahl zurückgesetzt.
       Dieser Rückweg ist als kleiner A-B-C-Fall und als 6-Hop-Praxisrundlauf geprüft:
       eine Nachricht läuft über Relaisstationen bis zur Zielstation, und das ACK kommt
-      über die passende Kette zurück. Eine automatische 6-Hop-Route wird nur freigegeben,
+      über die passende Kette zurück. Der A-B-C-Fall prüft zusätzlich Hop-Reihenfolge,
+      sinkende Rest-Hops, wachsenden Pfad, Zustellbestätigung, keinen ACK-auf-ACK-Folgefehler
+      und gekoppelte Feldnachweisreferenzen. Eine automatische 6-Hop-Route wird nur freigegeben,
       wenn jeder direkte Hop einen echten bidirektionalen Nachbar-Feldnachweis hat.
       Der direkte Audio-QSO ist lokal bis OFDM schnell geprüft; die Mesh-Audio-Abnahme
       wählt den Übertragungsmodus aus der Mesh-Bewertung und prüft Hinweg, Relais,
@@ -491,14 +492,14 @@
     <p class="eyebrow">Programmoberfläche</p>
     <h2>Alles Wichtige bleibt im Blick.</h2>
     <p>
-      Die Oberfläche ist jetzt bewusst aufgeräumter aufgebaut. Das Hauptfenster zeigt die
+      Die Oberfläche ist bewusst aufgeräumt aufgebaut. Das Hauptfenster zeigt die
       laufende Funklage mit Frequenz, Profil, schmalem Wasserfall, Chatverlauf,
       Zielauswahl, TX-Eingabe und knapper Automatiklage.
       Alles, was viel Platz braucht, öffnet in eigenen Fenstern: Gerätebedienung für
       CAT, Audio und Sicherheit, Automatikübersicht für Warteschlange, RX/Kanalwache,
       FB2-Direkt und Mesh-Live, Monitor für alle RX/TX-Daten sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
       Tests und Protokoll. Die wichtigsten Einstellungen liegen oben in der Menüzeile; im
-      Einfachbetrieb führen Hauptleiste, Start prüfen mit Praxisstartstufe,
+      Haupt- und Automatikfenster führen mit Hauptleiste, Start prüfen mit Praxisstartstufe,
       Sicherheitslinie, Automatik prüfen, FB2-Live-Ereignisse und die FB2-Karte durch Einreihen, Prüfung,
       Senden, Empfangen und Antworten.
     </p>
@@ -573,9 +574,9 @@
       <h3>{{ dokument.titel }}</h3>
       <p>{{ dokument.beschreibung }}</p>
       {% if dokument.schlüssel == "bedienung" %}
-      <p>Aktueller Schwerpunkt: erstes FB2-QSO über Warteschlange und Automatik, getrennte Lagen für Trockenlauf, lokalen Audiotest und echte CAT-PTT, App-RX/TX-Kopplung, FB2-Mindestabschluss, Mesh-Feldnachweis-ID und FB2L-App-Lage.</p>
+      <p>Aktueller Schwerpunkt: erstes FB2-QSO über Warteschlange und Automatik, getrennte Lagen für Trockenlauf, lokalen Audiotest und echte CAT-PTT, App-RX/TX-Kopplung, FB2-Ende-zu-Ende-Abschluss, A-B-C-Mesh-Absicherung, Mesh-Feldnachweis-ID und FB2L-App-Lage.</p>
       {% elif dokument.schlüssel == "fb2" %}
-      <p>Aktueller technischer Stand: FB2 bewertet RX/TX-Lage, direkten Mindestabschluss, Nachbar-Feldnachweis je Mesh-Warteschlangeneintrag und FB2L-Heartbeats mit App-Lage.</p>
+      <p>Aktueller technischer Stand: FB2 bewertet RX/TX-Lage, direkten Ende-zu-Ende-Abschluss, Nachbar-Feldnachweis je Mesh-Warteschlangeneintrag, A-B-C-Weiterleitung mit Rückweg-ACK und FB2L-Heartbeats mit App-Lage.</p>
       {% endif %}
       {% if dokument.verfügbar %}
       <dl>

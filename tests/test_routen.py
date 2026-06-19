@@ -281,8 +281,9 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
         "keine manuelle PTT",
         "App-RX/TX-Kopplung",
         "Audio-RX, FB2-Dauer-RX, Kanalwache",
-        "direktem FB2-Mindestabschluss",
-        "Warteschlangenauftrag, automatischer TX, Gegenstations-RX",
+        "FB2-Ende-zu-Ende-Abschluss",
+        "Warteschlangenauftrag, Vor-TX-Automatik, Audio-TX",
+        "A-B-C-Mesh-Absicherung",
         "Sicherheitslinie",
         "Feldtestprotokoll",
         "Zwei-Stationen-Praxisstart",
@@ -292,7 +293,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
         "Feldnachweisvorschlag aus bestandener Abnahme",
         "gespeichertem mesh-tauglichem Feldnachweis",
         "externer Feldnachweis-Route",
-        "vorab geprüften FB2L-Heartbeats",
+        "FB2L-Heartbeats",
         "Sequenz, Rufzeichen, Richtung, Modus",
         "frei wählbarer Audioein- und Audioausgang",
         "Audioquellen werden nicht auf bestimmte Gerätenamen begrenzt",
@@ -303,9 +304,9 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
         "Praxisanzeigen",
         "FunkBrücke-Softwareversion",
         "Softwareversion und erreichbaren Maximalmodus",
-        "FB2L-Webkarten-Heartbeat",
+        "FB2L-Webkarte",
         "FB2L-Livekarte",
-        "FB2L-Prüfknopf",
+        "FB2L-Heartbeat",
         "Livekarten-Heartbeat im Mesh-Detailfenster",
         "App-Lage",
         "Audio-RX, FB2-Dauer-RX, TX, PTT",
@@ -319,7 +320,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
         "gültig-bis",
         "grauer-Nachlauf-bis",
         "reine Nachbarprofile",
-        "Kern-Audiopfad von 2-FSK robust bis 16-MFSK",
+        "Modusleiter",
         "Duplikate werden gezählt",
         "neueste passende Nachbarspur",
         "Kompressionsbilanz",
@@ -942,3 +943,5 @@ def test_meshcore_ble_updater_downloads_liefern_artefakte_und_zählen_getrennt(t
     assert lies_downloads(zähler_datei, android) == 1
     assert lies_downloads(zähler_datei, windows) == 1
     assert lies_downloads(zähler_datei, ios) == 1
+
+# Copyright © 2026 Erik Schauer, do1ffe@darc.de
