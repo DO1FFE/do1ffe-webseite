@@ -377,16 +377,22 @@
       Frequenz, Warteschlange, Sendemodus, Audio-TX, automatische PTT-Führung,
       Rückkehr auf RX und die Antwort der Gegenstation. Eine eigene TX/RX-Lage führt
       Hören, Kanalprüfung, Senden, Rückkehr auf Empfang, OK, Wiederholen und Timeout
-      zusammen. Echte CAT-PTT bleibt bewusst freigabepflichtig; der Trockenlauf und
-      lokale Audiotests senden nicht unbeaufsichtigt auf HF.
+      zusammen. Der produktive Sendemotor wird als kompletter Ablauf bewertet:
+      Warteschlangenauftrag, Vor-TX-Sperren, Audio-TX, PTT-Führung, RX-Rückkehr,
+      Antwort und Zustandsmaschine müssen gemeinsam passen. Echte CAT-PTT bleibt
+      bewusst freigabepflichtig; der Trockenlauf und lokale Audiotests senden nicht
+      unbeaufsichtigt auf HF.
     </p>
     <p>
       Das Mesh ist als automatischer Weiterleitungsweg vorbereitet: Jede Station kann
       Pakete für andere Stationen weiterreichen, wenn ein echter Nachbarlink bekannt
       ist und die Sicherheitsprüfung passt. Baken laufen sparsam in 2-FSK robust,
       Nutzpakete wählen danach den schnellsten passenden Modus, aktuell bis 16-MFSK im
-      abgesicherten Kernpfad. Der Prototyp prüft direkte QSOs, den A-D-Relaisfall über
-      B und C mit Rückweg-ACK und Routen bis sechs Hops lokal in der Audiokette.
+      abgesicherten Kernpfad. Die Aushandlung wird dabei mit dem folgenden Nutzpaket
+      gekoppelt: Bake, Probe, Antwort, Version und Nutzmodus müssen zum Audio-Sendemotor
+      passen. Der Prototyp prüft direkte QSOs, den A-D-Relaisfall über B und C mit
+      Rückweg-ACK, Hop-Warteschlangen, Relaisbetrieb und Routen bis sechs Hops lokal
+      in der Audiokette.
     </p>
   </article>
   <aside class="fact-panel reveal">
