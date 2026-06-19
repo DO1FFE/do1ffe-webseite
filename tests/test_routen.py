@@ -302,7 +302,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
         "Nutzpakete wählen danach den schnellsten passenden Modus",
         "adaptive Moduswahl",
         "Rückweg-ACK",
-        "A-B-C-Relaisfall",
+        "A-D-Relaisfall über",
         "Routen bis sechs Hops",
         "Mesh-Routen sind auf sechs Hops begrenzt",
         "Nur die Station, die als nächster Hop genannt ist",

@@ -54,7 +54,7 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "titel": "Windows-Programm",
         "dateiname": "FunkBruecke-latest-win-x64.exe",
         "typ": "EXE",
-        "beschreibung": "Aktuelle Windows-x64-Version des FunkBrücke-Prototyps. Das Programm startet mit leerem Stationszustand, zeigt den Funkbetrieb als Chatverlauf, legt Nachrichten in eine Warteschlange und lässt die Sendeautomatik nach Kanal-, Audio-, PTT- und Mesh-Prüfung arbeiten. FB2, FT-991A-CAT, Mesh-Weiterleitung, Moduswahl, Monitor, Bedienfenster und FB2L-Livekarte sind für Tests vorbereitet.",
+        "beschreibung": "Aktuelle Windows-x64-Version des FunkBrücke-Prototyps. Das Programm startet mit leerem Stationszustand, zeigt den Funkbetrieb als Chatverlauf, legt Nachrichten in eine Warteschlange und lässt die Sendeautomatik nach Kanal-, Audio-, PTT- und Mesh-Prüfung arbeiten. FB2, FT-991A-CAT, A-D-Mesh-Weiterleitung über B und C, Moduswahl, Monitor, Bedienfenster und FB2L-Livekarte sind für Tests vorbereitet.",
         "primär": True,
     },
     {

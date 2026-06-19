@@ -242,7 +242,7 @@
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
       <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt vorab geprüfte Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle, Rest-TTL und App-Lage.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster, automatische TX-Warteschlange, separater Monitor, direkte FB2-QSOs, A-B-C-Mesh-Test, adaptive Moduswahl und FB2L-Livekarte. Echte Aussendungen bleiben beaufsichtigte Prototypversuche.</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster, automatische TX-Warteschlange, separater Monitor, direkte FB2-QSOs, A-D-Mesh-Test über B und C, adaptive Moduswahl und FB2L-Livekarte. Echte Aussendungen bleiben beaufsichtigte Prototypversuche.</dd></div>
     </dl>
   </aside>
 </section>
@@ -375,17 +375,18 @@
       Der wichtigste aktuelle Testpfad ist das erste praktische FB2-QSO zwischen zwei
       Stationen. FunkBrücke prüft dafür Version, Frequenz, Profil, Empfang, freie
       Frequenz, Warteschlange, Sendemodus, Audio-TX, automatische PTT-Führung,
-      Rückkehr auf RX und die Antwort der Gegenstation. Echte CAT-PTT bleibt bewusst
-      freigabepflichtig; der Trockenlauf und lokale Audiotests senden nicht
-      unbeaufsichtigt auf HF.
+      Rückkehr auf RX und die Antwort der Gegenstation. Eine eigene TX/RX-Lage führt
+      Hören, Kanalprüfung, Senden, Rückkehr auf Empfang, OK, Wiederholen und Timeout
+      zusammen. Echte CAT-PTT bleibt bewusst freigabepflichtig; der Trockenlauf und
+      lokale Audiotests senden nicht unbeaufsichtigt auf HF.
     </p>
     <p>
       Das Mesh ist als automatischer Weiterleitungsweg vorbereitet: Jede Station kann
       Pakete für andere Stationen weiterreichen, wenn ein echter Nachbarlink bekannt
       ist und die Sicherheitsprüfung passt. Baken laufen sparsam in 2-FSK robust,
-      Nutzpakete wählen danach den schnellsten passenden Modus. Der Prototyp prüft
-      direkte QSOs, einen A-B-C-Relaisfall mit Rückweg-ACK und Routen bis sechs Hops
-      lokal in der Audiokette.
+      Nutzpakete wählen danach den schnellsten passenden Modus, aktuell bis 16-MFSK im
+      abgesicherten Kernpfad. Der Prototyp prüft direkte QSOs, den A-D-Relaisfall über
+      B und C mit Rückweg-ACK und Routen bis sechs Hops lokal in der Audiokette.
     </p>
   </article>
   <aside class="fact-panel reveal">
@@ -517,10 +518,10 @@
     </p>
     <p>
       Baken und Modusproben bleiben sparsam und robust. Sie laufen in 2-FSK, damit auch
-      schwache Verbindungen eine Chance haben. Erst wenn ein Nachbar bestätigt ist,
-      werden Nutzpakete schneller gesendet. Verschlechtert sich der Funkweg, geht die
-      Automatik wieder eine Stufe zurück; wird die Verbindung besser, kann sie eine
-      Stufe höher gehen.
+      schwache Verbindungen eine Chance haben. Erst nach freiem Kanal, erkannter Bake,
+      Modusprobe und bestätigter Antwort werden Nutzpakete schneller gesendet.
+      Verschlechtert sich der Funkweg, geht die Automatik wieder eine Stufe zurück;
+      wird die Verbindung besser, kann sie eine Stufe höher gehen.
     </p>
     <p>
       Das Mesh arbeitet adressiert: Nur die Station, die als nächster Hop genannt ist,
