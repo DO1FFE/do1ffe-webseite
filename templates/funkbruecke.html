@@ -56,9 +56,9 @@
       schreibt eine Nachricht und legt sie in die Warteschlange. Im Chat erscheinen
       eigene Sendungen, empfangene Nachrichten an das eigene Rufzeichen und Rundrufe
       an `ALLE`; fremde Ziele bleiben im separaten Monitor sichtbar. FunkBrücke
-      bereitet Empfang, Kanalprüfung, FB1-Horchfenster, Audioausgabe, Sendesicherheit
+      bereitet Empfang, Kanalprüfung, Horchfenster, Audioausgabe, Sendesicherheit
       und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
-      werden RX, Kanalwache, FB1-Horchfenster und FB2-Dauer-RX direkt vorbereitet.
+      werden RX, Kanalwache, Horchfenster und FB2-Dauer-RX direkt vorbereitet.
       Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus und den kurzen
       Modusgrund aus dem FB2-Rahmen, bevor der
       Sendemotor ihn abarbeitet. Der FB2-Live-Ereignismonitor zeigt kompakt,
@@ -134,7 +134,10 @@
       direkte Mesh-Nachbarn zusätzlich an die FB2L-Webkarte senden. Dort erscheinen
       aktive Stationen mit Locator, Profilangaben, FunkBrücke-Version, Linkmodus und
       Linkwerten auf einer interaktiven Leaflet-Karte. Wenn keine frischen Heartbeats
-      mehr eintreffen, verschwinden Station und Verbindung automatisch wieder. In der
+      mehr eintreffen, verschwinden die Verbindungen per TTL; die Stationen bleiben
+      noch 60 Minuten dunkelgrau als inaktiv sichtbar. Auch reine Nachbarprofile ohne
+      eigenen Heartbeat bleiben so kurz im Lagebild erhalten, ohne alte Links weiter
+      vorzutäuschen. In der
       App kann dieser Livekarten-Heartbeat im Mesh-Detailfenster bewusst geprüft werden;
       der Status nennt dann Zielserver, Linkanzahl und gemeldete Nachbar-Modi. Der
       FB2L-Server nimmt nur kompakte Heartbeats an und begrenzt zu große oder zu häufige
@@ -147,15 +150,16 @@
       Duplikat, ein falsches Ziel oder beschädigt ist. Fremde FB2-Ziele werden bereits
       als Mesh-Kandidaten mit Route und nächstem Hop erkannt. Eine Freigabekette nennt,
       ob ein gespeicherter Feldnachweis für genau diese Nachbarstation, Bedienfreigabe,
-      Kanalprüfung, FB1-Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
+      Kanalprüfung, Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
       Wenn diese Kette passt und die FB2-Mesh-Automatik bewusst freigegeben ist, reiht
       FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag profilabhängig in die Warteschlange ein.
       Diese Automatikgrenze ist im Live-Status sichtbar: SSB schmal bleibt schmalbandig,
       FM normal kann bis OFDM normal gehen, FM breit/Labor bis OFDM schnell.
       Die Nachbarn melden ihre erreichbare Maximalgeschwindigkeit und die verwendete
-      FunkBrücke-Softwareversion in Kurzpaketen;
-      FunkBrücke korrigiert den genutzten Modus laufend eine Stufe nach oben oder unten,
-      wenn Zuverlässigkeit, Paketverlust oder ACK-Zeit das nahelegen.
+      FunkBrücke-Softwareversion in Kurzpaketen. Diese Baken bleiben in 2-FSK robust;
+      schnellere Modi werden danach sparsam pro Nachbar bestätigt. FunkBrücke korrigiert
+      den genutzten Modus laufend eine Stufe nach oben oder unten, wenn Zuverlässigkeit,
+      Paketverlust oder ACK-Zeit das nahelegen.
       Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
@@ -166,7 +170,8 @@
       Horchfenster und Sendesicherheit gebunden.
       Der Live-RX-Andockpunkt zeigt dabei, ob ein Rahmen direktes QSO, Mesh-Mithören,
       Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist. Link-Baken
-      tragen Nachbarn, Maximalmodus und Softwareversion. Aktiv
+      tragen Nachbarn, Maximalmodus und Softwareversion und werden bewusst robust
+      ausgesendet. Aktiv
       verarbeitet wird ein Mesh-Paket nur durch die Station, die als nächster Hop
       adressiert ist; alle anderen Stationen beobachten den Rahmen nur.
       Der echte Ausgangskorb zeigt, ob ein Paket auf den Rückweg-ACK wartet, ob ein
@@ -346,7 +351,7 @@
     <p>
       Der wichtigste Entwicklungspfad ist derzeit der kontrollierte FB2-Zwei-Stationen-Test.
       Dabei geht es um einen überprüfbaren Automatiklauf: Nachricht einreihen, Empfang
-      und Kanalwache vorbereiten, FB1-Horchfenster beobachten, automatisch senden,
+      und Kanalwache vorbereiten, Horchfenster beobachten, automatisch senden,
       Gegenstation empfangen lassen, OK oder Wiederholen zurückführen, nach TX wieder
       auf Empfang gehen und den Gesprächszustand abschließen.
       Start prüfen, Vor-TX-Prüfung, Fehlerhilfe, Sendeautomatik und Feldtestprotokoll
@@ -384,9 +389,9 @@
       bis zum Ursprung zurück und schließen dort den offenen Auftrag sichtbar ab.
       Automatische Mesh-Wiederholungen und Ersatzrouten bleiben gesperrt, wenn die
       Feldnachweise für Hin- und Rückweg nicht vollständig sind.
-      Dieser Rückweg ist jetzt als 6-Hop-Praxisrundlauf geprüft: eine Nachricht läuft
-      über sechs Funkhops bis zur Zielstation, und das ACK kommt über dieselbe Kette
-      zurück. Der direkte Audio-QSO ist lokal bis OFDM schnell geprüft; die Mesh-Audio-Abnahme
+      Dieser Rückweg ist als kleiner A-B-C-Fall und als 6-Hop-Praxisrundlauf geprüft:
+      eine Nachricht läuft über Relaisstationen bis zur Zielstation, und das ACK kommt
+      über die passende Kette zurück. Der direkte Audio-QSO ist lokal bis OFDM schnell geprüft; die Mesh-Audio-Abnahme
       wählt den Übertragungsmodus aus der Mesh-Bewertung und prüft Hinweg, Relais,
       Zielzustellung und Rückweg-ACK durch die Audiokette.
       Der Live-RX-Andockpunkt unterscheidet Direkt-QSO,
@@ -547,7 +552,7 @@
       verwenden dieselbe Praxisstartbewertung und Sicherheitslinie; ohne echte
       CAT-PTT-Freigabe bleibt ein Auftrag sichtbar in der Warteschlange, statt
       unklar zu senden. Beim Einreihen einer Direktnachricht werden RX, Kanalwache,
-      FB1-Horchfenster und Auto-QSO-Status automatisch vorbereitet. Der
+      Horchfenster und Auto-QSO-Status automatisch vorbereitet. Der
       Zwei-Stationen-Praxisstart prüft zusätzlich gleiche Version,
       Frequenz, Profil, Modus, RX, Kanalwache, genau einen Auftrag, Auto-OK und keine
       manuelle PTT; der FT-991A-Hardwarepfad prüft CAT, DATA-Modus, Leistung, PTT-Aus,
@@ -558,7 +563,7 @@
       einen Feldnachweisvorschlag anzeigen. Ein gespeicherter FB2-Feldnachweis zählt für Mesh erst, wenn
       er ein echtes, abgeschlossenes und testleiterbestätigtes QSO zur nächsten
       Nachbarstation belegt. Für fremde FB2-Ziele zeigt die Mesh-Freigabekette zusätzlich,
-      ob Feldnachweis, Bedienfreigabe, Kanalprüfung, FB1-Horchfenster, Sendesicherheit
+      ob Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit
       oder freie TX-Lage noch fehlen. Bei bewusst aktivierter Freigabe werden passende
       FB2-Mesh-Aufträge profilabhängig in die Warteschlange gelegt. Nicht als
       nächster Hop adressierte Stationen hören nur mit und leiten nicht weiter.
@@ -596,7 +601,7 @@
       <li>Die Zwei-Stationen-Livepraxis zeigt, ob Test-TX, Gegenstations-RX, ACK/Wiederholen-RX und Auftragsbindung zum gleichen Rundlauf passen.</li>
       <li>FB2 senden/empfangen bietet direkte Aktionen für RX, Warteschlange, Sendeautomatik, OK/Wiederholen, Antwort und Problemprüfung; Wartegründe und Wiederholungslimit sind sichtbar.</li>
       <li>Nach einer Aussendung wird der FB2-Dauer-RX automatisch wieder vorbereitet, damit die Antwort ohne manuelles Umschalten erkannt werden kann.</li>
-      <li>Beim Einreihen einer FB2-Direktnachricht werden RX, Kanalwache, FB1-Horchfenster und Auto-QSO-Status automatisch vorbereitet.</li>
+      <li>Beim Einreihen einer FB2-Direktnachricht werden RX, Kanalwache, Horchfenster und Auto-QSO-Status automatisch vorbereitet.</li>
       <li>FB2 senden/empfangen zeigt den Hintergrundzustand für RX, Auftrag, Antwort, laufende Sendung, offene Antwort und Timeout.</li>
       <li>Jedes geplante TX-Paket zeigt den vorgesehenen Sendemodus in Chat, Warteschlange und Automatikstatus.</li>
       <li>FB2-Live-Ereignisse zeigen Paket, RX nach TX, Feldtestschritt und Mesh-Moduswahl kompakt.</li>
