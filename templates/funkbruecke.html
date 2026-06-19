@@ -64,7 +64,11 @@
       laufende Audioblöcke und sucht darin nach gültigen FB2-Rahmen. Die
       Sendefreigabe zeigt diesen Audioweg direkt als Prüfpunkt; Sendemotor,
       Modus-Aushandlung und Mesh-Weiterleitung gelten erst als bereit, wenn der
-      Audio-I/O-Pfad freigegeben ist.
+      Audio-I/O-Pfad freigegeben ist. Direkt vor FB2- oder FB2L-TX prüft der
+      Sendemotor diese Lage erneut; ohne Audioeingang, Audioausgang oder
+      FB2-Dauer-RX bleibt der Auftrag in der Warteschlange. Nach TX meldet die
+      Oberfläche, ob Audio-RX, Kanalprüfung, Horchfenster und Dauer-RX wieder
+      vollständig bereit sind.
       Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus, die Quelle der
       Entscheidung und den robusteren Rückfallmodus, bevor der
       Sendemotor ihn abarbeitet. Der FB2-Live-Ereignismonitor zeigt kompakt,
@@ -184,7 +188,9 @@
       Nachbarverbindung. Fehlt diese Referenz, gilt der Mesh-Auftrag nicht als praktisch
       freigegeben, auch wenn eine theoretische Route bekannt ist.
       Die Mesh-Praxisfreigabe bündelt dafür Route, echten Nachbarlink, Bedienfreigabe,
-      Kanalwache, Sendesicherheit und freie TX-Lage zu einer klaren Einreihentscheidung.
+      Kanalwache, Sendesicherheit, freie TX-Lage und Audio-I/O zu einer klaren
+      Einreihentscheidung. Reine Routen- und Feldnachweise reichen ohne
+      RX/TX-Bereitschaft nicht für automatische Mesh-Weiterleitung.
       Diese Automatikgrenze ist im Live-Status sichtbar: SSB schmal bleibt schmalbandig,
       FM normal kann bis OFDM normal gehen, FM breit/Labor bis OFDM schnell.
       Die Nachbarn melden ihre erreichbare Maximalgeschwindigkeit und die verwendete
