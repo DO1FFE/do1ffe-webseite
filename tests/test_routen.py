@@ -277,6 +277,7 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
         "Audio-I/O-Pfad",
         "Live-RX-Puffer",
         "RX-Puffer und Decoder",
+        "Die Sendefreigabe zeigt diesen Audioweg direkt als Prüfpunkt",
         "Sendemotor, Modus-Aushandlung und Mesh-Weiterleitung",
         "FB2L-Webkarte",
         "FB2L-Livekarte",

@@ -61,9 +61,10 @@
       werden RX, Kanalwache, Horchfenster und FB2-Dauer-RX direkt vorbereitet.
       Der aktuelle Audio-I/O-Pfad prüft Audioeingang, Audioausgang, Dauer-RX,
       TX-Samples, RX-Puffer und Decoder gemeinsam. Ein Live-RX-Puffer sammelt
-      laufende Audioblöcke und sucht darin nach gültigen FB2-Rahmen; Sendemotor,
-      Modus-Aushandlung und Mesh-Weiterleitung gelten erst als bereit, wenn dieser
-      Audioweg freigegeben ist.
+      laufende Audioblöcke und sucht darin nach gültigen FB2-Rahmen. Die
+      Sendefreigabe zeigt diesen Audioweg direkt als Prüfpunkt; Sendemotor,
+      Modus-Aushandlung und Mesh-Weiterleitung gelten erst als bereit, wenn der
+      Audio-I/O-Pfad freigegeben ist.
       Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus, die Quelle der
       Entscheidung und den robusteren Rückfallmodus, bevor der
       Sendemotor ihn abarbeitet. Der FB2-Live-Ereignismonitor zeigt kompakt,
