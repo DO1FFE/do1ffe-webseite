@@ -128,7 +128,9 @@
       Hardware-TX/RX-Abnahme prüft anschließend, ob Paket, Gegenstations-RX,
       OK/Wiederholen-Rückmeldung, automatische PTT-Führung und RX-Rückkehr zusammenpassen.
       Erst aus einer bestandenen Abnahme schlägt FunkBrücke einen speicherbaren
-      Nachbar-Feldnachweis vor.
+      Nachbar-Feldnachweis vor. Gespeichert wird er nur, wenn er wirklich mesh-tauglich
+      ist; danach kann FunkBrücke daraus wieder einen bidirektionalen Nachbarlink für
+      Karte, Modusentscheidung und Mesh-Route ableiten.
     </p>
     <p>
       Zusätzlich sammelt FunkBrücke Stationsprofile für das Mesh: Rufzeichen, Name,
@@ -144,7 +146,9 @@
       Für den öffentlichen Liveblick kann FunkBrücke die eigene Station und frische
       direkte Mesh-Nachbarn zusätzlich an die FB2L-Webkarte senden. Dort erscheinen
       aktive Stationen mit Locator, Profilangaben, FunkBrücke-Version, Linkmodus und
-      Linkwerten auf einer interaktiven Leaflet-Karte. Wenn keine frischen Heartbeats
+      Linkwerten auf einer interaktiven Leaflet-Karte. Vor dem Senden prüft die App,
+      ob eigene Station, Locator, Version, Frequenz, Profil, TTL, Linkdaten und
+      Nachbarprofile zusammenpassen. Wenn keine frischen Heartbeats
       mehr eintreffen, verschwinden die Verbindungen per TTL; die Stationen bleiben
       noch 60 Minuten dunkelgrau als inaktiv sichtbar. Auch reine Nachbarprofile ohne
       eigenen Heartbeat bleiben so kurz im Lagebild erhalten, ohne alte Links weiter
@@ -230,8 +234,8 @@
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt aktive Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle und Rest-TTL.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt vorab geprüfte Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle und Rest-TTL.</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, strenger FB2-Modusprobe und Modusantwort, gespeichertem mesh-tauglichem Feldnachweis, externer Feldnachweis-Route, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen, korrektem letzten Rest-Hop und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -651,7 +655,8 @@
       <li>Der Zwei-Stationen-Praxisstart prüft Version, Frequenz, Profil, Modus, RX, Kanalwache, Warteschlange, Auto-OK und keine manuelle PTT.</li>
       <li>Der FT-991A-Hardwarepfad prüft CAT, DATA-Modus, Leistung, PTT-Aus, Not-Aus, frei gewählte Audio-RX/TX-Geräte, CAT-PTT und Protokollpflicht.</li>
       <li>Der FB2-Praxisblock und die Hardware-TX/RX-Abnahme prüfen Paket, Gegenstations-RX, Rückmeldung, automatische PTT-Führung und RX-Rückkehr als zusammenhängenden Funkversuch.</li>
-      <li>Die Abnahme wird nach TX, Gegenstations-RX und OK/Wiederholen im Ablauf nachgeführt und kann daraus einen speicherbaren Feldnachweis vorbereiten.</li>
+      <li>Die Abnahme wird nach TX, Gegenstations-RX und OK/Wiederholen im Ablauf nachgeführt; der Feldnachweisvorschlag aus bestandener Abnahme kann daraus einen speicherbaren Feldnachweis vorbereiten.</li>
+      <li>Ein Feldnachweis aus Abnahme wird nur gespeichert, wenn er mesh-tauglich ist, und kann danach wieder als bidirektionaler Nachbarlink rekonstruiert werden.</li>
       <li>Feldtestprotokoll und Exportübersicht bündeln Praxisstart, Hardwarepfad, Auto-QSO und Mesh-Nachbar-Feldnachweise.</li>
       <li>Der Zwei-Fenster-Rundlauf meldet laufend, bestanden oder fehlgeschlagen.</li>
       <li>Der FT-991A-Praxistest führt bis FB2-Trockenauftrag, Fokusblock und Protokoll.</li>
@@ -662,6 +667,7 @@
       <li>FB2-/FB2L-Treffer werden für Mesh-Beobachtung und Nachbartabellen angedockt.</li>
       <li>Fremde FB2-Ziele werden als Mesh-Kandidaten bewertet; die Freigabekette prüft gespeicherten Feldnachweis, Bedienfreigabe, Kanalprüfung, Horchfenster, Sendesicherheit und freie TX-Lage.</li>
       <li>Die Mesh-Praxisfreigabe erlaubt automatisches Einreihen erst nach Route, echtem Nachbarlink, Kanalwache, Sendesicherheit und freier TX-Lage.</li>
+      <li>Der Drei-Stationen-Rundlauf kann externe Feldnachweise nutzen und stoppt vor dem ersten Mesh-Schritt, wenn ein Hop-Nachweis fehlt.</li>
       <li>FB2-Direktnachrichten verwenden die adaptive Moduskorrektur vor dem Rahmenbau; pro Paket wird höchstens eine Modusstufe gewechselt.</li>
       <li>Bei bewusster Freigabe werden FB2-Mesh-Textaufträge und Transitpakete profilabhängig in die Warteschlange gelegt.</li>
       <li>FB2-Mesh-Live zeigt die Automatikgrenze bis OFDM schnell passend zum Profil.</li>
@@ -679,6 +685,7 @@
       <li>Nur die als nächster Hop adressierte Station verarbeitet ein FB2-Mesh-Paket aktiv; andere Stationen beobachten den Rahmen nur.</li>
       <li>SSB bleibt schmalbandig, FM kann später breitere Modi besser aufnehmen.</li>
       <li>Mesh-Kurzpakete halten Nachbarn, Geschwindigkeit und Erreichbarkeit aktuell.</li>
+      <li>FB2L-Heartbeats werden vor dem Senden auf Station, Locator, Version, Frequenz, Profil, TTL, Links und Nachbarprofile geprüft.</li>
     </ul>
   </div>
   <div class="feature__media reveal">
