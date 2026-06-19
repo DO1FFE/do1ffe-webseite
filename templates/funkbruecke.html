@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block titel %}FunkBrücke | DO1FFE{% endblock %}
-{% block beschreibung %}FunkBrücke: Windows-Software für den Yaesu FT-991A, FB2-Digitalbetrieb, Warteschlange, Sendeautomatik, Mesh-Weiterleitung und Downloads.{% endblock %}
+{% block beschreibung %}FunkBrücke: Windows-Prototyp für FB2-Digitalbetrieb, Yaesu FT-991A, Chat, automatische Warteschlange, Mesh und Downloads.{% endblock %}
 
 {% block inhalt %}
 <section class="page-hero page-hero--funkbruecke">
@@ -10,15 +10,16 @@
     <p class="eyebrow">FT-991A · FB2 · Mesh</p>
     <h1>FunkBrücke</h1>
     <p>
-      Eine Windows-Software, mit der Amateurfunkstationen digitale Nachrichten senden,
-      empfangen und später über benachbarte Stationen weiterleiten können.
+      FunkBrücke ist ein Windows-Prototyp für digitale Amateurfunk-Nachrichten:
+      Text schreiben, Ziel wählen, in die Warteschlange legen und die Automatik
+      senden und empfangen lassen.
     </p>
     <div class="hero__actions">
       {% if funkbruecke_haupt_download and funkbruecke_haupt_download.verfügbar %}
       <a class="button button--primary" href="{{ funkbruecke_haupt_download.url }}">Windows-EXE herunterladen</a>
       {% endif %}
-      <a class="button button--ghost" href="#anleitung">Anleitungen</a>
-      <a class="button button--ghost" href="#technik">Techniküberblick</a>
+      <a class="button button--ghost" href="#anleitung">Anleitung</a>
+      <a class="button button--ghost" href="#technik">Technik kurz erklärt</a>
       <a class="button button--ghost" href="https://fb2l.do1ffe.de">FB2L-Livekarte</a>
     </div>
   </div>
@@ -27,416 +28,104 @@
 <section class="section article-layout">
   <article class="article-main reveal">
     <p class="lead">
-      FunkBrücke soll aus einem Windows-PC und einem Yaesu FT-991A eine einfache digitale
-      Funkstation machen: Text eingeben, Zielrufzeichen wählen, in die Warteschlange legen,
-      den automatischen Sende-/Empfangslauf beobachten und den Funkweg nachvollziehen.
+      Ziel ist eine Funksoftware, die sich für den Nutzer wie ein einfacher Chat
+      anfühlt, darunter aber Frequenz, Audio, PTT, Paketformat, Bestätigung,
+      Wiederholung und später Mesh-Weiterleitung sauber führt.
     </p>
     <div class="prototype-note" role="note" aria-label="Prototyp-Hinweis">
       <strong>Derzeit noch ein Prototyp</strong>
       <p>
-        FunkBrücke ist im Moment ein früher Entwicklungsstand. Die Software ist zum
-        Anschauen, Ausprobieren und für kontrollierte Tests gedacht, aber noch nicht
-        als fertiges Werkzeug für verlässlichen Alltagsbetrieb. Echte Aussendungen
-        gehören nur in beaufsichtigte Tests mit freier Frequenz, niedriger Leistung,
-        sauberem Audioaufbau und aktiver Sendeautomatik-Prüfung.
+        FunkBrücke ist zum Anschauen, Ausprobieren und für kontrollierte Tests gedacht.
+        Echte Aussendungen gehören nur in beaufsichtigte Versuche mit zulässiger
+        Frequenz, niedriger Leistung, sauberem Audioaufbau und freiem Kanal.
       </p>
     </div>
+    <h2>Was das Programm machen soll</h2>
     <p>
-      Die Software steuert einen Yaesu FT-991A per CAT, prüft vor dem Senden, ob die
-      Frequenz frei ist, und nutzt FB2 als neue Betriebsart für robuste Datenpakete. Im
-      fertigen Zustand soll der Nutzer nicht mit Protokolldetails arbeiten müssen: Er
-      wählt Empfänger, Nachricht und Betriebsprofil; FunkBrücke kümmert sich um Paketbau,
-      Moduswahl, Wiederholungen, Empfangsbestätigung und die passende Route.
-      Das FB-Monogramm kennzeichnet Programmfenster, EXE, Anleitung und diese Projektseite
-      als zusammengehörigen aktuellen Prototypstand.
+      FunkBrücke soll einen Yaesu FT-991A per CAT steuern und mit FB2 eine neue
+      digitale Betriebsart für Textpakete nutzen. Der Nutzer soll nicht mit
+      Protokolldetails arbeiten müssen. Er wählt Ziel und Nachricht; die Software
+      prüft den Audioweg, hört vor dem Senden auf belegte Signale, wählt den passenden
+      Modus und wartet nach dem Senden wieder auf Empfang.
+    </p>
+    <h2>Aktueller Stand</h2>
+    <p>
+      Die Hauptansicht ist als Chat aufgebaut. Sichtbar sind Nachrichten an das eigene
+      Rufzeichen und Rundrufe an `ALLE`. Fremde Pakete bleiben im Monitor sichtbar.
+      Die Sendefreigabe zeigt, ob Kanalprüfung, Audioeingang, Audioausgang,
+      FB2-Dauer-RX, PTT und Warteschlange bereit sind. Ohne vollständigen Audio-I/O-Pfad
+      bleibt ein FB2- oder FB2L-Auftrag in der Warteschlange.
     </p>
     <p>
-      Der aktuelle Prototyp zeigt den gewünschten Grundablauf bereits sichtbar:
-      Der Nutzer liest den Chatverlauf, wählt `ALLE` oder eine bekannte Gegenstation,
-      schreibt eine Nachricht und legt sie in die Warteschlange. Im Chat erscheinen
-      eigene Sendungen, empfangene Nachrichten an das eigene Rufzeichen und Rundrufe
-      an `ALLE`; fremde Ziele bleiben im separaten Monitor sichtbar. FunkBrücke
-      bereitet Empfang, Kanalprüfung, Horchfenster, Audioausgabe, Sendesicherheit
-      und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
-      werden RX, Kanalwache, Horchfenster und FB2-Dauer-RX direkt vorbereitet.
-      Der aktuelle Audio-I/O-Pfad prüft Audioeingang, Audioausgang, Dauer-RX,
-      TX-Samples, RX-Puffer und Decoder gemeinsam. Ein Live-RX-Puffer sammelt
-      laufende Audioblöcke und sucht darin nach gültigen FB2-Rahmen. Die
-      Sendefreigabe zeigt diesen Audioweg direkt als Prüfpunkt; Sendemotor,
-      Modus-Aushandlung und Mesh-Weiterleitung gelten erst als bereit, wenn der
-      Audio-I/O-Pfad freigegeben ist. Direkt vor FB2- oder FB2L-TX prüft der
-      Sendemotor diese Lage erneut; ohne Audioeingang, Audioausgang oder
-      FB2-Dauer-RX bleibt der Auftrag in der Warteschlange. Nach TX meldet die
-      Oberfläche, ob Audio-RX, Kanalprüfung, Horchfenster und Dauer-RX wieder
-      vollständig bereit sind.
-      Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus, die Quelle der
-      Entscheidung und den robusteren Rückfallmodus, bevor der
-      Sendemotor ihn abarbeitet. Der FB2-Live-Ereignismonitor zeigt kompakt,
-      was gerade passiert: Paketereignisse, Feldtestschritte, RX nach TX und
-      die aktuell gewählte Mesh-Modusentscheidung.
-      Vier Praxisanzeigen fassen den normalen QSO-Ablauf zusammen: Empfang, TX,
-      Antwort und Abschluss. So sieht der Nutzer, ob FunkBrücke gerade hört,
-      auf eine freie Frequenz wartet, sendebereit ist, auf OK oder Wiederholen
-      wartet oder den Austausch abgeschlossen hat.
-      Der passende FB2-Rahmen wird automatisch gesendet, sobald die Sicherheitslinie
-      erfüllt ist, und die Rückmeldung wird als OK oder Wiederholen eingeordnet.
-      Eine Rückmeldung zählt dabei nur, wenn Sequenz, Rufzeichen, Richtung, Modus
-      und Prüfsummen eindeutig zum vorherigen Test-TX passen.
-      Offene direkte QSOs werden auf Timeout geprüft und
-      eindeutige Wiederholungen laufen wieder über dieselbe Warteschlange, dabei aber
-      automatisch eine robustere Modusstufe zurück, soweit das Profil dies erlaubt. Wenn ein
-      Paket und ein OK technisch eindeutig zusammenpassen, schlägt die Oberfläche einen
-      FB2-Feldnachweis vor; gespeichert wird er erst nach bewusster Bestätigung, dass
-      der Versuch wirklich über Funk und beaufsichtigt lief. Der Dauer-RX wird nicht
-      durch eine reine CAT-PTT-Freigabe blockiert; erst ein laufender Sendepfad pausiert
-      den Empfang. Duplikate werden gezählt, über einen Rahmenmerker erkannt und protokolliert,
-      ohne Chat, Mesh oder Antwortlogik erneut auszulösen. Nach einer Aussendung stellt
-      FunkBrücke den Empfang automatisch wieder bereit. Audioquellen werden nicht
-      auf bestimmte Gerätenamen begrenzt: Jeder Windows-Eingang und jeder
-      Windows-Ausgang kann gewählt werden; bei untypischen Geräten weist FunkBrücke
-      nur darauf hin, dass der Audioweg vor echter HF bewusst geprüft werden muss.
-      Der direkte Audiopfad wird
-      lokal mit zwei Programminstanzen von
-      2-FSK robust bis OFDM schnell geprüft: Paket aus der Warteschlange, Empfang bei der
-      Gegenstation, automatisches OK, Rückweg-Audio und Abschluss beim ursprünglichen
-      Sender. Komprimierte Nutzdaten werden beim Senden und Empfangen verständlich
-      bilanziert, damit ein Testteam sieht, ob ein Rahmen unkomprimiert war oder durch
-      Brotli mit weniger Funkdaten übertragen wurde. Das Hauptfenster wird bewusst
-      schlank gehalten: Chat, Zielauswahl und TX-Eingabe bekommen die volle Breite,
-      während der Wasserfall nur noch als kompakter Kontrollbereich sichtbar ist.
-      Gerätebedienung, Automatik, Monitor, weitere Fenster, Einstellungen und
-      Über-Informationen öffnen in eigenen Fenstern. Schwere Statusketten, CAT-Portscan
-      und Audiogerätesuche laufen erst nach dem sichtbaren Fensterstart, damit die
-      Oberfläche früh bedienbar bleibt. Das Automatikfenster bündelt die Arbeitspunkte
-      für RX, Dauer-RX, Einreihen, Automatikprüfung, Sendefreigabe, Zwei-Stationen-Live
-      und Mesh-Route. Vor dem ersten echten Paket bewertet `Start prüfen` Rufzeichen/Ziel,
-      Frequenz, Betriebsart, Leistung, Audio-RX, FB2-Auto-RX, Audio-TX, Kanalwache,
-      CAT/PTT, echte CAT-PTT, Sendesicherheit, Warteschlange und Abbruchregel gemeinsam.
-      Die Anzeige unterscheidet dabei Empfang bereit, Trockenlauf prüfbar und
-      automatisches Senden bereit. Ohne bewusste CAT-PTT-Freigabe kann der Ablauf
-      trocken geprüft werden, aber es startet keine HF-Aussendung. Dieselbe
-      Praxisstartbewertung wird auch vor TX, in der Fehlerhilfe, in der
-      Sendeautomatik und im Feldtestprotokoll verwendet. Dadurch bleibt die
-      Sicherheitslinie gleich: Wenn nur Empfang oder Trockenlauf bereit ist, bleibt
-      ein FB2-Auftrag in der Warteschlange, bis die echte CAT-PTT-Freigabe und alle
-      Pflichtpunkte bewusst erfüllt sind. Für den echten Zwei-Stationen-Start prüft
-      FunkBrücke zusätzlich gleiche Version, Frequenz, Profil, Modus, RX beider
-      Stationen, Kanalwache, genau einen Warteschlangenauftrag, Auto-OK und dass keine
-      manuelle PTT benutzt wird. Dieser Schutz ist Absicht: Der Nutzer legt nur in die
-      Warteschlange, die Software übernimmt Senden und Empfangen nach bestandener Prüfung.
-      Der FT-991A-Hardwarepfad ist als harte Startkette aufgebaut und bündelt CAT, DATA-Modus,
-      Leistung, PTT-Aus, Not-Aus, frei gewählte Audio-RX/TX-Geräte mit
-      Prüfhinweis bei untypischem Audioweg, freie Frequenz, Horchfenster,
-      CAT-PTT und Protokollpflicht. Das Feldtestprotokoll nennt dazu Praxisstart,
-      Zwei-Stationen-Praxisstart, echten FT-991A-Hardwarepfad, Auto-QSO und die
-      Nachbar-Feldnachweise, die später automatische Mesh-Weiterleitung absichern.
-      Der Zwei-Stationen-Automatikablauf bewertet dabei nicht nur einzelne Knöpfe,
-      sondern die ganze Betriebslage: Rollen, RX/Kanalwache, Warteschlange, Modus,
-      automatische RX/TX-Rückkehr, Auto-OK und Nachweis.
-      Der FB2-Praxisblock fasst daraus eine gemeinsame Freigabe für Versuchsdaten,
-      Hardwarepfad, Praxisstart, Sendeautomatik und QSO-Abschluss zusammen. Die
-      Hardware-TX/RX-Abnahme prüft anschließend, ob Paket, Gegenstations-RX,
-      OK/Wiederholen-Rückmeldung, automatische PTT-Führung und RX-Rückkehr zusammenpassen.
-      Erst aus einer bestandenen Abnahme schlägt FunkBrücke einen speicherbaren
-      Nachbar-Feldnachweis vor. Gespeichert wird er nur, wenn er wirklich mesh-tauglich
-      ist; danach kann FunkBrücke daraus wieder einen bidirektionalen Nachbarlink für
-      Karte, Modusentscheidung und Mesh-Route ableiten.
-    </p>
-    <p>
-      Zusätzlich sammelt FunkBrücke Stationsprofile für das Mesh: Rufzeichen, Name,
-      Locator, QTH, TRX, Antenne und Zusatzangaben können als kurze Profilpakete
-      ausgetauscht werden. Eine lokale Mesh-Karte zeigt bekannte Stationen anhand ihres
-      Locators, zeichnet Nachbar- und Routenlinien mit Modus und Qualität und kann eine
-      angeklickte Station direkt als Ziel übernehmen. Sechsstellige Locator werden als
-      Gebiet dargestellt; acht- und zehnstellige Locator erscheinen genauer als Punkt.
-      Alte Stations- und Linkinformationen bleiben für die Karte bis zu 24 Stunden als
-      Verlauf sichtbar, werden aber nicht mehr als aktuelle Route verwendet.
-    </p>
-    <p>
-      Für den öffentlichen Liveblick kann FunkBrücke die eigene Station und frische
-      direkte Mesh-Nachbarn zusätzlich an die FB2L-Webkarte senden. Dort erscheinen
-      aktive Stationen mit Locator, Profilangaben, FunkBrücke-Version, Linkmodus und
-      Linkwerten auf einer interaktiven Leaflet-Karte. Vor dem Senden prüft die App,
-      ob eigene Station, Locator, Version, Frequenz, Profil, TTL, Linkdaten und
-      Nachbarprofile zusammenpassen. Wenn keine frischen Heartbeats
-      mehr eintreffen, verschwinden die Verbindungen per TTL; die Stationen bleiben
-      noch 60 Minuten dunkelgrau als inaktiv sichtbar. Auch reine Nachbarprofile ohne
-      eigenen Heartbeat bleiben so kurz im Lagebild erhalten, ohne alte Links weiter
-      vorzutäuschen. Die Popups zeigen zusätzlich Quelle, Rest-TTL, gültig-bis und
-      grauer-Nachlauf-bis, damit aktive Heartbeats und reine Nachbarprofile klar
-      unterscheidbar bleiben. In der
-      App kann dieser Livekarten-Heartbeat im Mesh-Detailfenster bewusst geprüft werden;
-      der Status nennt dann Zielserver, Linkanzahl und gemeldete Nachbar-Modi. Der
-      Heartbeat enthält zusätzlich die aktuelle App-Lage der eigenen Station: Audio-RX,
-      FB2-Dauer-RX, TX, PTT, Anzahl der Warteschlangenaufträge und einen kurzen
-      Betriebsstatus. Die Livekarte kann dadurch nicht nur zeigen, wo eine Station ist,
-      sondern auch ob sie gerade hört, sendet, PTT führt oder wartend im Mesh steht. Der
-      FB2L-Server nimmt nur kompakte Heartbeats an und begrenzt zu große oder zu häufige
-      Meldungen, damit die öffentliche Karte ruhig bleibt.
-    </p>
-    <p>
-      Für Tests kann der Ablauf lokal mit zwei Programminstanzen ohne HF geprobt werden.
-      Der Empfang unterscheidet FB1-Live-RX und FB2-Auto-RX, prüft FB2-Rahmen mit Marker,
-      Paketgrenze und CRCs und zeigt, ob ein Rahmen Nutzdaten, OK, Wiederholen, ein
-      eigenes Echo, ein Duplikat, ein falsches Ziel oder beschädigt ist. Fremde FB2-Ziele werden bereits
-      als Mesh-Kandidaten mit Route und nächstem Hop erkannt. Eine Freigabekette nennt,
-      ob ein gespeicherter Feldnachweis für genau diese Nachbarstation, Bedienfreigabe,
-      Kanalprüfung, Horchfenster, Sendesicherheit oder freie TX-Lage noch fehlen.
-      Wenn diese Kette passt und die FB2-Mesh-Automatik bewusst freigegeben ist, reiht
-      FunkBrücke den nächsten Hop als FB2-Mesh-Auftrag profilabhängig in die Warteschlange ein.
-      Dieser Warteschlangeneintrag trägt die Feldnachweis-ID und die belegte
-      Nachbarverbindung. Fehlt diese Referenz, gilt der Mesh-Auftrag nicht als praktisch
-      freigegeben, auch wenn eine theoretische Route bekannt ist.
-      Die Mesh-Praxisfreigabe bündelt dafür Route, echten Nachbarlink, Bedienfreigabe,
-      Kanalwache, Sendesicherheit, freie TX-Lage und Audio-I/O zu einer klaren
-      Einreihentscheidung. Reine Routen- und Feldnachweise reichen ohne
-      RX/TX-Bereitschaft nicht für automatische Mesh-Weiterleitung.
-      Diese Automatikgrenze ist im Live-Status sichtbar: SSB schmal bleibt schmalbandig,
-      FM normal kann bis OFDM normal gehen, FM breit/Labor bis OFDM schnell.
-      Die Nachbarn melden ihre erreichbare Maximalgeschwindigkeit und die verwendete
-      FunkBrücke-Softwareversion in Kurzpaketen. Diese Baken bleiben in 2-FSK robust
-      und gelten 300 Sekunden als frisch; schnellere Modi werden danach sparsam pro
-      Nachbar bestätigt. FunkBrücke korrigiert den genutzten Modus laufend eine Stufe
-      nach oben oder unten, wenn Zuverlässigkeit, Paketverlust oder ACK-Zeit das nahelegen.
-      Modusprobe und Modusantwort werden als eigene Steuerpakete geprüft: Sie laufen in
-      2-FSK robust, müssen zum gemeldeten Nutzdatenmodus passen und dürfen keine
-      schnelleren Modi lernen, als das gewählte Profil erlaubt.
-      Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
-      Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
-      Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
-      und zusätzlich als Mesh-Audio-Abnahme mit automatisch aus der Mesh-Bewertung
-      gewähltem Übertragungsmodus, Relais, Zielzustellung und Rückweg-ACK. Für den
-      Direktpfad werden auch leicht verrauschte Audiosignale bis OFDM schnell geprüft; die
-      automatische Mesh-Aussendung bleibt an Profil, Feldnachweis, Kanalprüfung,
-      Horchfenster und Sendesicherheit gebunden.
-      Der Live-RX-Andockpunkt zeigt dabei, ob ein Rahmen direktes QSO, Mesh-Mithören,
-      Weiterleitung, lokale Zustellung, Link-Bake oder eigenes Echo ist. Link-Baken
-      tragen Nachbarn, Maximalmodus und Softwareversion und werden bewusst robust
-      ausgesendet. Aktiv
-      verarbeitet wird ein Mesh-Paket nur durch die Station, die als nächster Hop
-      adressiert ist; alle anderen Stationen beobachten den Rahmen nur.
-      Der echte Ausgangskorb zeigt, ob ein Paket auf den Rückweg-ACK wartet, ob ein
-      ACK-Timeout fällig ist, ob eine Ersatzroute bereitsteht oder ob ein Fehlerstatus
-      nötig ist. Harte Weiterleitungsfehler wie Hop-Limit, Schleife oder fehlende
-      Zielroute werden als FB2-Mesh-Fehlerantwort zurück zum Ursprung vorbereitet.
-      Fällige Wiederholungen werden wieder als FB2-Mesh-Auftrag in die normale
-      Warteschlange gelegt: zuerst erneut über den Primärweg, danach bei Bedarf über
-      eine unabhängige Ersatzroute. Ohne vollständige Hin- und Rückweg-Feldnachweise
-      sperrt FunkBrücke automatische Wiederholungen und Ersatzrouten; dann wird die
-      Route angezeigt, aber nicht selbstständig erneut gesendet. Der
-      FB2-Mesh-Live-Ausgangskorb beginnt deshalb mit einem normalen Bedienhinweis:
-      Entweder wartet die Automatik weiter, sie bleibt bis zu vollständigen
-      Feldnachweisen stehen, sie nutzt eine Ersatzroute oder sie stoppt den Auftrag
-      mit Fehlerantwort. Zusätzlich nennt der Live-Status, ob ein bidirektionaler
-      Nachbar-Feldnachweis für den nächsten Hop vorhanden ist. Ein echter,
-      vollständiger und testleiterbestätigter Direktnachweis zwischen zwei
-      Nachbarstationen gilt dabei als bidirektionaler Linknachweis für diese direkte
-      Verbindung.
-    </p>
-    <p>
-      Das Mesh-Prinzip ist der Kern für den späteren Ausbau: Jede Station soll nicht nur
-      eigene Nachrichten senden und empfangen, sondern bei Bedarf auch als Weiterleiter
-      dienen. Stationen tauschen sparsam aus, welche Nachbarn erreichbar sind, welche
-      Übertragungsgeschwindigkeit möglich ist und welcher Weg für ein Paket schnell und
-      zuverlässig erscheint. Dadurch kann eine Nachricht über mehrere Stationen bis zum
-      Ziel wandern, auch wenn Absender und Empfänger sich nicht direkt hören.
+      Das Mesh ist vorbereitet: Stationen können Nachbarn lernen, Routen bewerten und
+      Pakete später automatisch weiterleiten. Automatische Mesh-Weiterleitung braucht
+      aber nicht nur eine Route, sondern auch Feldnachweis, freie Frequenz,
+      Sendesicherheit und bereiten Audio-I/O-Pfad.
     </p>
   </article>
   <aside class="fact-panel reveal">
-    <h2>Aktueller Stand</h2>
+    <h2>Kurzdaten</h2>
     <dl class="fact-list">
       <div><dt>Version</dt><dd>{{ funkbruecke_version.version }}</dd></div>
       {% if funkbruecke_version.datum %}
-      <div><dt>Veröffentlicht</dt><dd>{{ funkbruecke_version.datum }}</dd></div>
+      <div><dt>Stand</dt><dd>{{ funkbruecke_version.datum }}</dd></div>
       {% endif %}
       <div><dt>Plattform</dt><dd>Windows x64</dd></div>
       <div><dt>Funkgerät</dt><dd>Yaesu FT-991A</dd></div>
-      <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
-      <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
-      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt vorab geprüfte Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus, Linkwerten, Quelle, Rest-TTL und App-Lage.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster, automatische TX-Warteschlange, separater Monitor, direkte FB2-QSOs, A-D-Mesh-Test über B und C, adaptive Moduswahl und FB2L-Livekarte. Echte Aussendungen bleiben beaufsichtigte Prototypversuche.</dd></div>
+      <div><dt>Betriebsart</dt><dd>FB2-Prototyp</dd></div>
+      <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a></dd></div>
     </dl>
   </aside>
 </section>
 
 <section class="section content-section">
   <div class="section__heading reveal">
-    <p class="eyebrow">Sinn und Zweck</p>
-    <h2>Was FunkBrücke machen soll.</h2>
-  </div>
-  <article class="article-main reveal">
-    <p>
-      FunkBrücke ist als praktische Datenbrücke für den Amateurfunk gedacht. Statt Sprache
-      oder Morsezeichen überträgt die Station strukturierte digitale Pakete: kurze
-      Textmeldungen, Statusinformationen, Quittungen, später auch vorbereitete Formulare
-      und kleine Dateien. Für den Bediener soll sich das ähnlich klar anfühlen wie ein
-      einfacher Nachrichtenclient, technisch läuft darunter aber Funkbetrieb mit
-      Bandbreiten, Pegeln, Sendezeiten, Rufzeichen, Frequenzdisziplin und Empfangsqualität.
-    </p>
-    <p>
-      Das Programm soll besonders dort helfen, wo direkte Internetverbindungen fehlen
-      oder bewusst nicht genutzt werden: Übungen, Notfunk, Feldbetrieb, OV-Versuche,
-      portable Stationen und Tests neuer digitaler Betriebsarten. Ein PC übernimmt die
-      Benutzeroberfläche, der FT-991A stellt HF, CAT-Steuerung und Audioweg bereit. Die
-      Software soll dabei lesbar anzeigen, warum eine Aussendung erlaubt, vorbereitet oder
-      gesperrt ist.
-    </p>
-    <p>
-      Im aktuellen Prototyp stehen deshalb nicht Protokollbegriffe im Vordergrund,
-      sondern der Gesprächsfluss: Chat lesen, Ziel wählen, Text schreiben, in die Warteschlange legen,
-      Empfang laufen lassen und den Status beobachten. FunkBrücke zeigt Sendefreigabe,
-      Antwortlage, Wiederholungshinweis, RX-Zuordnung, geplanten Sendemodus und die wichtigsten
-      Sicherheitsgründe. Im Hauptfenster stehen Chat, Zielauswahl, TX-Eingabe,
-      Sendefreigabe und knapper Betriebsstatus direkt im Blick. Die technische Diagnose bleibt
-      erreichbar, soll aber den normalen Ablauf nicht überladen.
-    </p>
-    <p>
-      Im fertigen Zustand soll FunkBrücke den gesamten Ablauf eines digitalen QSOs führen:
-      Empfänger auswählen, freie Frequenz prüfen, FB2-Rahmen erzeugen, passenden Modus
-      wählen, Paket automatisch senden, Empfangsbestätigung auswerten, bei Bedarf eindeutig
-      wiederholen und den Verlauf im Protokoll ablegen. Wenn der direkte Weg nicht
-      funktioniert, soll das Mesh automatisch eine geeignete Zwischenstation wählen.
-    </p>
-  </article>
-</section>
-
-<section class="section content-section">
-  <div class="section__heading reveal">
     <p class="eyebrow">Ablauf</p>
-    <h2>So soll eine Nachricht über Funk laufen.</h2>
+    <h2>So ist der normale Bedienweg gedacht.</h2>
   </div>
   <div class="download-card-grid">
     <article class="download-card reveal">
       <span>1</span>
-      <h3>Station vorbereiten</h3>
-      <p>
-        Rufzeichen, frei wählbarer Audioein- und Audioausgang, CAT-Port,
-        Frequenzprofil und Betriebsart werden eingestellt. Der Yaesu FT-991A soll über
-        CAT gesteuert werden, damit Frequenz, Betriebsart und PTT-Zustand
-        nachvollziehbar sind.
-      </p>
+      <h3>Station einrichten</h3>
+      <p>Rufzeichen, Locator, CAT-Port, Audioeingang, Audioausgang, Frequenzprofil und Sicherheit prüfen.</p>
     </article>
     <article class="download-card reveal">
       <span>2</span>
-      <h3>Nachricht erfassen</h3>
-      <p>
-        Der Nutzer schreibt eine Nachricht, wählt das Zielrufzeichen und entscheidet, ob
-        direkt oder über das Mesh gesendet werden soll. FunkBrücke erzeugt daraus einen
-        prüfbaren Datenrahmen mit Sequenz, Absender, Empfänger und Prüfsumme.
-      </p>
+      <h3>Empfang starten</h3>
+      <p>Audio-RX und FB2-Dauer-RX laufen lassen, damit FunkBrücke gültige Rahmen erkennen kann.</p>
     </article>
     <article class="download-card reveal">
       <span>3</span>
-      <h3>Kanal prüfen</h3>
-      <p>
-        Vor einer Aussendung soll die Software auf bekannte FB-Signale hören und die
-        Sendefreigabe sichtbar bewerten. Der RX-Pegel allein entscheidet nicht; maßgeblich
-        ist, ob ein gültiger Rahmen erkannt wurde.
-      </p>
+      <h3>Nachricht einreihen</h3>
+      <p>Zielrufzeichen oder `ALLE` wählen, Text schreiben und in die Warteschlange legen.</p>
     </article>
     <article class="download-card reveal">
       <span>4</span>
-      <h3>Passenden Modus wählen</h3>
-      <p>
-        FB2 soll je nach Kanal und Profil zwischen robusten schmalbandigen Modi und
-        schnelleren Varianten wählen. Auf SSB stehen schmale Modi im Vordergrund; auf FM
-        können später breitere und schnellere Modi sinnvoll sein.
-      </p>
+      <h3>Automatik arbeiten lassen</h3>
+      <p>FunkBrücke prüft Kanal, Audio-I/O, PTT und Modus und sendet erst danach.</p>
     </article>
     <article class="download-card reveal">
       <span>5</span>
-      <h3>Automatisch senden und bestätigen</h3>
-      <p>
-        Das Paket wird aus der Warteschlange automatisch nach freiem Kanal gesendet.
-        Die Gegenstation bestätigt den Empfang mit OK oder fordert mit Wiederholen
-        eine Wiederholung an. So wird nicht nur gesendet, sondern auch geprüft,
-        ob die Nachricht wirklich angekommen ist.
-      </p>
+      <h3>Antwort abwarten</h3>
+      <p>Die Gegenstation bestätigt mit OK oder fordert eine Wiederholung an.</p>
     </article>
     <article class="download-card reveal">
       <span>6</span>
-      <h3>Bei Bedarf weiterleiten</h3>
-      <p>
-        Im Mesh soll jede Station auch als Relais dienen können. Nachbarstationen tauschen
-        kurze Erreichbarkeitsinformationen aus; daraus berechnet FunkBrücke den möglichst
-        schnellen und zuverlässigen Weg bis zum Ziel.
-      </p>
+      <h3>Mesh nutzen</h3>
+      <p>Wenn eine Route bekannt und freigegeben ist, kann später eine Nachbarstation weiterleiten.</p>
     </article>
   </div>
 </section>
 
-<section class="section article-layout">
-  <article class="article-main reveal">
-    <p class="eyebrow">Aktueller Prototyp</p>
-    <h2>Was heute schon sichtbar ist.</h2>
-    <p>
-      Die aktuelle Version zeigt FunkBrücke als Nachrichtenprogramm für Funkbetrieb:
-      oben die knappe Funklage, darunter ein schmaler Wasserfall, dann der gemischte
-      RX/TX-Verlauf wie in einem Chat. Unten wählt der Nutzer `ALLE` oder eine bekannte
-      Gegenstation, schreibt den Text und legt ihn in die Warteschlange. Das eigentliche
-      Senden und Empfangen soll automatisch laufen.
-    </p>
-    <p>
-      Im Chat erscheinen nur Nachrichten an das eigene Rufzeichen oder an `ALLE`.
-      Ein separates Monitorfenster zeigt zusätzlich alle empfangenen FB2-Daten, auch
-      wenn sie für andere Stationen bestimmt sind. Geräte, Automatik, Monitor,
-      Wasserfall, Mesh-Karte, Einstellungen und Über-Informationen öffnen in eigenen
-      Fenstern, damit das Hauptfenster nicht mehr mit Diagnoseblöcken überladen wird.
-    </p>
-    <p>
-      Der wichtigste aktuelle Testpfad ist das erste praktische FB2-QSO zwischen zwei
-      Stationen. FunkBrücke prüft dafür Version, Frequenz, Profil, Empfang, freie
-      Frequenz, Warteschlange, Sendemodus, Audio-TX, automatische PTT-Führung,
-      Rückkehr auf RX und die Antwort der Gegenstation. Eine eigene TX/RX-Lage führt
-      Hören, Kanalprüfung, Senden, Rückkehr auf Empfang, OK, Wiederholen und Timeout
-      zusammen. Der produktive Sendemotor wird als kompletter Ablauf bewertet:
-      Warteschlangenauftrag, Vor-TX-Sperren, Audio-TX, PTT-Führung, RX-Rückkehr,
-      Antwort und Zustandsmaschine müssen gemeinsam passen. Echte CAT-PTT bleibt
-      bewusst freigabepflichtig; der Trockenlauf und lokale Audiotests senden nicht
-      unbeaufsichtigt auf HF.
-    </p>
-    <p>
-      Das Mesh ist als automatischer Weiterleitungsweg vorbereitet: Jede Station kann
-      Pakete für andere Stationen weiterreichen, wenn ein echter Nachbarlink bekannt
-      ist und die Sicherheitsprüfung passt. Baken laufen sparsam in 2-FSK robust,
-      Nutzpakete wählen danach den schnellsten passenden Modus, aktuell bis 16-MFSK im
-      abgesicherten Kernpfad. Die Aushandlung wird dabei mit dem folgenden Nutzpaket
-      gekoppelt: Bake, Probe, Antwort, Version und Nutzmodus müssen zum Audio-Sendemotor
-      passen. Der Prototyp prüft direkte QSOs, den A-D-Relaisfall über B und C mit
-      Rückweg-ACK, Hop-Warteschlangen, Relaisbetrieb und Routen bis sechs Hops lokal
-      in der Audiokette.
-    </p>
-  </article>
-  <aside class="fact-panel reveal">
-    <h2>Geplantes Zielbild</h2>
-    <ul class="check-list">
-      <li>Nachrichten schreiben, Ziel wählen und den Rest über Warteschlange und Automatik laufen lassen.</li>
-      <li>FB2 als neue digitale Betriebsart für robuste Textpakete und spätere Dateipakete nutzen.</li>
-      <li>Vor jeder Aussendung Kanal, PTT, Audio, Frequenzprofil und Sendesicherheit prüfen.</li>
-      <li>Empfangene Pakete verständlich als Nachricht, OK, Wiederholen oder Problem anzeigen.</li>
-      <li>Bei fehlender Antwort eine eindeutige Wiederholung vorbereiten, statt blind erneut zu senden.</li>
-      <li>Vor echten Funkversuchen denselben Ablauf lokal mit zwei Programmfenstern testen.</li>
-      <li>Mesh-Routen nutzen, damit Stationen bei Freigabe profilabhängig weiterleiten, Zustellbestätigungen und Fehlerantworten zurückführen und bei Timeouts eine Ersatzroute prüfen können.</li>
-      <li>Dokumentation, Screenshots und Downloads passend zum aktuellen Prototypstand bereitstellen.</li>
-    </ul>
-  </aside>
-</section>
-
 <section class="section funkbruecke-showcase">
   <div class="funkbruecke-showcase__text reveal">
-    <p class="eyebrow">Programmoberfläche</p>
-    <h2>Alles Wichtige bleibt im Blick.</h2>
+    <p class="eyebrow">Oberfläche</p>
+    <h2>Chat zuerst, Details in eigene Fenster.</h2>
     <p>
-      Die Oberfläche ist bewusst aufgeräumt aufgebaut. Das Hauptfenster zeigt die
-      laufende Funklage mit Frequenz, Profil, schmalem Wasserfall, Chatverlauf,
-      Zielauswahl, TX-Eingabe und knapper Automatiklage.
-      Alles, was viel Platz braucht, öffnet in eigenen Fenstern: Gerätebedienung für
-      CAT, Audio und Sicherheit, Automatikübersicht für Warteschlange, RX/Kanalwache,
-      FB2-Direkt und Mesh-Live, Monitor für alle RX/TX-Daten sowie Betriebsdetails für Mesh, TX, Dateien, Makros,
-      Tests und Protokoll. Die wichtigsten Einstellungen liegen oben in der Menüzeile; im
-      Haupt- und Automatikfenster führen mit Hauptleiste, Start prüfen mit Praxisstartstufe,
-      Sicherheitslinie, Automatik prüfen, FB2-Live-Ereignisse und die FB2-Karte durch Einreihen, Prüfung,
-      Senden, Empfangen und Antworten.
+      Das Hauptfenster zeigt Frequenz, Profil, kurzen Wasserfall, Chatverlauf,
+      Zielauswahl, Texteingabe und Sendefreigabe. Geräte, Automatik, Monitor,
+      Wasserfall, Mesh-Karte und Einstellungen öffnen getrennt, damit der normale
+      Ablauf übersichtlich bleibt.
     </p>
   </div>
   <div class="funkbruecke-showcase__media reveal">
@@ -446,21 +135,21 @@
 
 <section class="section funkbruecke-screenshots">
   <div class="section__heading reveal">
-    <p class="eyebrow">Aktuelle Ansichten</p>
-    <h2>Der Prototyp zeigt Chat, Warteschlange und Sendeautomatik.</h2>
+    <p class="eyebrow">Ansichten</p>
+    <h2>Die wichtigsten Fenster im Überblick.</h2>
   </div>
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Kopfstatus, schmalem Wasserfall, Chatbetrieb, Zielauswahl, sichtbarem TX-Modus und TX-Eingabe. Geräte-, Automatik-, Monitor- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
+      <figcaption>Hauptfenster mit Chat, Zielauswahl, TX-Eingabe, Sendefreigabe und kurzem Wasserfall.</figcaption>
     </figure>
     <figure class="reveal">
-      <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
-      <figcaption>Normale Nachrichteneingabe: Chat lesen, Ziel `ALLE` oder Gegenstation wählen, Text schreiben und einreihen. Der separate Monitor zeigt zusätzlich alle RX/TX-Daten, auch fremde Ziele.</figcaption>
+      <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="FB2-Test-TX in FunkBrücke">
+      <figcaption>FB2-Testbereich für kontrollierte lokale und beaufsichtigte Versuche.</figcaption>
     </figure>
     <figure class="reveal">
-      <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Markierte Mesh-Karte mit Stationen, Locator, Linkmodus und Stationsliste">
-      <figcaption>Mesh-Karte: Stationen erscheinen anhand ihres Locators, Linien zeigen Modus und Qualität, das Profil-Popup nennt Name, QTH, TRX und Antenne, und die Stationssuche filtert Rufzeichen, Locator und Standort. Eine ausgewählte Station kann direkt als Ziel übernommen werden.</figcaption>
+      <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Mesh-Karte mit Stationen und Verbindungen">
+      <figcaption>Mesh-Karte mit Stationen, Locator, Nachbarlinien und Profilinformationen.</figcaption>
     </figure>
   </div>
 </section>
@@ -469,15 +158,10 @@
   <div class="download-panel download-panel--funkbruecke reveal">
     <div>
       <p class="eyebrow">Download</p>
-      <h2>Aktuelle Windows-Version herunterladen.</h2>
+      <h2>Aktuelle Windows-Version.</h2>
       <p>
-        Die EXE im Downloadbereich ist immer die neueste veröffentlichte Version.
-        Ältere Dateien liegen im Archivordner und werden auf der Downloadseite nicht
-        mehr als aktuelle Ausgabe angezeigt.
-      </p>
-      <p class="download-prototype-note">
-        Bitte als Prototyp behandeln: nutzbar für erste Tests, aber noch mit
-        bewusst eingeschränktem Funktionsumfang.
+        Die EXE im Downloadbereich ist die aktuelle Prototyp-Version. Ältere Dateien
+        werden archiviert und nicht als aktuelle Ausgabe angezeigt.
       </p>
       {% if funkbruecke_haupt_download and funkbruecke_haupt_download.verfügbar %}
       <dl class="download-meta download-meta--compact">
@@ -500,7 +184,7 @@
 <section class="section content-section" id="anleitung">
   <div class="section__heading reveal">
     <p class="eyebrow">Dateien</p>
-    <h2>Anleitungen, Frequenzprofile und technische Dokumente.</h2>
+    <h2>Anleitung und technische Unterlagen.</h2>
   </div>
   <div class="download-card-grid">
     {% for dokument in funkbruecke_dokumente %}
@@ -524,38 +208,24 @@
 
 <section class="feature feature--funkbruecke" id="technik">
   <div class="feature__content reveal">
-    <p class="eyebrow">FB2 und Mesh</p>
-    <h2>Die Stationen wählen den Funkweg gemeinsam.</h2>
+    <p class="eyebrow">Technik kurz erklärt</p>
+    <h2>FB2, Mesh und FB2L.</h2>
     <p>
-      FB2 ist als flexible digitale Betriebsart geplant. Schmale Funkwege nutzen robuste
-      Modi wie 2-FSK, 4-FSK und 8-FSK; breitere FM-Profile können zusätzlich 16/32/64-MFSK
-      und OFDM verwenden. Die Stationen tauschen im Mesh kurze Informationen über
-      erreichbare Nachbarn, Softwareversion und maximal nutzbare Geschwindigkeit aus.
-      Daraus wählt FunkBrücke pro Paket einen möglichst schnellen, aber weiterhin
-      zuverlässigen Modus.
+      FB2 ist die neue digitale Betriebsart im Projekt. Robuste Modi wie 2-FSK,
+      4-FSK und 8-FSK sind für schwächere oder schmalere Verbindungen gedacht.
+      Schnellere MFSK- und OFDM-Modi sind für breitere Profile und spätere Tests
+      vorgesehen.
     </p>
     <p>
-      Baken und Modusproben bleiben sparsam und robust. Sie laufen in 2-FSK, damit auch
-      schwache Verbindungen eine Chance haben. Erst nach freiem Kanal, erkannter Bake,
-      Modusprobe und bestätigter Antwort werden Nutzpakete schneller gesendet.
-      Verschlechtert sich der Funkweg, geht die Automatik wieder eine Stufe zurück;
-      wird die Verbindung besser, kann sie eine Stufe höher gehen.
-    </p>
-    <p>
-      Das Mesh arbeitet adressiert: Nur die Station, die als nächster Hop genannt ist,
-      verarbeitet und sendet ein Paket weiter. Alle anderen Stationen können mithören
-      und im Monitor anzeigen, greifen aber nicht in den Auftrag ein. Am Ziel entsteht
-      eine Zustellbestätigung, die über den Rückweg wieder zum Ursprung läuft.
+      Im Mesh melden Stationen sparsam, welche Nachbarn sie erreichen. Daraus kann
+      FunkBrücke später den passenden Weg für ein Paket wählen. FB2L ist die
+      öffentliche Livekarte für Stationen und Nachbarlinks.
     </p>
     <ul class="check-list">
-      <li>Vor jeder Aussendung wird auf belegte Frequenzen und bekannte FB-Signale geachtet.</li>
-      <li>Der RX-Pegel allein entscheidet nicht; ein gültiger Rahmen ist maßgeblich.</li>
-      <li>Schmalbandprofile bleiben bei 2-FSK, 4-FSK, 8-FSK und robustem OFDM innerhalb der gewählten Bandbreite.</li>
-      <li>Breitbandprofile dürfen zusätzlich schnellere MFSK- und OFDM-Modi nutzen.</li>
-      <li>Jedes TX-Paket zeigt den geplanten Modus, bevor es gesendet wird.</li>
+      <li>Vor TX wird auf gültige FB-Signale gehört; der RX-Pegel allein entscheidet nicht.</li>
+      <li>Jedes TX-Paket zeigt den geplanten Modus.</li>
       <li>Nach einer Aussendung geht die Station automatisch wieder auf Empfang.</li>
-      <li>Mesh-Routen sind auf sechs Hops begrenzt und brauchen bestätigte Nachbarwege.</li>
-      <li>Die FB2L-Karte zeigt Stationen, Nachbarn, Linkmodi und inaktive Stationen als Lagebild.</li>
+      <li>Mesh-Routen brauchen bestätigte Nachbarwege und einen bereiten Audio-I/O-Pfad.</li>
     </ul>
   </div>
   <div class="feature__media reveal">
