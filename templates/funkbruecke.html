@@ -94,7 +94,7 @@
       Brotli mit weniger Funkdaten übertragen wurde. Das Hauptfenster wird bewusst
       schlank gehalten: Chat, Zielauswahl und TX-Eingabe bekommen die volle Breite,
       während der Wasserfall nur noch als kompakter Kontrollbereich gedacht ist.
-      Gerätebedienung, Automatik, Monitor, Details, Einstellungen und
+      Gerätebedienung, Automatik, Monitor, weitere Fenster, Einstellungen und
       Über-Informationen öffnen in eigenen Fenstern. Schwere Statusketten, CAT-Portscan
       und Audiogerätesuche laufen erst nach dem sichtbaren Fensterstart, damit die
       Oberfläche früh bedienbar bleibt. Das Automatikfenster bündelt die Arbeitspunkte
@@ -169,10 +169,10 @@
       Diese Automatikgrenze ist im Live-Status sichtbar: SSB schmal bleibt schmalbandig,
       FM normal kann bis OFDM normal gehen, FM breit/Labor bis OFDM schnell.
       Die Nachbarn melden ihre erreichbare Maximalgeschwindigkeit und die verwendete
-      FunkBrücke-Softwareversion in Kurzpaketen. Diese Baken bleiben in 2-FSK robust;
-      schnellere Modi werden danach sparsam pro Nachbar bestätigt. FunkBrücke korrigiert
-      den genutzten Modus laufend eine Stufe nach oben oder unten, wenn Zuverlässigkeit,
-      Paketverlust oder ACK-Zeit das nahelegen.
+      FunkBrücke-Softwareversion in Kurzpaketen. Diese Baken bleiben in 2-FSK robust
+      und gelten 300 Sekunden als frisch; schnellere Modi werden danach sparsam pro
+      Nachbar bestätigt. FunkBrücke korrigiert den genutzten Modus laufend eine Stufe
+      nach oben oder unten, wenn Zuverlässigkeit, Paketverlust oder ACK-Zeit das nahelegen.
       Am Ziel erzeugt das Mesh eine Ende-zu-Ende-Zustellbestätigung, die als eigenes
       Rückweg-Paket über passende Nachbarn bis zum Ursprung zurückläuft.
       Der aktuelle Stand prüft diesen Ablauf lokal als 6-Hop-Praxisrundlauf
@@ -226,7 +226,7 @@
       <div><dt>Betriebsart</dt><dd>FB2 senden/empfangen mit Modusleiter bis OFDM schnell</dd></div>
       <div><dt>Funkweg</dt><dd>SSB schmalbandig, FM für breitere Modi</dd></div>
       <div><dt>Livekarte</dt><dd><a href="https://fb2l.do1ffe.de">fb2l.do1ffe.de</a> zeigt aktive Heartbeats mit eigener Station, direkten Mesh-Nachbarn, Modus und Linkwerten.</dd></div>
-      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
+      <div><dt>Testbetrieb</dt><dd>Chat-Hauptfenster mit Zielauswahl, TX-Eingabe, sichtbarem Sendemodus je Paket, FB2-Live-Ereignissen, Mesh-Modusentscheidung, Warteschlange, TX-Automatik, Empfang, separatem Monitor für alle RX/TX-Daten, automatischem RX nach TX, OK/Wiederholen, Timeout-Wiederholung, Start prüfen mit Empfang/Trockenlauf/echter CAT-PTT, Auto-QSO-Bedienfluss ohne manuelle PTT, Zwei-Stationen-Praxisstart, FT-991A-Hardwarepfad, separatem Geräte-, Automatik-, Detail-, Einstellungs- und Über-Fenster, direktem Audio-QSO bis OFDM schnell inklusive verrauschtem Testsignal, FB2L-Baken mit 300 Sekunden TTL, profilabhängiger Mesh-Automatik bis OFDM schnell, Rückweg-ACK, Fehlerantwort bis zum Ursprung, Mesh-Karte, Nachbar-Feldnachweisen und 6-Hop-Praxisrundlauf</dd></div>
     </dl>
   </aside>
 </section>
@@ -486,7 +486,7 @@
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
-      <figcaption>Übersicht mit Menüzeile, Kopfstatus, schmalem Wasserfall, Chatbetrieb, Zielauswahl und TX-Eingabe. Geräte-, Automatik-, Monitor- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
+      <figcaption>Übersicht mit Menüzeile, Kopfstatus, schmalem Wasserfall, Chatbetrieb, Zielauswahl, sichtbarem TX-Modus und TX-Eingabe. Geräte-, Automatik-, Monitor- und Detailbereiche öffnen in eigenen Fenstern, damit lange Prüflisten und Mesh-Status nicht mehr das Hauptfenster überladen.</figcaption>
     </figure>
     <figure class="reveal">
       <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="Markierter Bereich für FB2 senden und empfangen">
