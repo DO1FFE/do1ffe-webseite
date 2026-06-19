@@ -59,6 +59,11 @@
       bereitet Empfang, Kanalprüfung, Horchfenster, Audioausgabe, Sendesicherheit
       und den Auto-QSO-Bedienfluss vor. Beim Einreihen direkter FB2- und FB2-Mesh-Aufträge
       werden RX, Kanalwache, Horchfenster und FB2-Dauer-RX direkt vorbereitet.
+      Der aktuelle Audio-I/O-Pfad prüft Audioeingang, Audioausgang, Dauer-RX,
+      TX-Samples, RX-Puffer und Decoder gemeinsam. Ein Live-RX-Puffer sammelt
+      laufende Audioblöcke und sucht darin nach gültigen FB2-Rahmen; Sendemotor,
+      Modus-Aushandlung und Mesh-Weiterleitung gelten erst als bereit, wenn dieser
+      Audioweg freigegeben ist.
       Jeder geplante Sendeauftrag zeigt den vorgesehenen Sendemodus, die Quelle der
       Entscheidung und den robusteren Rückfallmodus, bevor der
       Sendemotor ihn abarbeitet. Der FB2-Live-Ereignismonitor zeigt kompakt,
