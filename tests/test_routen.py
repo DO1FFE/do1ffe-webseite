@@ -78,6 +78,18 @@ def verwende_github_testdaten(monkeypatch):
         },
     }
     monkeypatch.setattr(webseite, "lade_github_daten", lambda: daten)
+    monkeypatch.setattr(
+        webseite,
+        "lade_meshcore_repeater_firmware",
+        lambda: {
+            "version": "1.16.0",
+            "verfügbar": True,
+            "quelle": "meshcore.io",
+            "url": "https://flasher.meshcore.io/",
+            "abgerufen_um": "28.06.2026, 23:00",
+            "fehler": "",
+        },
+    )
 
 
 def richte_repeater_apk_testdaten_ein(tmp_path, monkeypatch):
@@ -686,6 +698,56 @@ def test_meshcoreseite_bewirbt_lokale_einstiege():
     assert "https://corescope.lima11.de/#/home" in html
     assert "MeshCore-Essen" in html
     assert "CoreScope Essen" in html
+
+
+def test_meshcoreseite_zeigt_aktuelle_meshcore_io_repeater_firmware():
+    klient = app.test_client()
+    antwort = klient.get("/meshcore")
+    html = antwort.get_data(as_text=True)
+
+    assert "Aktuelle Repeater-Firmware von meshcore.io:" in html
+    assert 'data-meshcore-firmware' in html
+    assert 'data-meshcore-firmware-version' in html
+    assert "1.16.0" in html
+    assert 'href="https://flasher.meshcore.io/"' in html
+
+
+def test_meshcore_repeater_firmware_api_liefert_aktuelle_version():
+    klient = app.test_client()
+    antwort = klient.get("/api/meshcore/repeater-firmware")
+    daten = antwort.get_json()
+
+    assert antwort.status_code == 200
+    assert antwort.headers["Cache-Control"] == "no-store, no-cache, must-revalidate, max-age=0"
+    assert daten["label"] == "Aktuelle Repeater-Firmware von meshcore.io:"
+    assert daten["version"] == "1.16.0"
+    assert daten["url"] == "https://flasher.meshcore.io/"
+
+
+def test_meshcore_repeater_firmware_parser_findet_neuste_sensecap_solar_version():
+    daten = [
+        {
+            "version": "v1.15.0",
+            "type": "repeater",
+            "files": [{"name": "SenseCap_Solar_repeater-v1.15.0-alt.uf2"}],
+        },
+        {
+            "version": "v1.16.0",
+            "type": "repeater",
+            "files": [{"name": "SenseCap_Solar_Repeater-v1.16.0-neu.zip"}],
+        },
+        {
+            "version": "v9.99.0",
+            "type": "room-server",
+            "files": [{"name": "SenseCap_Solar_room_server-v9.99.0.zip"}],
+        },
+    ]
+
+    firmware = webseite.ermittle_meshcore_sensecap_solar_repeater_firmware(daten)
+
+    assert firmware["version"] == "1.16.0"
+    assert firmware["verfügbar"] is True
+    assert firmware["quelle"] == "meshcore.io"
 
 
 def test_meshcoreseite_verlinkt_repeater_konfigurator_apk():

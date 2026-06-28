@@ -4,6 +4,8 @@ const toggle = document.querySelector("[data-nav-toggle]");
 const farbschemaSchalter = document.querySelector("[data-theme-toggle]");
 const farbschemaSchalterText = document.querySelector("[data-theme-toggle-label]");
 const year = document.querySelector("[data-year]");
+const meshcoreFirmwareAnzeige = document.querySelector("[data-meshcore-firmware]");
+const meshcoreFirmwareVersion = document.querySelector("[data-meshcore-firmware-version]");
 const tempCo2Anzeige = document.querySelector("[data-tempco2]");
 const tempCo2Temperatur = document.querySelector("[data-tempco2-temp]");
 const tempCo2Luftfeuchtigkeit = document.querySelector("[data-tempco2-humidity]");
@@ -124,6 +126,33 @@ if (toggle && nav) {
     }
   });
 }
+
+const aktualisiereMeshcoreFirmware = async () => {
+  if (!meshcoreFirmwareAnzeige || !meshcoreFirmwareVersion) {
+    return;
+  }
+
+  try {
+    const antwort = await fetch("/api/meshcore/repeater-firmware", { cache: "no-store" });
+    if (!antwort.ok) {
+      return;
+    }
+    const daten = await antwort.json();
+    if (!daten.version) {
+      return;
+    }
+
+    meshcoreFirmwareVersion.textContent = daten.version;
+    if (daten.url) {
+      meshcoreFirmwareAnzeige.setAttribute("href", daten.url);
+    }
+  } catch {
+    // Die serverseitig gerenderte Version bleibt sichtbar, falls die Aktualisierung fehlschlägt.
+  }
+};
+
+aktualisiereMeshcoreFirmware();
+window.setInterval(aktualisiereMeshcoreFirmware, 15 * 60 * 1000);
 
 const tempCo2TabIdAusHash = () => {
   if (!window.location.hash) {

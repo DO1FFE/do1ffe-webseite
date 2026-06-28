@@ -62,6 +62,12 @@ TEMP_CO2_SPERRE = Lock()
 MESHCORE_REPEATER_APK_MUSTER = "MeshCoreRepeaterKonfigurator-*-release-signed.apk"
 MESHCORE_REPEATER_HISTORIE_AB_VERSION = "1.0.22"
 MESHCORE_REPEATER_MAX_HISTORIE_VERSIONEN = 2
+MESHCORE_FLASHER_BASIS_URL = "https://flasher.meshcore.io"
+MESHCORE_FLASHER_START_URL = f"{MESHCORE_FLASHER_BASIS_URL}/"
+MESHCORE_FLASHER_RELEASES_URL = f"{MESHCORE_FLASHER_BASIS_URL}/releases"
+MESHCORE_FLASHER_TIMEOUT_SEKUNDEN = 8
+MESHCORE_FLASHER_CACHE_DAUER_SEKUNDEN = 30 * 60
+MESHCORE_FLASHER_FALLBACK_VERSION = "1.16.0"
 FUNKBRUECKE_DOWNLOAD_ORDNER = Path("/home/do1ffe/software-downloads/FunkBruecke")
 FUNKBRUECKE_DOWNLOAD_BASIS_URL = "https://downloads.do1ffe.de/FunkBruecke"
 FUNKBRUECKE_EXE_REGEX = re.compile(
@@ -148,6 +154,11 @@ MESHCORE_BLE_UPDATER_ARTEFAKTE = {
 DOWNLOAD_ZÄHLER_SPERRE = Lock()
 DOWNLOAD_ZÄHLER_QUELLEN = {"button", "qr", "historie"}
 DOWNLOAD_ZÄHLER_ENTPRELL_FENSTER_SEKUNDEN = 15 * 60
+MESHCORE_FLASHER_CACHE_SPERRE = Lock()
+MESHCORE_FLASHER_CACHE = {
+    "zeit": 0,
+    "daten": None,
+}
 GITHUB_BENUTZER = "DO1FFE"
 GITHUB_API_BASIS = "https://api.github.com"
 GITHUB_API_TIMEOUT_SEKUNDEN = 6
@@ -1245,6 +1256,92 @@ def meshcore_repeater_apk_übersicht():
     return infos[0], historie
 
 
+def meshcore_flasher_versions_sortierschlüssel(version):
+    treffer = re.search(r"(\d+(?:\.\d+)*)", str(version or ""))
+    if not treffer:
+        return ()
+    return tuple(int(teil) for teil in treffer.group(1).split("."))
+
+
+def bereinige_meshcore_flasher_version(version):
+    treffer = re.search(r"(\d+(?:\.\d+)*)", str(version or ""))
+    return treffer.group(1) if treffer else ""
+
+
+def ermittle_meshcore_sensecap_solar_repeater_firmware(releases):
+    versionen = []
+    dateimuster = re.compile(r"SenseCap_Solar_[rR]epeater.*?\.(?:zip|uf2)$")
+    for release in releases if isinstance(releases, list) else []:
+        if not isinstance(release, dict) or release.get("type") != "repeater":
+            continue
+        dateien = release.get("files")
+        if not isinstance(dateien, list):
+            continue
+        if any(dateimuster.search(str(datei.get("name") or "")) for datei in dateien if isinstance(datei, dict)):
+            version = bereinige_meshcore_flasher_version(release.get("version"))
+            if version:
+                versionen.append(version)
+
+    if not versionen:
+        return None
+
+    version = max(versionen, key=meshcore_flasher_versions_sortierschlüssel)
+    return {
+        "version": version,
+        "verfügbar": True,
+        "quelle": "meshcore.io",
+        "url": MESHCORE_FLASHER_START_URL,
+        "abgerufen_um": datetime.now(BERLINER_ZEITZONE).strftime("%d.%m.%Y, %H:%M"),
+        "fehler": "",
+    }
+
+
+def hole_meshcore_flasher_releases():
+    anfrage = Request(
+        MESHCORE_FLASHER_RELEASES_URL,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "do1ffe-webseite",
+        },
+    )
+    with urlopen(anfrage, timeout=MESHCORE_FLASHER_TIMEOUT_SEKUNDEN) as antwort:
+        return json.loads(antwort.read().decode("utf-8"))
+
+
+def meshcore_repeater_firmware_fallback(fehler=""):
+    return {
+        "version": MESHCORE_FLASHER_FALLBACK_VERSION,
+        "verfügbar": False,
+        "quelle": "Fallback",
+        "url": MESHCORE_FLASHER_START_URL,
+        "abgerufen_um": "",
+        "fehler": fehler,
+    }
+
+
+def lade_meshcore_repeater_firmware():
+    jetzt = time.time()
+    zwischenspeicher = MESHCORE_FLASHER_CACHE.get("daten")
+    if zwischenspeicher and jetzt - MESHCORE_FLASHER_CACHE.get("zeit", 0) < MESHCORE_FLASHER_CACHE_DAUER_SEKUNDEN:
+        return zwischenspeicher
+
+    with MESHCORE_FLASHER_CACHE_SPERRE:
+        zwischenspeicher = MESHCORE_FLASHER_CACHE.get("daten")
+        if zwischenspeicher and jetzt - MESHCORE_FLASHER_CACHE.get("zeit", 0) < MESHCORE_FLASHER_CACHE_DAUER_SEKUNDEN:
+            return zwischenspeicher
+
+        try:
+            daten = ermittle_meshcore_sensecap_solar_repeater_firmware(hole_meshcore_flasher_releases())
+            if daten is None:
+                raise ValueError("Keine SenseCAP-Solar-Repeater-Firmware in den MeshCore-Releases gefunden.")
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, OSError, ValueError) as fehler:
+            daten = zwischenspeicher or meshcore_repeater_firmware_fallback(f"{type(fehler).__name__}: {fehler}")
+
+        MESHCORE_FLASHER_CACHE["zeit"] = jetzt
+        MESHCORE_FLASHER_CACHE["daten"] = daten
+        return daten
+
+
 def sende_repeater_apk(datei):
     version = apk_version(datei)
     if not version:
@@ -1565,6 +1662,18 @@ def github():
     return render_template("github.html", **lade_github_daten())
 
 
+@app.route("/api/meshcore/repeater-firmware")
+def meshcore_repeater_firmware_api():
+    firmware = lade_meshcore_repeater_firmware()
+    antwort = dict(firmware)
+    antwort["label"] = "Aktuelle Repeater-Firmware von meshcore.io:"
+    return antwort, 200, {
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0",
+    }
+
+
 @app.route("/meshcore")
 def meshcore():
     repeater_apk, repeater_apk_historie = meshcore_repeater_apk_übersicht()
@@ -1575,6 +1684,7 @@ def meshcore():
         meshcore_ble_updater=meshcore_ble_updater_übersicht(),
         repeater_changelog_verfügbar=repeater_changelog_verfügbar(),
         regionenkarte_punkte=meshcore_regionenkarte_punkte(),
+        meshcore_repeater_firmware=lade_meshcore_repeater_firmware(),
     )
 
 

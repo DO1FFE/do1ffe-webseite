@@ -1545,6 +1545,47 @@ h3 {
   font-size: clamp(1.05rem, 1.8vw, 1.24rem);
 }
 
+.meshcore-firmware-status {
+  display: inline-flex;
+  max-width: min(100%, 560px);
+  min-height: 54px;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 12px 15px;
+  border: 1px solid rgba(143, 241, 228, 0.38);
+  border-radius: 8px;
+  color: var(--white);
+  background: rgba(143, 241, 228, 0.12);
+  font-weight: 850;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.meshcore-firmware-status:hover,
+.meshcore-firmware-status:focus-visible {
+  border-color: rgba(143, 241, 228, 0.74);
+  background: rgba(143, 241, 228, 0.18);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.meshcore-firmware-status span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.92rem;
+}
+
+.meshcore-firmware-status strong {
+  color: #8ff1e4;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  font-weight: 950;
+  white-space: nowrap;
+}
+
 .page-hero--radio {
   background:
     linear-gradient(135deg, rgba(10, 21, 24, 0.9), rgba(0, 108, 104, 0.72)),
@@ -2889,6 +2930,12 @@ html[data-theme="dark"] .tempco2-chart-values td {
 
   .download-history ol {
     grid-template-columns: 1fr;
+  }
+
+  .meshcore-firmware-status {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .tempco2-projektgeschichte {
