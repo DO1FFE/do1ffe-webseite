@@ -6,7 +6,7 @@
 {% block inhalt %}
 <section class="page-hero page-hero--funkbruecke">
   <div class="page-hero__content reveal">
-    <img class="funkbruecke-hero-logo" src="{{ url_for('static', filename='assets/funkbruecke-logo.png') }}" alt="FunkBrücke Logo" width="640" height="180">
+    <img class="funkbruecke-hero-logo" src="{{ url_for('static', filename='assets/funkbruecke-logo.png') }}" alt="FunkBrücke Logo" width="640" height="180" decoding="async">
     <p class="eyebrow">FT-991A · FB2 · Mesh</p>
     <h1>FunkBrücke</h1>
     <p>
@@ -129,7 +129,7 @@
     </p>
   </div>
   <div class="funkbruecke-showcase__media reveal">
-    <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Screenshot der FunkBrücke Windows-Oberfläche">
+    <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Screenshot der FunkBrücke Windows-Oberfläche" width="1440" height="900" loading="lazy" decoding="async">
   </div>
 </section>
 
@@ -140,15 +140,15 @@
   </div>
   <div class="funkbruecke-screenshot-grid">
     <figure class="reveal">
-      <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche">
+      <img src="{{ url_for('static', filename='assets/funkbruecke-uebersicht.png') }}" alt="Markierte Übersicht der FunkBrücke-Oberfläche" width="1440" height="900" loading="lazy" decoding="async">
       <figcaption>Hauptfenster mit Chat, Zielauswahl, TX-Eingabe, Sendefreigabe und kurzem Wasserfall.</figcaption>
     </figure>
     <figure class="reveal">
-      <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="FB2-Test-TX in FunkBrücke">
+      <img src="{{ url_for('static', filename='assets/funkbruecke-fb2-test-tx.png') }}" alt="FB2-Test-TX in FunkBrücke" width="1440" height="900" loading="lazy" decoding="async">
       <figcaption>FB2-Testbereich für kontrollierte lokale und beaufsichtigte Versuche.</figcaption>
     </figure>
     <figure class="reveal">
-      <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Mesh-Karte mit Stationen und Verbindungen">
+      <img src="{{ url_for('static', filename='assets/funkbruecke-mesh-karte.png') }}" alt="Mesh-Karte mit Stationen und Verbindungen" width="1440" height="900" loading="lazy" decoding="async">
       <figcaption>Mesh-Karte mit Stationen, Locator, Nachbarlinien und Profilinformationen.</figcaption>
     </figure>
   </div>
@@ -229,7 +229,7 @@
     </ul>
   </div>
   <div class="feature__media reveal">
-    <img src="{{ url_for('static', filename='assets/funkbruecke-wasserfall.png') }}" alt="Wasserfallübersicht der geplanten FunkBrücke-Sendemodi von FSK bis OFDM">
+    <img src="{{ url_for('static', filename='assets/funkbruecke-wasserfall.png') }}" alt="Wasserfallübersicht der geplanten FunkBrücke-Sendemodi von FSK bis OFDM" width="2160" height="1658" loading="lazy" decoding="async">
   </div>
 </section>
 

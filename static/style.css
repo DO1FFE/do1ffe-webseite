@@ -4,6 +4,11 @@
   --paper: #f5f8f6;
   --paper-2: #e7f0ed;
   --line: rgba(10, 21, 24, 0.12);
+  --surface: #ffffff;
+  --surface-2: #f5f8f6;
+  --surface-3: #e7f0ed;
+  --header-bg: rgba(245, 248, 246, 0.92);
+  --nav-bg: rgba(245, 248, 246, 0.96);
   --teal: #009f93;
   --teal-dark: #006c68;
   --amber: #f2a33a;
@@ -13,6 +18,26 @@
   --shadow: 0 20px 60px rgba(10, 21, 24, 0.16);
   --content: min(1120px, calc(100vw - 40px));
   color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --ink: #edf7f5;
+  --ink-2: #bdd1ce;
+  --paper: #071113;
+  --paper-2: #102326;
+  --line: rgba(221, 239, 235, 0.16);
+  --surface: #0f1d20;
+  --surface-2: #13282b;
+  --surface-3: #183236;
+  --header-bg: rgba(7, 17, 19, 0.92);
+  --nav-bg: rgba(7, 17, 19, 0.96);
+  --teal: #3fcabd;
+  --teal-dark: #8ff1e4;
+  --amber: #f6bd6a;
+  --red: #ff7780;
+  --green: #8ccd70;
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
+  color-scheme: dark;
 }
 
 * {
@@ -31,6 +56,9 @@ body {
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   line-height: 1.55;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
 }
 
 img {
@@ -42,6 +70,18 @@ a {
   color: inherit;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .site-header {
   position: fixed;
   top: 0;
@@ -50,7 +90,7 @@ a {
   display: flex;
   width: 100%;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 18px max(20px, calc((100vw - 1120px) / 2));
   color: var(--white);
   transition:
@@ -62,7 +102,7 @@ a {
 
 .site-header.is-scrolled {
   color: var(--ink);
-  background: rgba(245, 248, 246, 0.92);
+  background: var(--header-bg);
   border-bottom: 1px solid var(--line);
   box-shadow: 0 8px 32px rgba(10, 21, 24, 0.08);
   backdrop-filter: blur(16px);
@@ -70,7 +110,9 @@ a {
 
 .brand {
   display: grid;
+  flex: 0 0 auto;
   gap: 1px;
+  min-width: max-content;
   text-decoration: none;
 }
 
@@ -83,21 +125,141 @@ a {
 .brand__sub {
   font-size: 0.76rem;
   opacity: 0.78;
+  white-space: nowrap;
+}
+
+.tempco2-status {
+  position: relative;
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  max-width: 360px;
+  margin: 0 14px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.tempco2-status:hover,
+.tempco2-status:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(242, 163, 58, 0.68);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 28px rgba(10, 21, 24, 0.18);
+}
+
+.tempco2-status::before,
+.tempco2-status::after {
+  position: absolute;
+  left: 50%;
+  z-index: 80;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    visibility 160ms ease;
+}
+
+.tempco2-status::before {
+  content: "";
+  top: calc(100% + 5px);
+  transform: translate(-50%, -4px);
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid rgba(10, 21, 24, 0.96);
+  border-left: 7px solid transparent;
+}
+
+.tempco2-status::after {
+  content: attr(data-tempco2-tooltip);
+  top: calc(100% + 12px);
+  width: max-content;
+  max-width: min(340px, calc(100vw - 32px));
+  padding: 10px 12px;
+  border: 1px solid rgba(242, 163, 58, 0.44);
+  border-radius: 8px;
+  background: rgba(10, 21, 24, 0.96);
+  box-shadow: 0 18px 42px rgba(10, 21, 24, 0.26);
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.3;
+  text-align: left;
+  text-transform: none;
+  transform: translate(-50%, -6px);
+  white-space: normal;
+}
+
+.tempco2-status:hover::before,
+.tempco2-status:hover::after,
+.tempco2-status:focus-visible::before,
+.tempco2-status:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
+.tempco2-status[hidden] {
+  display: none;
+}
+
+.site-header.is-scrolled .tempco2-status {
+  border-color: rgba(0, 159, 147, 0.22);
+  background: rgba(0, 159, 147, 0.09);
+  color: var(--ink);
+}
+
+.site-header.is-scrolled .tempco2-status:hover,
+.site-header.is-scrolled .tempco2-status:focus-visible {
+  border-color: rgba(0, 159, 147, 0.52);
+  background: rgba(0, 159, 147, 0.14);
+}
+
+.tempco2-status__label {
+  color: var(--amber);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.site-header.is-scrolled .tempco2-status__label {
+  color: var(--teal-dark);
+}
+
+.tempco2-status__value strong {
+  font-size: 0.92rem;
 }
 
 .site-nav {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-left: auto;
 }
 
 .site-nav a {
   min-height: 38px;
   padding: 8px 12px;
   border-radius: 6px;
+  flex: 0 0 auto;
   font-size: 0.92rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
   transition:
     background 160ms ease,
     color 160ms ease;
@@ -118,6 +280,103 @@ a {
 .site-header.is-scrolled .site-nav a.is-active {
   background: rgba(0, 159, 147, 0.12);
   color: var(--teal-dark);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  min-width: 82px;
+  min-height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 4px 5px 4px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.theme-toggle__label {
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  border-color: rgba(143, 241, 228, 0.72);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 28px rgba(10, 21, 24, 0.16);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.site-header.is-scrolled .theme-toggle {
+  border-color: rgba(0, 159, 147, 0.24);
+  color: var(--ink);
+  background: rgba(0, 159, 147, 0.09);
+}
+
+.site-header.is-scrolled .theme-toggle:hover,
+.site-header.is-scrolled .theme-toggle:focus-visible {
+  border-color: rgba(0, 159, 147, 0.52);
+  background: rgba(0, 159, 147, 0.14);
+}
+
+.theme-toggle__track {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 24px;
+  flex: 0 0 38px;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.theme-toggle__icon {
+  position: relative;
+  z-index: 1;
+  font-size: 0.7rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.74;
+}
+
+.theme-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--white);
+  box-shadow: 0 5px 14px rgba(10, 21, 24, 0.22);
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+html[data-theme="dark"] .theme-toggle__knob {
+  background: #8ff1e4;
+  transform: translateX(14px);
 }
 
 .nav-toggle {
@@ -357,7 +616,7 @@ h3 {
 .project-card {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
 }
 
@@ -650,7 +909,7 @@ h3 {
   padding: clamp(24px, 4vw, 34px);
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
 }
 
@@ -709,7 +968,7 @@ h3 {
 .dashboard-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
 }
 
@@ -796,7 +1055,7 @@ h3 {
   padding: 32px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
 }
 
@@ -1066,7 +1325,7 @@ h3 {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: var(--shadow);
 }
 
@@ -1116,7 +1375,7 @@ h3 {
 .mesh-region-map__commands details {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .mesh-region-map__commands summary {
@@ -1195,7 +1454,7 @@ h3 {
   padding: 4px 7px;
   border: 1px solid color-mix(in srgb, var(--region-color) 28%, var(--line));
   border-radius: 6px;
-  background: color-mix(in srgb, var(--region-color) 8%, #fff);
+  background: color-mix(in srgb, var(--region-color) 8%, var(--surface));
   color: var(--ink);
   font-size: 0.78rem;
   line-height: 1.25;
@@ -1308,6 +1567,91 @@ h3 {
   background:
     linear-gradient(135deg, rgba(10, 21, 24, 0.94), rgba(0, 159, 147, 0.64)),
     #132326;
+}
+
+.page-hero--tempco2 {
+  background:
+    linear-gradient(135deg, rgba(10, 21, 24, 0.94), rgba(0, 159, 147, 0.52)),
+    radial-gradient(circle at 78% 34%, rgba(242, 163, 58, 0.28), transparent 34%),
+    #132326;
+}
+
+.page-hero--tempco2 {
+  min-height: min(470px, 56vh);
+  padding-top: clamp(104px, 12vh, 136px);
+  padding-bottom: clamp(42px, 6vw, 68px);
+}
+
+.tempco2-hero__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.72fr);
+  gap: clamp(28px, 5vw, 72px);
+  width: min(1120px, 100%);
+  max-width: none;
+  align-items: end;
+}
+
+.page-hero--tempco2 h1 {
+  max-width: 640px;
+  font-size: clamp(2.1rem, 3.9vw, 3.45rem);
+  line-height: 1;
+}
+
+.page-hero--tempco2 p:not(.eyebrow) {
+  max-width: 620px;
+}
+
+.tempco2-hero__lage {
+  align-self: stretch;
+  display: grid;
+  align-content: end;
+  gap: 14px;
+  padding-bottom: 4px;
+}
+
+.tempco2-hero__lage p {
+  margin: 0;
+  color: #8ff1e4;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tempco2-hero__lage ul {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  list-style: none;
+}
+
+.tempco2-hero__lage li {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 58px;
+  align-items: center;
+  padding: 12px 14px;
+  background: rgba(5, 12, 14, 0.34);
+}
+
+.tempco2-hero__lage strong {
+  color: var(--amber);
+  font-size: 0.83rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.tempco2-hero__lage span {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.92rem;
+  font-weight: 760;
+  line-height: 1.28;
 }
 
 .page-hero--funkbruecke {
@@ -1537,7 +1881,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--teal-dark);
-  background: var(--white);
+  background: var(--surface);
   font-weight: 900;
   text-decoration: none;
 }
@@ -1584,7 +1928,7 @@ h3 {
   margin: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
 }
 
@@ -1658,7 +2002,7 @@ h3 {
   padding: 28px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 21, 24, 0.06);
 }
 
@@ -1669,6 +2013,501 @@ h3 {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.tempco2-sprungmarken {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  max-width: 780px;
+  margin-top: 26px;
+}
+
+.tempco2-sprungmarken a {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  padding: 7px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 6px;
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.15;
+  text-decoration: none;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.tempco2-sprungmarken a:hover,
+.tempco2-sprungmarken a:focus-visible {
+  border-color: rgba(143, 241, 228, 0.74);
+  background: rgba(143, 241, 228, 0.18);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.tempco2-dashboard {
+  display: grid;
+  gap: 26px;
+}
+
+.tempco2-live {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--line);
+}
+
+.tempco2-live[hidden] {
+  display: none;
+}
+
+.tempco2-live div {
+  min-height: 96px;
+  padding: 20px 22px;
+  background: var(--surface);
+}
+
+.tempco2-live div > span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--teal-dark);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.tempco2-live strong {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ink);
+  font-size: clamp(1.8rem, 3.4vw, 2.55rem);
+  font-weight: 900;
+  line-height: 0.96;
+}
+
+.tempco2-live strong small {
+  color: var(--ink);
+  font-size: 0.52em;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tempco2-live div:last-child strong {
+  letter-spacing: 0;
+}
+
+.tempco2-live .tempco2-live-stand {
+  display: grid;
+  gap: 6px;
+  align-items: start;
+  font-size: clamp(1.65rem, 2.7vw, 2.15rem);
+  line-height: 1;
+}
+
+.tempco2-live .tempco2-live-stand small {
+  color: rgba(32, 50, 54, 0.72);
+  font-size: clamp(0.8rem, 1.3vw, 0.96rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.tempco2-empty {
+  margin: 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(201, 67, 75, 0.22);
+  border-radius: 8px;
+  color: var(--ink-2);
+  background: rgba(201, 67, 75, 0.08);
+  font-weight: 800;
+}
+
+.tempco2-empty[hidden] {
+  display: none;
+}
+
+.tempco2-hinweis {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 1px solid rgba(242, 163, 58, 0.42);
+  border-left: 6px solid var(--amber);
+  border-radius: 8px;
+  background: rgba(242, 163, 58, 0.12);
+  box-shadow: 0 12px 30px rgba(10, 21, 24, 0.05);
+}
+
+.tempco2-hinweis strong {
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.tempco2-hinweis span {
+  color: var(--ink-2);
+  font-weight: 720;
+}
+
+.tempco2-bereich-legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: -10px;
+}
+
+.tempco2-bereich-legende span {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border: 1px solid rgba(10, 21, 24, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(32, 50, 54, 0.86);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.15;
+}
+
+.tempco2-bereich-legende__farbe {
+  display: inline-block;
+  width: 20px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.tempco2-bereich-legende__farbe--normal {
+  background: rgba(106, 168, 79, 0.38);
+}
+
+.tempco2-bereich-legende__farbe--warnung {
+  background: rgba(242, 163, 58, 0.42);
+}
+
+.tempco2-bereich-legende__farbe--kritisch {
+  background: rgba(201, 67, 75, 0.32);
+}
+
+.tempco2-graph-tabs,
+.tempco2-graph-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.tempco2-tablist {
+  display: inline-grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(430px, 100%);
+  overflow: hidden;
+  border: 1px solid rgba(0, 159, 147, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 10px 28px rgba(10, 21, 24, 0.05);
+}
+
+.tempco2-tablist button {
+  min-height: 42px;
+  padding: 9px 16px;
+  border: 0;
+  border-right: 1px solid rgba(0, 159, 147, 0.16);
+  color: var(--ink-2);
+  background: transparent;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.tempco2-tablist button:last-child {
+  border-right: 0;
+}
+
+.tempco2-tablist button:hover,
+.tempco2-tablist button:focus-visible {
+  color: var(--teal-dark);
+  background: rgba(0, 159, 147, 0.08);
+  outline: none;
+}
+
+.tempco2-tablist button.is-active {
+  color: var(--white);
+  background: var(--teal-dark);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.tempco2-chart {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 16px 42px rgba(10, 21, 24, 0.08);
+}
+
+.tempco2-chart header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.tempco2-chart h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+}
+
+.tempco2-chart header > span {
+  min-width: 82px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: var(--teal-dark);
+  background: rgba(0, 159, 147, 0.1);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.tempco2-chart svg {
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  overflow: visible;
+}
+
+.tempco2-chart .tempco2-row-bg {
+  fill: rgba(10, 21, 24, 0.025);
+  rx: 6;
+}
+
+.tempco2-chart .tempco2-messbereich {
+  stroke-width: 0;
+}
+
+.tempco2-chart .tempco2-messbereich--normal {
+  fill: rgba(106, 168, 79, 0.14);
+}
+
+.tempco2-chart .tempco2-messbereich--warnung {
+  fill: rgba(242, 163, 58, 0.13);
+}
+
+.tempco2-chart .tempco2-messbereich--kritisch {
+  fill: rgba(201, 67, 75, 0.1);
+}
+
+.tempco2-chart .tempco2-grid {
+  stroke: rgba(10, 21, 24, 0.1);
+  stroke-width: 1;
+}
+
+.tempco2-chart .tempco2-line {
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tempco2-chart .tempco2-dot {
+  pointer-events: auto;
+}
+
+.tempco2-chart .tempco2-dot--messpunkt {
+  opacity: 0.38;
+}
+
+.tempco2-chart .tempco2-dot--aktuell {
+  stroke: var(--white);
+  stroke-width: 2;
+  opacity: 1;
+}
+
+.tempco2-chart .tempco2-row-title {
+  fill: var(--ink-2);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.tempco2-chart .tempco2-row-unit {
+  fill: rgba(32, 50, 54, 0.66);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.tempco2-chart .tempco2-axis {
+  fill: rgba(32, 50, 54, 0.74);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tempco2-chart .tempco2-time-axis {
+  stroke: rgba(10, 21, 24, 0.18);
+  stroke-width: 1.4;
+}
+
+.tempco2-chart .tempco2-last-value {
+  paint-order: stroke;
+  stroke: var(--white);
+  stroke-linejoin: round;
+  stroke-width: 5px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.tempco2-chart-values {
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.tempco2-chart-values:empty {
+  display: none;
+}
+
+.tempco2-chart-values table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  color: var(--ink);
+  font-size: 0.88rem;
+}
+
+.tempco2-chart-values th,
+.tempco2-chart-values td {
+  padding: 9px 10px;
+  border-top: 1px solid rgba(10, 21, 24, 0.08);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tempco2-chart-values thead th {
+  color: var(--teal-dark);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tempco2-chart-values th:first-child,
+.tempco2-chart-values td:first-child {
+  text-align: left;
+}
+
+.tempco2-chart-values tbody th {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.tempco2-projektgeschichte {
+  display: grid;
+  gap: 28px;
+  padding: clamp(28px, 5vw, 44px);
+  border: 1px solid rgba(0, 159, 147, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(0, 159, 147, 0.09), rgba(242, 163, 58, 0.1)),
+    var(--surface);
+  box-shadow: 0 16px 42px rgba(10, 21, 24, 0.07);
+}
+
+.tempco2-projektgeschichte__intro {
+  max-width: 900px;
+}
+
+.tempco2-projektgeschichte h2 {
+  max-width: 880px;
+  margin: 0 0 18px;
+  font-size: clamp(1.6rem, 3.3vw, 3rem);
+  line-height: 1.02;
+}
+
+.tempco2-projektgeschichte p {
+  max-width: 900px;
+  margin: 0;
+  color: var(--ink-2);
+  font-weight: 680;
+}
+
+.tempco2-projektgeschichte p + p {
+  margin-top: 14px;
+}
+
+.tempco2-projektgeschichte strong {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.tempco2-technikpfad {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.tempco2-technikpfad article {
+  min-height: 210px;
+  padding: 20px;
+  border: 1px solid rgba(10, 21, 24, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.tempco2-technikpfad span {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 16px;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--white);
+  background: var(--teal-dark);
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.tempco2-technikpfad h3 {
+  margin-bottom: 9px;
+  font-size: 1.1rem;
+}
+
+.tempco2-technikpfad p {
+  font-size: 0.95rem;
+}
+
+.tempco2-projektgeschichte__fazit {
+  max-width: none;
+  padding: 18px 20px;
+  border-left: 6px solid var(--amber);
+  border-radius: 8px;
+  background: rgba(242, 163, 58, 0.14);
+  font-weight: 820;
+}
+
+.tempco2-value-color {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.tempco2-chart p[data-tempco2-chart-empty] {
+  margin: 10px 0 0;
+  color: var(--ink-2);
+  font-weight: 800;
 }
 
 .download-card p {
@@ -1739,9 +2578,154 @@ h3 {
   outline: none;
 }
 
+html[data-theme="dark"] .site-header.is-scrolled {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .focus-card,
+html[data-theme="dark"] .project-card,
+html[data-theme="dark"] .legal-card,
+html[data-theme="dark"] .topic-card,
+html[data-theme="dark"] .note-card,
+html[data-theme="dark"] .detail-card,
+html[data-theme="dark"] .repo-card,
+html[data-theme="dark"] .fact-panel,
+html[data-theme="dark"] .dashboard-panel,
+html[data-theme="dark"] .promo-card,
+html[data-theme="dark"] .repo-list a,
+html[data-theme="dark"] .funkbruecke-screenshot-grid figure,
+html[data-theme="dark"] .download-card,
+html[data-theme="dark"] .tempco2-chart,
+html[data-theme="dark"] .tempco2-live div {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+}
+
+html[data-theme="dark"] .topic-card--wide,
+html[data-theme="dark"] .promo-card--accent {
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .feature--radio,
+html[data-theme="dark"] .feature--funkbruecke {
+  background: var(--paper-2);
+}
+
+html[data-theme="dark"] .feature--radio .feature__content p:not(.eyebrow),
+html[data-theme="dark"] .feature--funkbruecke .feature__content p:not(.eyebrow) {
+  color: var(--ink-2);
+}
+
+html[data-theme="dark"] .projects {
+  background:
+    linear-gradient(180deg, transparent 0, transparent 90px, rgba(63, 202, 189, 0.12) 90px, rgba(63, 202, 189, 0.12) 100%);
+}
+
+html[data-theme="dark"] .mesh-region-map__canvas {
+  background: #0b1719;
+}
+
+html[data-theme="dark"] .mesh-region-map__legend,
+html[data-theme="dark"] .mesh-region-map__commands {
+  background: rgba(15, 29, 32, 0.94);
+}
+
+html[data-theme="dark"] .mesh-region-map__commands details {
+  background: var(--surface-2);
+}
+
+html[data-theme="dark"] .prototype-note {
+  border-color: rgba(255, 119, 128, 0.3);
+  background: rgba(255, 119, 128, 0.09);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+html[data-theme="dark"] .tempco2-bereich-legende span,
+html[data-theme="dark"] .tempco2-tablist,
+html[data-theme="dark"] .tempco2-technikpfad article {
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink-2);
+}
+
+html[data-theme="dark"] .tempco2-live .tempco2-live-stand small {
+  color: var(--ink-2);
+}
+
+html[data-theme="dark"] .tempco2-tablist button.is-active,
+html[data-theme="dark"] .next-links a:hover,
+html[data-theme="dark"] .next-links a:focus-visible {
+  color: #041011;
+}
+
+html[data-theme="dark"] .tempco2-chart .tempco2-row-bg {
+  fill: rgba(255, 255, 255, 0.045);
+}
+
+html[data-theme="dark"] .tempco2-chart .tempco2-grid {
+  stroke: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .tempco2-chart .tempco2-time-axis {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme="dark"] .tempco2-chart .tempco2-row-unit,
+html[data-theme="dark"] .tempco2-chart .tempco2-axis {
+  fill: rgba(189, 209, 206, 0.78);
+}
+
+html[data-theme="dark"] .tempco2-chart-values th,
+html[data-theme="dark"] .tempco2-chart-values td {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1120px) and (min-width: 841px) {
+  .tempco2-status {
+    gap: 6px;
+    max-width: 240px;
+    margin: 0 8px;
+    padding: 6px 8px;
+    font-size: 0.76rem;
+  }
+
+  .tempco2-status__label {
+    display: none;
+  }
+
+  .site-nav a {
+    padding-right: 7px;
+    padding-left: 7px;
+    font-size: 0.84rem;
+  }
+}
+
 @media (max-width: 840px) {
   .site-header {
+    flex-wrap: wrap;
+    gap: 0 10px;
     padding: 14px 20px;
+  }
+
+  .site-header__actions {
+    margin-left: auto;
+  }
+
+  .tempco2-status {
+    order: 3;
+    justify-content: center;
+    width: 100%;
+    max-width: none;
+    margin: 4px 0 0;
+    font-size: 0.78rem;
+  }
+
+  .tempco2-status__label {
+    display: none;
+  }
+
+  .tempco2-status::before,
+  .tempco2-status::after {
+    display: none;
   }
 
   .nav-toggle {
@@ -1750,17 +2734,18 @@ h3 {
 
   .site-nav {
     position: fixed;
-    top: 68px;
+    top: 112px;
     right: 20px;
     left: 20px;
     display: none;
     flex-direction: column;
     align-items: stretch;
+    margin-left: 0;
     padding: 12px;
     border: 1px solid var(--line);
     border-radius: 8px;
     color: var(--ink);
-    background: rgba(245, 248, 246, 0.96);
+    background: var(--nav-bg);
     box-shadow: var(--shadow);
     backdrop-filter: blur(16px);
   }
@@ -1803,6 +2788,9 @@ h3 {
     .funkbruecke-showcase,
     .funkbruecke-screenshot-grid,
     .download-card-grid,
+    .tempco2-hero__content,
+    .tempco2-live,
+    .tempco2-technikpfad,
     .next-links {
     grid-template-columns: 1fr;
   }
@@ -1852,6 +2840,19 @@ h3 {
   .download-panel__actions {
     justify-items: stretch;
   }
+
+  .tempco2-sprungmarken a {
+    flex: 1 1 150px;
+    justify-content: center;
+  }
+
+  .page-hero--tempco2 {
+    min-height: auto;
+  }
+
+  .tempco2-hero__lage {
+    align-content: start;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1888,6 +2889,19 @@ h3 {
 
   .download-history ol {
     grid-template-columns: 1fr;
+  }
+
+  .tempco2-projektgeschichte {
+    padding: 22px;
+  }
+
+  .tempco2-hero__lage li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .tempco2-technikpfad article {
+    min-height: auto;
   }
 
   .site-footer {

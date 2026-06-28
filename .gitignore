@@ -2,3 +2,6 @@ __pycache__/
 .pytest_cache/
 *.py[cod]
 .env
+do1ffe-webseite.log
+daten/tempco2-aktuell.json
+daten/tempco2-historie.jsonl

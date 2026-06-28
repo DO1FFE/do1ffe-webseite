@@ -1,5 +1,6 @@
-from collections import Counter
-from datetime import datetime
+from collections import Counter, deque
+from datetime import datetime, timedelta, timezone
+import hmac
 import hashlib
 import json
 import os
@@ -13,9 +14,22 @@ from urllib.request import Request, urlopen
 from xml.sax.saxutils import escape
 from zoneinfo import ZoneInfo
 
-from flask import Flask, abort, redirect, render_template, request, send_file
+from flask import Flask, abort, redirect, render_template, request, send_file, url_for
 
 app = Flask(__name__)
+
+
+@app.context_processor
+def statische_dateien_mit_version():
+    def statische_datei(dateiname):
+        pfad = Path(app.static_folder or "") / dateiname
+        try:
+            version = int(pfad.stat().st_mtime)
+        except OSError:
+            version = int(time.time())
+        return url_for("static", filename=dateiname, v=version)
+
+    return {"statische_datei": statische_datei}
 
 
 KANONISCHE_BASIS_URL = "https://do1ffe.de"
@@ -23,6 +37,7 @@ INDEXIERBARE_PFADE = (
     "/",
     "/ov-l11",
     "/tesla-dashboard",
+    "/tempco2",
     "/github",
     "/meshcore",
     "/Funkbruecke",
@@ -40,13 +55,17 @@ MESHCORE_REGIONEN_ORDNER = Path("/home/do1ffe/meshcore-repeater-konfigurator/reg
 MESHCORE_KOMMANDO_BESCHREIBUNGEN_DATEI = Path(__file__).with_name("daten") / "meshcore-kommandos-de.json"
 MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER = Path("/home/do1ffe/software-downloads")
 MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI = MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER / ".download-zaehler.json"
+TEMP_CO2_STANDARD_DATEI = Path(__file__).with_name("daten") / "tempco2-aktuell.json"
+TEMP_CO2_STANDARD_HISTORIE_DATEI = Path(__file__).with_name("daten") / "tempco2-historie.jsonl"
+TEMP_CO2_STANDARD_MAX_ALTER_SEKUNDEN = 1800
+TEMP_CO2_SPERRE = Lock()
 MESHCORE_REPEATER_APK_MUSTER = "MeshCoreRepeaterKonfigurator-*-release-signed.apk"
 MESHCORE_REPEATER_HISTORIE_AB_VERSION = "1.0.22"
 MESHCORE_REPEATER_MAX_HISTORIE_VERSIONEN = 2
 FUNKBRUECKE_DOWNLOAD_ORDNER = Path("/home/do1ffe/software-downloads/FunkBruecke")
 FUNKBRUECKE_DOWNLOAD_BASIS_URL = "https://downloads.do1ffe.de/FunkBruecke"
 FUNKBRUECKE_EXE_REGEX = re.compile(
-    r"^FunkBruecke-v(?P<version>\d+(?:\.\d+)*)-(?P<datum>\d{8})-win-x64\.exe$"
+    r"^FunkBruecke-v(?P<version>\d+(?:\.\d+)*(?:-[0-9A-Za-z.-]+)?)-(?P<datum>\d{8})-win-x64\.exe$"
 )
 FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
     {
@@ -88,22 +107,6 @@ FUNKBRUECKE_DOWNLOAD_ARTEFAKTE = [
         "dateiname": "FB2-Frequenzprofile.md",
         "typ": "Markdown",
         "beschreibung": "Vorsichtige Startprofile für KW, UKW, Bandplanfenster und bekannte Sperrfrequenzen.",
-        "primär": False,
-    },
-    {
-        "schlüssel": "mesh",
-        "titel": "FB1-/Mesh-Protokoll",
-        "dateiname": "FB1-Mesh-Protokoll.md",
-        "typ": "Markdown",
-        "beschreibung": "Protokollnotizen für Mesh-Erreichbarkeit, Routing und Weiterleitung.",
-        "primär": False,
-    },
-    {
-        "schlüssel": "sinn",
-        "titel": "Sinn und Zweck",
-        "dateiname": "FunkBruecke-Sinn-und-Zweck-latest.pdf",
-        "typ": "PDF",
-        "beschreibung": "Laienverständliche Erklärung, wozu FunkBrücke im fertigen Zustand dienen soll.",
         "primär": False,
     },
 ]
@@ -279,6 +282,9 @@ def verhindere_dynamischen_cache(antwort):
         "meshcore_ble_updater_ios",
         "meshcore_ble_updater_ios_version",
         "funkbruecke",
+        "tempco2_aktueller_messwert",
+        "tempco2_historie",
+        "tempco2_messwert_empfangen",
     }
     if request.endpoint in dynamische_endpunkte:
         antwort.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
@@ -967,6 +973,7 @@ def funkbruecke_download_daten():
         download
         for download in downloads
         if not download["primär"] and download.get("öffentlich", True)
+        and download["verfügbar"]
     ]
     return {
         "funkbruecke_version": funkbruecke_versionsinfo(),
@@ -1279,6 +1286,229 @@ def kanonische_url(pfad):
     return f"{KANONISCHE_BASIS_URL}{pfad}"
 
 
+def tempco2_upload_token():
+    lade_umgebungsdatei()
+    return os.environ.get("TEMP_CO2_UPLOAD_TOKEN", "").strip()
+
+
+def tempco2_daten_datei():
+    lade_umgebungsdatei()
+    pfad = os.environ.get("TEMP_CO2_DATEN_DATEI", "").strip()
+    return Path(pfad) if pfad else TEMP_CO2_STANDARD_DATEI
+
+
+def tempco2_historie_datei():
+    lade_umgebungsdatei()
+    pfad = os.environ.get("TEMP_CO2_HISTORIE_DATEI", "").strip()
+    return Path(pfad) if pfad else TEMP_CO2_STANDARD_HISTORIE_DATEI
+
+
+def tempco2_max_alter_sekunden():
+    lade_umgebungsdatei()
+    wert = os.environ.get("TEMP_CO2_MAX_ALTER_SEKUNDEN", "").strip()
+    if not wert:
+        return TEMP_CO2_STANDARD_MAX_ALTER_SEKUNDEN
+    try:
+        return max(30, int(wert))
+    except ValueError:
+        return TEMP_CO2_STANDARD_MAX_ALTER_SEKUNDEN
+
+
+def tempco2_token_aus_anfrage():
+    autorisierung = request.headers.get("Authorization", "").strip()
+    if autorisierung.casefold().startswith("bearer "):
+        return autorisierung[7:].strip()
+    return request.headers.get("X-TempCO2-Token", "").strip()
+
+
+def tempco2_token_ist_gültig():
+    erwarteter_token = tempco2_upload_token()
+    if not erwarteter_token:
+        return False
+    return hmac.compare_digest(erwarteter_token, tempco2_token_aus_anfrage())
+
+
+def tempco2_utc_jetzt_iso():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def tempco2_parse_utc(wert):
+    if not isinstance(wert, str) or not wert.strip():
+        return None
+    try:
+        zeitpunkt = datetime.fromisoformat(wert.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if zeitpunkt.tzinfo is None:
+        zeitpunkt = zeitpunkt.replace(tzinfo=timezone.utc)
+    return zeitpunkt.astimezone(timezone.utc)
+
+
+def tempco2_zahl(daten, schlüssel, minimum, maximum, typ=float):
+    try:
+        wert = typ(daten.get(schlüssel))
+    except (TypeError, ValueError):
+        raise ValueError(f"Ungültiger Wert für {schlüssel}.") from None
+    if wert < minimum or wert > maximum:
+        raise ValueError(f"Wert für {schlüssel} außerhalb des gültigen Bereichs.")
+    return wert
+
+
+def tempco2_text(daten, schlüssel, standard=""):
+    wert = daten.get(schlüssel, standard)
+    if wert is None:
+        return standard
+    return str(wert).strip()
+
+
+def tempco2_normalisiere_messwert(daten):
+    if not isinstance(daten, dict):
+        raise ValueError("JSON-Objekt erwartet.")
+
+    empfangen_utc = tempco2_utc_jetzt_iso()
+    zeit_utc = tempco2_text(daten, "zeit_utc", empfangen_utc) or empfangen_utc
+    if tempco2_parse_utc(zeit_utc) is None:
+        zeit_utc = empfangen_utc
+
+    return {
+        "zeit_utc": zeit_utc,
+        "empfangen_utc": empfangen_utc,
+        "geraete_adresse": tempco2_text(daten, "geraete_adresse"),
+        "geraetename": tempco2_text(daten, "geraetename") or None,
+        "temperatur_c": round(tempco2_zahl(daten, "temperatur_c", -40, 85, float), 1),
+        "luftfeuchtigkeit_prozent": int(tempco2_zahl(daten, "luftfeuchtigkeit_prozent", 0, 100, int)),
+        "co2_ppm": int(tempco2_zahl(daten, "co2_ppm", 0, 9999, int)),
+        "batterie_prozent": int(tempco2_zahl(daten, "batterie_prozent", 0, 100, int)),
+        "rssi_dbm": int(tempco2_zahl(daten, "rssi_dbm", -127, 20, int)),
+    }
+
+
+def tempco2_speichere_messwert(messwert):
+    datei = tempco2_daten_datei()
+    datei.parent.mkdir(parents=True, exist_ok=True)
+    temporär = datei.with_suffix(".tmp")
+    temporär.write_text(
+        json.dumps(messwert, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    temporär.replace(datei)
+
+
+def tempco2_speichere_historie(messwert):
+    datei = tempco2_historie_datei()
+    datei.parent.mkdir(parents=True, exist_ok=True)
+    with datei.open("a", encoding="utf-8") as verlauf:
+        verlauf.write(json.dumps(messwert, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def tempco2_lade_messwert():
+    datei = tempco2_daten_datei()
+    if not datei.is_file():
+        return None
+    try:
+        daten = json.loads(datei.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(daten, dict):
+        return None
+    return daten
+
+
+def tempco2_lade_historie(seit_utc):
+    datei = tempco2_historie_datei()
+    if not datei.is_file():
+        return []
+
+    messwerte = []
+    try:
+        with datei.open("r", encoding="utf-8") as datenstrom:
+            zeilen = deque(datenstrom, maxlen=20000)
+    except OSError:
+        return []
+
+    for zeile in zeilen:
+        if not zeile.strip():
+            continue
+        try:
+            messwert = json.loads(zeile)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(messwert, dict):
+            continue
+        zeitpunkt = tempco2_parse_utc(messwert.get("empfangen_utc"))
+        if zeitpunkt is None or zeitpunkt < seit_utc:
+            continue
+        messwerte.append(messwert)
+
+    return sorted(messwerte, key=lambda eintrag: eintrag.get("empfangen_utc", ""))
+
+
+def tempco2_ist_aktuell(messwert):
+    empfangen = tempco2_parse_utc(messwert.get("empfangen_utc"))
+    if empfangen is None:
+        return False
+    alter = (datetime.now(timezone.utc) - empfangen).total_seconds()
+    return 0 <= alter <= tempco2_max_alter_sekunden()
+
+
+@app.route("/api/tempco2/aktuell")
+def tempco2_aktueller_messwert():
+    with TEMP_CO2_SPERRE:
+        messwert = tempco2_lade_messwert()
+    if not messwert or not tempco2_ist_aktuell(messwert):
+        return {
+            "verfuegbar": False,
+            "max_alter_sekunden": tempco2_max_alter_sekunden(),
+        }
+    antwort = dict(messwert)
+    antwort["verfuegbar"] = True
+    antwort["max_alter_sekunden"] = tempco2_max_alter_sekunden()
+    return antwort
+
+
+@app.route("/api/tempco2/historie")
+def tempco2_historie():
+    zeitraum = request.args.get("zeitraum", "tag").strip().casefold()
+    dauer = {
+        "tag": timedelta(days=1),
+        "woche": timedelta(days=7),
+        "monat": timedelta(days=31),
+    }.get(zeitraum)
+    if dauer is None:
+        abort(400)
+
+    seit_utc = datetime.now(timezone.utc) - dauer
+    with TEMP_CO2_SPERRE:
+        messwerte = tempco2_lade_historie(seit_utc)
+
+    return {
+        "zeitraum": zeitraum,
+        "messwerte": messwerte,
+    }
+
+
+@app.route("/api/tempco2/messwert", methods=["POST"])
+def tempco2_messwert_empfangen():
+    if not tempco2_upload_token():
+        abort(503)
+    if not tempco2_token_ist_gültig():
+        abort(403)
+
+    try:
+        messwert = tempco2_normalisiere_messwert(request.get_json(silent=True))
+    except ValueError:
+        abort(400)
+
+    with TEMP_CO2_SPERRE:
+        tempco2_speichere_messwert(messwert)
+        tempco2_speichere_historie(messwert)
+
+    return {
+        "ok": True,
+        "empfangen_utc": messwert["empfangen_utc"],
+    }
+
+
 @app.route("/robots.txt")
 def crawler_regeln():
     inhalt = "\n".join(
@@ -1323,6 +1553,11 @@ def ov_l11():
 @app.route("/tesla-dashboard")
 def tesla_dashboard():
     return render_template("tesla_dashboard.html")
+
+
+@app.route("/tempco2")
+def tempco2():
+    return render_template("tempco2.html")
 
 
 @app.route("/github")

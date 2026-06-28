@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from xml.etree import ElementTree
 
 import pytest
@@ -140,6 +140,7 @@ def test_alle_hauptseiten_erreichbar():
         "/",
         "/ov-l11",
         "/tesla-dashboard",
+        "/tempco2",
         "/github",
         "/meshcore",
         "/kontakt",
@@ -165,6 +166,168 @@ def test_startseite_verlinkt_unterseiten():
     assert "/meshcore" in html
     assert "Erik Schauer, DO1FFE aus Essen" in html
     assert "33 öffentliche Repositories" not in html
+
+
+def test_layout_enthaelt_tempco2_statusblock():
+    klient = app.test_client()
+    antwort = klient.get("/")
+    html = antwort.get_data(as_text=True)
+
+    assert 'data-tempco2' in html
+    assert 'hidden' in html
+    assert 'href="/tempco2"' in html
+    assert 'data-tempco2-tooltip=' in html
+    assert "Meine Wohnung hat Zahlen, Meinung" in html
+    assert 'aria-label="TempCO2 Wohnungsluft öffnen"' in html
+    assert 'data-tempco2-temp' in html
+    assert 'data-tempco2-humidity' in html
+    assert 'data-tempco2-co2' in html
+    assert "style.css?v=" in html
+    assert "script.js?v=" in html
+
+
+def test_layout_enthaelt_dark_mode_schalter():
+    klient = app.test_client()
+    antwort = klient.get("/")
+    html = antwort.get_data(as_text=True)
+
+    assert 'meta name="color-scheme" content="light dark"' in html
+    assert 'localStorage.getItem("farbschema")' in html
+    assert 'data-theme-toggle' in html
+    assert 'class="theme-toggle__label"' in html
+    assert 'aria-label="Dunkelmodus aktivieren"' in html
+    assert ">Dunkel</span>" in html
+
+
+def test_tempco2_api_empfaengt_und_liefert_aktuellen_messwert(tmp_path, monkeypatch):
+    daten_datei = tmp_path / "tempco2-aktuell.json"
+    historie_datei = tmp_path / "tempco2-historie.jsonl"
+    monkeypatch.setenv("TEMP_CO2_DATEN_DATEI", str(daten_datei))
+    monkeypatch.setenv("TEMP_CO2_HISTORIE_DATEI", str(historie_datei))
+    monkeypatch.setenv("TEMP_CO2_UPLOAD_TOKEN", "test-token")
+    monkeypatch.setenv("TEMP_CO2_MAX_ALTER_SEKUNDEN", "180")
+
+    klient = app.test_client()
+    antwort = klient.post(
+        "/api/tempco2/messwert",
+        json={
+            "zeit_utc": "2026-06-22T22:27:16Z",
+            "geraete_adresse": "B0:E9:FE:54:67:DD",
+            "geraetename": None,
+            "temperatur_c": 27.7,
+            "luftfeuchtigkeit_prozent": 53,
+            "co2_ppm": 403,
+            "batterie_prozent": 25,
+            "rssi_dbm": -46,
+        },
+        headers={"Authorization": "Bearer test-token"},
+    )
+
+    assert antwort.status_code == 200
+    assert daten_datei.is_file()
+    assert historie_datei.is_file()
+
+    aktuell = klient.get("/api/tempco2/aktuell")
+    daten = aktuell.get_json()
+
+    assert aktuell.headers["Cache-Control"] == "no-store, no-cache, must-revalidate, max-age=0"
+    assert daten["verfuegbar"] is True
+    assert daten["temperatur_c"] == 27.7
+    assert daten["luftfeuchtigkeit_prozent"] == 53
+    assert daten["co2_ppm"] == 403
+    assert daten["batterie_prozent"] == 25
+
+    historie = klient.get("/api/tempco2/historie?zeitraum=tag")
+    verlauf = historie.get_json()
+
+    assert historie.headers["Cache-Control"] == "no-store, no-cache, must-revalidate, max-age=0"
+    assert verlauf["zeitraum"] == "tag"
+    assert len(verlauf["messwerte"]) == 1
+    assert verlauf["messwerte"][0]["co2_ppm"] == 403
+
+
+def test_tempco2_api_lehnt_falschen_token_ab(tmp_path, monkeypatch):
+    monkeypatch.setenv("TEMP_CO2_DATEN_DATEI", str(tmp_path / "tempco2-aktuell.json"))
+    monkeypatch.setenv("TEMP_CO2_UPLOAD_TOKEN", "test-token")
+
+    klient = app.test_client()
+    antwort = klient.post(
+        "/api/tempco2/messwert",
+        json={"temperatur_c": 21.0},
+        headers={"Authorization": "Bearer falsch"},
+    )
+
+    assert antwort.status_code == 403
+
+
+def test_tempco2_api_blendet_veraltete_daten_aus(tmp_path, monkeypatch):
+    daten_datei = tmp_path / "tempco2-aktuell.json"
+    monkeypatch.setenv("TEMP_CO2_DATEN_DATEI", str(daten_datei))
+    monkeypatch.setenv("TEMP_CO2_MAX_ALTER_SEKUNDEN", "180")
+    alter_zeitpunkt = (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat().replace("+00:00", "Z")
+    daten_datei.write_text(
+        json.dumps({
+            "zeit_utc": alter_zeitpunkt,
+            "empfangen_utc": alter_zeitpunkt,
+            "temperatur_c": 27.7,
+            "luftfeuchtigkeit_prozent": 53,
+            "co2_ppm": 403,
+            "batterie_prozent": 25,
+            "rssi_dbm": -46,
+        }),
+        encoding="utf-8",
+    )
+
+    klient = app.test_client()
+    antwort = klient.get("/api/tempco2/aktuell")
+    daten = antwort.get_json()
+
+    assert antwort.status_code == 200
+    assert daten["verfuegbar"] is False
+
+
+def test_tempco2_seite_enthaelt_graphbereiche():
+    klient = app.test_client()
+    antwort = klient.get("/tempco2")
+    html = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 200
+    assert "Tagesgraph" in html
+    assert "Wochengraph" in html
+    assert "Monatsgraph" in html
+    assert "Meine Wohnung führt jetzt Luftprotokoll." in html
+    assert "Amtlicher Luftlagebericht" in html
+    assert 'data-tempco2-lage-co2' in html
+    assert 'data-tempco2-lage-temp' in html
+    assert 'data-tempco2-lage-luft' in html
+    assert "Die Geschichte" in html
+    assert "Wie ein kleines Display meine Wohnung zur Pressestelle für Luft gemacht hat" in html
+    assert "ChatGPT gefragt" in html
+    assert "Zugriff verweigert" in html
+    assert "Konfetti mit mathematischem Ehrgeiz" in html
+    assert "aus ganzen Spruch-Pools passende Kommentare" in html
+    assert "Trendrichtung" in html
+    assert "15-Minuten-Fenster" in html
+    assert "0,1 °C" in html
+    assert "1er-Schritten" in html
+    assert "Bericht kommentiert" in html
+    assert "abgestandene Luft eine API bekommt" in html
+    assert 'href="#aktuelle-werte"' in html
+    assert 'href="#projektgeschichte"' in html
+    assert "Wohnungsluft, keine Stadtmessstation. Essen darf sitzen bleiben." in html
+    assert "Wohlfühlbereich" in html
+    assert "Warnbereich" in html
+    assert "Kritisch" in html
+    assert 'role="tablist"' in html
+    assert html.count('role="tab"') == 3
+    assert html.count('role="tabpanel"') == 3
+    assert 'data-tempco2-tab="tag"' in html
+    assert 'data-tempco2-tab="woche"' in html
+    assert 'data-tempco2-tab="monat"' in html
+    assert 'data-tempco2-chart="tag"' in html
+    assert 'data-tempco2-chart="woche"' in html
+    assert 'data-tempco2-chart="monat"' in html
+    assert html.count("data-tempco2-chart-values") == 3
 
 
 def test_ueber_mich_erzählt_persönlich_ohne_private_repos():
@@ -295,6 +458,10 @@ def test_funkbruecke_seite_zeigt_aktuellen_prototypstand():
     assert "Changelog" not in html
     assert "Changelog ansehen" not in html
     assert "Seit v0.9." not in html
+    assert "Nicht bereitgestellt" not in html
+    assert "FB1-Mesh-Protokoll.md" not in html
+    assert "FunkBruecke-Sinn-und-Zweck-latest.pdf" not in html
+    assert "v0.9.400-rc1" in html
 
 
 def test_layout_setzt_seo_metadaten():
@@ -339,6 +506,7 @@ def test_sitemap_listet_indexierbare_hauptseiten():
         "https://do1ffe.de/",
         "https://do1ffe.de/ov-l11",
         "https://do1ffe.de/tesla-dashboard",
+        "https://do1ffe.de/tempco2",
         "https://do1ffe.de/github",
         "https://do1ffe.de/meshcore",
         "https://do1ffe.de/Funkbruecke",

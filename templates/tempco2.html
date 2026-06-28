@@ -1,0 +1,269 @@
+{% extends "layout.html" %}
+
+{% block titel %}TempCO2 Wohnungsluft | DO1FFE{% endblock %}
+{% block beschreibung %}Live-Werte aus meiner Wohnung: Temperatur, Luftfeuchte und CO2 mit Graphen, Luftlagebericht und einer erstaunlich langen Geschichte über Bluetooth.{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--tempco2">
+  <div class="page-hero__content tempco2-hero__content reveal">
+    <div class="tempco2-hero__text">
+      <p class="eyebrow">SwitchBot Meter Pro CO2 · Live aus der Luftzentrale</p>
+      <h1>Meine Wohnung führt jetzt Luftprotokoll.</h1>
+      <p>
+        Temperatur, Luftfeuchtigkeit und CO2 kommen lokal per Bluetooth vom Sensor.
+        Die Werte landen hier, damit „geht doch noch“ nicht länger als Lüftungskonzept
+        durchkommt. Oben kommentiert der Luftlagebericht die Zahlen mit der amtlichen
+        Ernsthaftigkeit eines Fensters, das endlich befördert werden möchte.
+      </p>
+      <nav class="tempco2-sprungmarken" aria-label="Sprungmarken auf der TempCO2-Seite">
+        <a href="#aktuelle-werte">Aktuelle Werte</a>
+        <a href="#wohnungs-hinweis">Wohnungsluft</a>
+        <a href="#tagesgraph">Tag</a>
+        <a href="#wochengraph">Woche</a>
+        <a href="#monatsgraph">Monat</a>
+        <a href="#projektgeschichte">Geschichte</a>
+      </nav>
+    </div>
+    <aside class="tempco2-hero__lage" aria-label="Humorvoller Luftlagebericht" aria-live="polite" data-tempco2-lage>
+      <p>Amtlicher Luftlagebericht</p>
+      <ul>
+        <li><strong data-tempco2-lage-co2-titel>CO2</strong><span data-tempco2-lage-co2>wartet auf frische Zahlen und übt schon einmal sein amtliches Räuspern.</span></li>
+        <li><strong data-tempco2-lage-temp-titel>Temperatur</strong><span data-tempco2-lage-temp>steht im Foyer der Messverwaltung und sucht den passenden Stempel.</span></li>
+        <li><strong data-tempco2-lage-luft-titel>Luftfeuchte</strong><span data-tempco2-lage-luft>sortiert Unterlagen mit der Aufschrift „gefühlt bestimmt okay“.</span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<section class="section tempco2-dashboard" id="aktuelle-werte" aria-label="TempCO2 Messwerte">
+  <div class="tempco2-live reveal" data-tempco2-page-current hidden>
+    <div>
+      <span>Temperatur</span>
+      <strong><span data-tempco2-page-temp>--</span><small>°C</small></strong>
+    </div>
+    <div>
+      <span>Luftfeuchtigkeit</span>
+      <strong><span data-tempco2-page-humidity>--</span><small>% rF</small></strong>
+    </div>
+    <div>
+      <span>CO2</span>
+      <strong><span data-tempco2-page-co2>--</span><small>ppm</small></strong>
+    </div>
+    <div>
+      <span>Stand</span>
+      <strong class="tempco2-live-stand">
+        <span data-tempco2-page-time>--:--</span>
+        <small data-tempco2-page-date>--.--.----</small>
+      </strong>
+    </div>
+  </div>
+
+  <p class="tempco2-empty reveal" data-tempco2-page-empty>
+    Gerade keine frischen Messdaten. Der Sensor reicht wohl noch Unterlagen nach,
+    Bluetooth schaut bedeutungsvoll in die Ferne, und die Wohnung genießt kurz Privatsphäre.
+  </p>
+
+  <aside class="tempco2-hinweis reveal" id="wohnungs-hinweis" aria-label="Hinweis zur Herkunft der Messwerte">
+    <strong>Wohnungsluft, keine Stadtmessstation. Essen darf sitzen bleiben.</strong>
+    <span>
+      Diese Live-Werte stammen direkt aus meiner Wohnung in Essen. Wenn CO2, Temperatur oder Luftfeuchte hier ausschlagen,
+      ist also nicht ganz Essen plötzlich anders, sondern erst einmal nur mein Raumklima. Amtliche Hektik bitte erst nach
+      Rücksprache mit dem Fenstergriff, einem tiefen Blick auf den Tagesgraphen und einer kurzen Tasse Sachlichkeit.
+    </span>
+  </aside>
+
+  <div class="tempco2-bereich-legende reveal" aria-label="Farblegende für Normal- und Warnbereiche in den Graphen">
+    <span><i class="tempco2-bereich-legende__farbe tempco2-bereich-legende__farbe--normal" aria-hidden="true"></i>Wohlfühlbereich</span>
+    <span><i class="tempco2-bereich-legende__farbe tempco2-bereich-legende__farbe--warnung" aria-hidden="true"></i>Warnbereich</span>
+    <span><i class="tempco2-bereich-legende__farbe tempco2-bereich-legende__farbe--kritisch" aria-hidden="true"></i>Kritisch</span>
+  </div>
+
+  <div class="tempco2-graph-tabs reveal" id="graphen" data-tempco2-tabs>
+    <div class="tempco2-tablist" role="tablist" aria-label="Zeitraum für die TempCO2-Graphen">
+      <button class="is-active" type="button" id="tempco2-tab-tag" role="tab" aria-selected="true" aria-controls="tagesgraph" tabindex="0" data-tempco2-tab="tag">24h</button>
+      <button type="button" id="tempco2-tab-woche" role="tab" aria-selected="false" aria-controls="wochengraph" tabindex="-1" data-tempco2-tab="woche">Woche</button>
+      <button type="button" id="tempco2-tab-monat" role="tab" aria-selected="false" aria-controls="monatsgraph" tabindex="-1" data-tempco2-tab="monat">Monat</button>
+    </div>
+
+    <article class="tempco2-chart" id="tagesgraph" role="tabpanel" aria-labelledby="tempco2-tab-tag" data-tempco2-chart="tag" data-tempco2-tab-panel="tag">
+      <header>
+        <div>
+          <p class="eyebrow">24 Stunden</p>
+          <h2>Tagesgraph</h2>
+        </div>
+        <span data-tempco2-chart-count>--</span>
+      </header>
+      <svg viewBox="0 0 760 430" role="img" aria-label="Tagesgraph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
+      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum Tagesgraph"></div>
+      <p data-tempco2-chart-empty hidden>Für diesen Zeitraum liegen noch keine Messwerte vor. Das Diagramm übt schon einmal seriöses Schweigen.</p>
+    </article>
+
+    <article class="tempco2-chart" id="wochengraph" role="tabpanel" aria-labelledby="tempco2-tab-woche" data-tempco2-chart="woche" data-tempco2-tab-panel="woche" hidden>
+      <header>
+        <div>
+          <p class="eyebrow">7 Tage</p>
+          <h2>Wochengraph</h2>
+        </div>
+        <span data-tempco2-chart-count>--</span>
+      </header>
+      <svg viewBox="0 0 760 430" role="img" aria-label="Wochengraph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
+      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum Wochengraph"></div>
+      <p data-tempco2-chart-empty hidden>Für diesen Zeitraum liegen noch keine Messwerte vor. Die Woche wartet noch auf verwertbare Raumklima-Akten.</p>
+    </article>
+
+    <article class="tempco2-chart" id="monatsgraph" role="tabpanel" aria-labelledby="tempco2-tab-monat" data-tempco2-chart="monat" data-tempco2-tab-panel="monat" hidden>
+      <header>
+        <div>
+          <p class="eyebrow">31 Tage</p>
+          <h2>Monatsgraph</h2>
+        </div>
+        <span data-tempco2-chart-count>--</span>
+      </header>
+      <svg viewBox="0 0 760 430" role="img" aria-label="Monatsgraph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
+      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum Monatsgraph"></div>
+      <p data-tempco2-chart-empty hidden>Für diesen Zeitraum liegen noch keine Messwerte vor. Der Monat stellt gerade den Ausschuss für Luftfragen zusammen.</p>
+    </article>
+  </div>
+
+  <section class="tempco2-projektgeschichte reveal" id="projektgeschichte" aria-labelledby="tempco2-projektgeschichte-titel">
+    <div class="tempco2-projektgeschichte__intro">
+      <p class="eyebrow">Die Geschichte</p>
+      <h2 id="tempco2-projektgeschichte-titel">Wie ein kleines Display meine Wohnung zur Pressestelle für Luft gemacht hat</h2>
+      <p>
+        Am Anfang stand ein völlig harmloser Gedanke. Ich sah das SwitchBot Meter Pro CO2,
+        dieses kleine Gerät mit Display und Raumklima-Zahlen, und dachte: <strong>„Nett.“</strong>
+        Das war der letzte vernünftige Moment des Abends.
+      </p>
+      <p>
+        Sekunden später kam der Satz, der in Bastelprojekten ungefähr dieselbe Wirkung hat wie
+        „Ich schaue nur kurz in den Maschinenraum“: <strong>„Ob man das wohl lokal auslesen kann?“</strong>
+        Also ChatGPT gefragt, ob das technisch möglich ist. Die Antwort war sinngemäß:
+        „Ja, vermutlich. Aber Bluetooth Low Energy wird dich erst einmal prüfen, ob du es wirklich ernst meinst.“
+      </p>
+      <p>
+        Damit war der Abend offiziell ruiniert, aber auf diese produktive Art, bei der man sich um
+        23:47 Uhr einredet, man sei „gleich fertig“, während auf dem Bildschirm Hex-Zahlen stehen,
+        die ungefähr so freundlich wirken wie ein Steuerformular mit schlechter Laune.
+      </p>
+      <p>
+        Und natürlich meinte ich es ernst. Sehr ernst. Unangemessen ernst für ein Gerät, das eigentlich
+        nur sagen wollte: „Hier sind 27 Grad, 52 Prozent Luftfeuchte und CO2 ist auch da.“ Meine Wohnung
+        hingegen wurde in meinem Kopf sofort zur kleinen Wetterredaktion. Mit Ressortleitung Fenstergriff,
+        Chefredaktion Sensor und einem Praktikanten namens „Warum kommt da kein Paket?“
+      </p>
+      <p>
+        Es folgte die Phase, in der man Bluetooth Low Energy nicht mehr als Funktechnik betrachtet,
+        sondern als Persönlichkeitstest. Mal kam ein Paket, mal nicht. Mal stand da ein Wert, mal nur
+        Daten, die aussahen, als hätte jemand eine Zahlenkolonne in den Ventilator gehalten. Der Sensor
+        funkte, Windows nickte höflich, und ich saß da wie der Mensch, der einem unsichtbaren Thermometer
+        erklärt, dass es jetzt bitte seine Gefühle in JSON ausdrücken möge.
+      </p>
+      <p>
+        Besonders schön wurde es, als die erste Testmessung funktionierte. Das war dieser gefährliche
+        Moment, in dem ein Projekt so tut, als wäre es fertig. Man lehnt sich zurück, sagt innerlich
+        „läuft“, klickt auf Automatikbetrieb und bekommt anschließend die technische Version von
+        Schulterzucken serviert. Einmal Messwert, dann Stille. Das Raumklima hatte offenbar beschlossen,
+        nur noch auf Zuruf Karriere zu machen.
+      </p>
+      <p>
+        Dann begann die klassische Reihenfolge: erst Optimismus, dann Rohdaten, dann „warum kommt
+        da nichts?“, dann eine Testmessung, die funktioniert, und ein Hintergrundlauf, der sich benimmt
+        wie ein Kollege, der im Meeting sagt „bei mir geht's“ und danach offline ist. Windows war auch
+        dabei und brachte seinen beliebten Klassiker mit: „Zugriff verweigert“. Sehr charmant. Sehr 1998.
+      </p>
+      <p>
+        Zwischendurch sah das Downloadportal kurz aus, als hätte jemand eine Werkzeugkiste in einen
+        Dateimanager gekippt: EXE hier, Hilfsdatei dort, Skript daneben, und irgendwo lag bestimmt noch
+        eine Datei mit dem mentalen Namen „bitte-diesmal-wirklich-final-final“. Also wurde aufgeräumt:
+        eine EXE, ein Fenster, klare Knöpfe. Installieren, Deinstallieren, Starten, Stoppen, Testmessung.
+        So, wie es sein sollte, wenn man nicht erst eine kleine Verwaltungsfachkraft für Luftmessung
+        einstellen möchte.
+      </p>
+      <p>
+        Am Ende wurde daraus eine Windows-EXE mit Tray-Symbol, lokaler Speicherung und Live-Upload.
+        Die EXE lauscht im Benutzerkonto, weil Bluetooth dort weniger beleidigt ist, schreibt CSV und
+        JSONL, schickt frische Werte mit Token an do1ffe.de und verschwindet in den Infobereich, als
+        hätte sie nie etwas anderes gewollt. Schließen bedeutet jetzt nicht mehr „Ende“, sondern
+        „ich arbeite weiter, aber ohne im Weg herumzustehen“. Sehr erwachsen. Für ein CO2-Projekt.
+      </p>
+      <p>
+        Die Webseite macht daraus oben den kleinen Wohnungs-Badge und unten diese Graphen. Wenn keine
+        frischen Daten kommen, blendet sie die Anzeige aus. Denn alte Luft als neue Luft zu verkaufen
+        wäre zwar ein Geschäftsmodell, aber kein Messsystem.
+      </p>
+      <p>
+        Die Graphen hatten ebenfalls ihre Findungsphase. Erst wirkten die Punkte, als hätte jemand
+        Konfetti mit mathematischem Ehrgeiz verteilt. Dann wurden Achsen, Skalen, letzte Werte und
+        unaufdringlichere Markierungen nachgerüstet. Jetzt kann man tatsächlich erkennen, was passiert:
+        Temperatur sinkt, Luftfeuchte macht kleine Bürokratiebewegungen, CO2 bleibt erstaunlich gelassen,
+        und irgendwo im Hintergrund fühlt sich das Fenster endlich ernst genommen.
+      </p>
+      <p>
+        Danach bekam der Luftlagebericht eine eigene kleine Karriere. Erst stand dort nur ein statischer
+        Dreizeiler, der so tat, als könne ein einmaliger Satz die wechselhafte Innenpolitik einer Wohnung
+        erklären. Inzwischen würfelt die Seite aus ganzen Spruch-Pools passende Kommentare zusammen:
+        abhängig von CO2, Temperatur, Luftfeuchte, Messzeit, Lageklasse und Trendrichtung. Dafür schaut er
+        auf die letzten 15 Minuten und vergleicht den aktuellen Wert mit dem ältesten verfügbaren Messpunkt
+        in diesem Fenster. Steigt ein Wert, bekommt er einen anderen Kommentar als beim Fallen. Bei der
+        Temperatur zählt schon ab 0,1 °C, CO2 und Luftfeuchte ab einem Schritt von 1. Kleinliche Daten?
+        Vielleicht. Aber wenn die Luft schon Bericht schreibt, dann bitte mit Dezimalstelle und Dienstsiegel.
+      </p>
+      <p>
+        Aktueller Stand: Die EXE läuft brav im Hintergrund, das Fenster darf in den Tray verschwinden,
+        die Webseite zeigt frische Werte im Kopfbereich, die Graphen lassen sich lesen, und der
+        Luftlagebericht kommentiert das Ganze mit der Würde einer Behörde, die aus Versehen Humor
+        installiert hat. Genau so beginnt vermutlich jede seriöse Raumklima-Infrastruktur.
+      </p>
+    </div>
+
+    <div class="tempco2-technikpfad" aria-label="Technischer Ablauf von TempCO2">
+      <article>
+        <span>1</span>
+        <h3>Sensor plaudert</h3>
+        <p>
+          Der SwitchBot sendet per Bluetooth Low Energy kleine Werbepakete durch die Wohnung.
+          Darin verstecken sich Temperatur, Luftfeuchte, CO2, Akku und Signalstärke. Also alles,
+          was man braucht, um einem Zimmer fachlich fundiert vorzuwerfen, muffig zu werden.
+        </p>
+      </article>
+      <article>
+        <span>2</span>
+        <h3>EXE lauscht</h3>
+        <p>
+          TempCO2 läuft unter Windows im Benutzerkonto, scannt regelmäßig, dekodiert die Pakete
+          und schreibt die Messwerte lokal als CSV und JSONL. CSV für die Tabellenfraktion,
+          JSONL für alle, die beim Wort „Zeilenformat“ leise nicken.
+        </p>
+      </article>
+      <article>
+        <span>3</span>
+        <h3>Webseite zeigt</h3>
+        <p>
+          Frische Messwerte werden mit Token an do1ffe.de geschickt. Die Webseite zeigt sie oben
+          im Kopfbereich und hier als Tages-, Wochen- und Monatsverlauf. Wenn nichts Frisches kommt,
+          verschwindet die Anzeige lieber, statt alte Luft als neue Luft zu verkaufen. Das wäre
+          marketingtechnisch mutig, aber raumklimatisch frech.
+        </p>
+      </article>
+      <article>
+        <span>4</span>
+        <h3>Bericht kommentiert</h3>
+        <p>
+          Der Luftlagebericht wählt aus Spruch-Pools passende Kommentare. Für die Tendenz nimmt er das
+          15-Minuten-Fenster vor der aktuellen Messung und vergleicht mit dem ältesten verfügbaren Wert
+          darin. Bei Temperatur reichen 0,1 °C Änderung für eine Richtung, CO2 und Luftfeuchte zählen
+          in 1er-Schritten, damit die Wohnung nicht heimlich Drama macht.
+        </p>
+      </article>
+    </div>
+
+    <p class="tempco2-projektgeschichte__fazit">
+      Kurzfassung: Gerät gesehen, ChatGPT gefragt, losgelegt, Bluetooth diskutierte mit,
+      Windows wollte überzeugt werden, die EXE zog in den Tray, die Graphen lernten Benehmen,
+      und jetzt petzt meine Wohnung live ins Internet, wenn die Luft im Zimmer wieder Meetings
+      simuliert. Digitalisierung ist, wenn selbst abgestandene Luft eine API bekommt und danach
+      auch noch kommentiert wird.
+    </p>
+  </section>
+</section>
+{% endblock %}

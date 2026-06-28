@@ -59,7 +59,7 @@
     </p>
   </article>
   <aside class="feature__media reveal">
-    <img src="{{ url_for('static', filename='assets/meshcore-lora.svg') }}" alt="Abstrakte Darstellung eines LoRa-Mesh-Netzes mit verbundenen Nodes">
+    <img src="{{ url_for('static', filename='assets/meshcore-lora.svg') }}" alt="Abstrakte Darstellung eines LoRa-Mesh-Netzes mit verbundenen Nodes" width="900" height="640" loading="lazy" decoding="async">
   </aside>
 </section>
 
@@ -150,7 +150,7 @@
     </div>
     <div class="download-panel__actions">
       <div class="download-qr" aria-label="QR-Code für den APK-Download">
-        <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}?v={{ repeater_apk.version if repeater_apk else 'aktuell' }}" alt="QR-Code für den APK-Download der Android-App">
+        <img src="{{ url_for('static', filename='assets/meshcore-repeater-konfigurator-apk-qr.png') }}?v={{ repeater_apk.version if repeater_apk else 'aktuell' }}" alt="QR-Code für den APK-Download der Android-App" width="450" height="450" loading="lazy" decoding="async">
         <span>Mit dem Android-Handy scannen</span>
       </div>
       <a class="button button--primary" href="{{ repeater_apk_button_url }}"{% if repeater_apk %} data-download-version="{{ repeater_apk.version }}"{% endif %}>APK herunterladen</a>

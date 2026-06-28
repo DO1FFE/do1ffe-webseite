@@ -22,8 +22,23 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ seitentitel|trim }}">
     <meta name="twitter:description" content="{{ seitenbeschreibung|trim }}">
+    <meta name="color-scheme" content="light dark">
     <title>{{ seitentitel|trim }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+      (() => {
+        let gespeichertesFarbschema = null;
+        try {
+          gespeichertesFarbschema = localStorage.getItem("farbschema");
+        } catch {
+          gespeichertesFarbschema = null;
+        }
+        const dunklesSystem = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (gespeichertesFarbschema === "dunkel" || (!gespeichertesFarbschema && dunklesSystem)) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="{{ statische_datei('style.css') }}">
     {% block head %}{% endblock %}
   </head>
   <body class="no-js">
@@ -32,11 +47,20 @@
         <span class="brand__mark">DO1FFE</span>
         <span class="brand__sub">Essen · DOK L11</span>
       </a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <a
+        class="tempco2-status"
+        href="{{ url_for('tempco2') }}"
+        data-tempco2
+        data-tempco2-tooltip="Klick mich: Meine Wohnung hat Zahlen, Meinung und vermutlich schon wieder einen Lüftungsantrag."
+        hidden
+        aria-label="TempCO2 Wohnungsluft öffnen"
+        aria-live="polite"
+      >
+        <span class="tempco2-status__label">Wohnung</span>
+        <span class="tempco2-status__value"><strong data-tempco2-temp>--</strong> °C</span>
+        <span class="tempco2-status__value"><strong data-tempco2-humidity>--</strong> % rF</span>
+        <span class="tempco2-status__value"><strong data-tempco2-co2>--</strong> ppm CO2</span>
+      </a>
       <nav class="site-nav" id="site-nav" data-nav>
         <a class="{% if request.endpoint == 'startseite' %}is-active{% endif %}" href="{{ url_for('startseite') }}">Start</a>
         <a class="{% if request.endpoint == 'ueber_mich' %}is-active{% endif %}" href="{{ url_for('ueber_mich') }}">Über mich</a>
@@ -47,6 +71,28 @@
         <a class="{% if request.endpoint == 'funkbruecke' %}is-active{% endif %}" href="{{ url_for('funkbruecke') }}">FunkBrücke</a>
         <a class="{% if request.endpoint == 'kontakt' %}is-active{% endif %}" href="{{ url_for('kontakt') }}">Kontakt</a>
       </nav>
+      <div class="site-header__actions">
+        <button
+          class="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Dunkelmodus aktivieren"
+          title="Dunkelmodus aktivieren"
+          data-theme-toggle
+        >
+          <span class="theme-toggle__label" data-theme-toggle-label>Dunkel</span>
+          <span class="theme-toggle__track" aria-hidden="true">
+            <span class="theme-toggle__icon theme-toggle__icon--sun">☀</span>
+            <span class="theme-toggle__knob"></span>
+            <span class="theme-toggle__icon theme-toggle__icon--moon">☾</span>
+          </span>
+        </button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </header>
 
     <main>
@@ -62,7 +108,7 @@
       </nav>
     </footer>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ statische_datei('script.js') }}"></script>
     {% block scripts %}{% endblock %}
   </body>
 </html>
