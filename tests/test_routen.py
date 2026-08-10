@@ -1,5 +1,7 @@
 import json
 import os
+import re
+import gzip
 from datetime import datetime, timedelta, timezone
 from xml.etree import ElementTree
 
@@ -146,24 +148,74 @@ def lies_downloads(zähler_datei, datei):
     return eintrag["downloads"]
 
 
+def extrahiere_json_ld(html):
+    blöcke = re.findall(
+        r'<script type="application/ld\+json">(.*?)</script>',
+        html,
+        flags=re.DOTALL,
+    )
+    return [json.loads(block) for block in blöcke]
+
+
+def flache_json_ld_elemente(html):
+    elemente = []
+    for block in extrahiere_json_ld(html):
+        elemente.append(block)
+        graph = block.get("@graph") if isinstance(block, dict) else None
+        if isinstance(graph, list):
+            elemente.extend(
+                eintrag for eintrag in graph if isinstance(eintrag, dict)
+            )
+    return elemente
+
+
 def test_alle_hauptseiten_erreichbar():
     klient = app.test_client()
     for route in [
         "/",
         "/ov-l11",
+        "/ov-l11/ov-abend-2026-08-11",
         "/tesla-dashboard",
         "/tempco2",
-        "/github",
+        "/autobahn",
+        "/dienste",
         "/meshcore",
         "/kontakt",
         "/impressum",
         "/datenschutz",
         "/ueber-mich",
-        "/projekte",
         "/Funkbruecke",
     ]:
         antwort = klient.get(route)
         assert antwort.status_code == 200
+
+
+def test_alte_projektpfade_leiten_auf_dienste():
+    klient = app.test_client()
+
+    assert klient.get("/github").status_code == 301
+    assert klient.get("/github").headers["Location"] == "/dienste"
+    assert klient.get("/projekte").status_code == 301
+    assert klient.get("/projekte").headers["Location"] == "/dienste"
+
+
+def test_www_host_leitet_dauerhaft_auf_kanonischen_host():
+    klient = app.test_client()
+
+    startseite = klient.get("/", base_url="https://www.do1ffe.de")
+    unterseite = klient.get(
+        "/meshcore?quelle=google&sprache=de",
+        base_url="https://www.do1ffe.de",
+    )
+
+    assert startseite.status_code == 301
+    assert startseite.headers["Location"] == "https://do1ffe.de/"
+    assert unterseite.status_code == 301
+    assert (
+        unterseite.headers["Location"]
+        == "https://do1ffe.de/meshcore?quelle=google&sprache=de"
+    )
+    assert klient.get("/", base_url="https://do1ffe.de").status_code == 200
 
 
 def test_startseite_verlinkt_unterseiten():
@@ -174,7 +226,8 @@ def test_startseite_verlinkt_unterseiten():
     assert "/ueber-mich" in html
     assert "/ov-l11" in html
     assert "/tesla-dashboard" in html
-    assert "/github" in html
+    assert "/autobahn" in html
+    assert "/dienste" in html
     assert "/meshcore" in html
     assert "Erik Schauer, DO1FFE aus Essen" in html
     assert "33 öffentliche Repositories" not in html
@@ -196,6 +249,28 @@ def test_layout_enthaelt_tempco2_statusblock():
     assert 'data-tempco2-co2' in html
     assert "style.css?v=" in html
     assert "script.js?v=" in html
+
+
+def test_statische_assets_werden_kurzfristig_öffentlich_gecacht():
+    antwort = app.test_client().get("/static/style.css")
+
+    assert antwort.status_code == 200
+    assert (
+        antwort.headers["Cache-Control"]
+        == "public, max-age=3600, stale-while-revalidate=86400"
+    )
+
+
+def test_html_und_statische_text_assets_werden_mit_gzip_komprimiert():
+    klient = app.test_client()
+
+    for pfad in ["/", "/static/style.css", "/static/script.js"]:
+        antwort = klient.get(pfad, headers={"Accept-Encoding": "gzip"})
+
+        assert antwort.status_code == 200
+        assert antwort.headers["Content-Encoding"] == "gzip"
+        assert "Accept-Encoding" in antwort.headers["Vary"]
+        assert gzip.decompress(antwort.get_data()), pfad
 
 
 def test_layout_enthaelt_dark_mode_schalter():
@@ -254,8 +329,15 @@ def test_tempco2_api_empfaengt_und_liefert_aktuellen_messwert(tmp_path, monkeypa
 
     assert historie.headers["Cache-Control"] == "no-store, no-cache, must-revalidate, max-age=0"
     assert verlauf["zeitraum"] == "tag"
+    assert verlauf["messwerte_gesamt"] == 1
+    assert verlauf["verdichtet"] is False
     assert len(verlauf["messwerte"]) == 1
     assert verlauf["messwerte"][0]["co2_ppm"] == 403
+
+    for zeitraum in ["1h", "6h", "12h", "monat", "6monate", "jahr"]:
+        antwort = klient.get(f"/api/tempco2/historie?zeitraum={zeitraum}")
+        assert antwort.status_code == 200
+        assert antwort.get_json()["zeitraum"] == zeitraum
 
 
 def test_tempco2_api_lehnt_falschen_token_ab(tmp_path, monkeypatch):
@@ -305,8 +387,6 @@ def test_tempco2_seite_enthaelt_graphbereiche():
 
     assert antwort.status_code == 200
     assert "Tagesgraph" in html
-    assert "Wochengraph" in html
-    assert "Monatsgraph" in html
     assert "Meine Wohnung führt jetzt Luftprotokoll." in html
     assert "Amtlicher Luftlagebericht" in html
     assert 'data-tempco2-lage-co2' in html
@@ -330,16 +410,15 @@ def test_tempco2_seite_enthaelt_graphbereiche():
     assert "Wohlfühlbereich" in html
     assert "Warnbereich" in html
     assert "Kritisch" in html
-    assert 'role="tablist"' in html
-    assert html.count('role="tab"') == 3
-    assert html.count('role="tabpanel"') == 3
-    assert 'data-tempco2-tab="tag"' in html
-    assert 'data-tempco2-tab="woche"' in html
-    assert 'data-tempco2-tab="monat"' in html
+    assert 'data-tempco2-range' in html
+    assert 'type="range"' in html
+    assert 'min="0"' in html
+    assert 'max="6"' in html
+    assert 'step="1"' in html
+    for marke in ["1h", "6h", "12h", "1 Tag", "1 Monat", "6 Monate", "1 Jahr"]:
+        assert marke in html
     assert 'data-tempco2-chart="tag"' in html
-    assert 'data-tempco2-chart="woche"' in html
-    assert 'data-tempco2-chart="monat"' in html
-    assert html.count("data-tempco2-chart-values") == 3
+    assert html.count("data-tempco2-chart-values") == 1
 
 
 def test_ueber_mich_erzählt_persönlich_ohne_private_repos():
@@ -488,9 +567,179 @@ def test_layout_setzt_seo_metadaten():
     assert '<link rel="canonical" href="https://do1ffe.de/ov-l11">' in html
     assert '<meta property="og:site_name" content="DO1FFE">' in html
     assert '<meta name="twitter:card" content="summary">' in html
+    assert '"@type":"BreadcrumbList"' in html
+    assert '"name":"OV L11"' in html
+    assert '"item":"https://do1ffe.de/ov-l11"' in html
 
 
-def test_robots_txt_erlaubt_vollständige_indexierung():
+def test_kanonische_urls_ignorieren_parameter_und_nutzen_die_routendefinition():
+    klient = app.test_client()
+
+    antwort = klient.get("/Funkbruecke?utm_source=google&ansicht=kompakt")
+    html = antwort.get_data(as_text=True)
+    canonicals = re.findall(r'<link rel="canonical" href="([^"]+)">', html)
+
+    assert antwort.status_code == 200
+    assert canonicals == ["https://do1ffe.de/Funkbruecke"]
+    assert '<meta property="og:url" content="https://do1ffe.de/Funkbruecke">' in html
+    assert "utm_source" not in canonicals[0]
+
+
+def test_parameterseiten_werden_nicht_separat_indexiert():
+    klient = app.test_client()
+    antwort = klient.get("/Funkbruecke?utm_source=suche")
+    html = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 200
+    assert '<meta name="robots" content="noindex,follow,noarchive">' in html
+    assert antwort.headers["X-Robots-Tag"] == "noindex,follow,noarchive"
+    assert '<link rel="canonical" href="https://do1ffe.de/Funkbruecke">' in html
+
+
+def test_rechtstexte_bleiben_erreichbar_aber_werden_nicht_indexiert():
+    klient = app.test_client()
+
+    for pfad in ["/impressum", "/datenschutz"]:
+        antwort = klient.get(pfad)
+        html = antwort.get_data(as_text=True)
+
+        assert antwort.status_code == 200
+        assert '<meta name="robots" content="noindex,follow,noarchive">' in html
+        assert antwort.headers["X-Robots-Tag"] == "noindex,follow,noarchive"
+        assert f'<link rel="canonical" href="https://do1ffe.de{pfad}">' in html
+
+
+def test_technische_antworten_tragen_x_robots_tag():
+    klient = app.test_client()
+
+    for pfad in ["/api/tempco2/aktuell", "/api/autobahn"]:
+        antwort = klient.get(pfad)
+
+        assert antwort.status_code == 200
+        assert "noindex" in antwort.headers["X-Robots-Tag"]
+        assert "nofollow" in antwort.headers["X-Robots-Tag"]
+
+
+def test_eigene_404_seite_hat_status_noindex_und_keinen_canonical():
+    klient = app.test_client()
+    antwort = klient.get("/diese-seite-gibt-es-nicht")
+    html = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 404
+    assert antwort.headers["Content-Language"] == "de"
+    assert antwort.headers["X-Robots-Tag"] == webseite.ROBOTS_FEHLERSEITE
+    assert '<meta name="robots" content="noindex,nofollow,nosnippet,noarchive">' in html
+    assert '<link rel="canonical"' not in html
+    assert '<meta property="og:url"' not in html
+    assert html.count("<h1>") == 1
+    assert "Diese Seite funkt nicht mehr auf dieser Adresse." in html
+    assert 'href="/"' in html
+
+
+def test_startseite_hat_website_person_und_webpage_json_ld():
+    html = app.test_client().get("/").get_data(as_text=True)
+    elemente = flache_json_ld_elemente(html)
+    typen = {eintrag.get("@type") for eintrag in elemente}
+
+    assert {"WebSite", "Person", "WebPage"}.issubset(typen)
+    website = next(eintrag for eintrag in elemente if eintrag.get("@type") == "WebSite")
+    assert website["url"] == "https://do1ffe.de/"
+    assert website["publisher"]["@id"] == "https://do1ffe.de/ueber-mich#person"
+    assert "SearchAction" not in html
+
+
+def test_ueber_mich_hat_profilepage_mit_person_als_hauptinhalt():
+    html = app.test_client().get("/ueber-mich").get_data(as_text=True)
+    elemente = flache_json_ld_elemente(html)
+    profilseite = next(
+        eintrag for eintrag in elemente if eintrag.get("@type") == "ProfilePage"
+    )
+    person = next(eintrag for eintrag in elemente if eintrag.get("@type") == "Person")
+
+    assert profilseite["mainEntity"]["@id"] == person["@id"]
+    assert person["name"] == "Erik Schauer"
+    assert person["alternateName"] == "DO1FFE"
+
+
+def test_projektseiten_haben_passende_valide_json_ld_typen():
+    klient = app.test_client()
+    erwartete_typen = {
+        "/tesla-dashboard": "WebApplication",
+        "/tempco2": "WebApplication",
+        "/autobahn": "WebApplication",
+        "/dienste": "ItemList",
+        "/meshcore": "SoftwareApplication",
+        "/Funkbruecke": "SoftwareApplication",
+        "/kontakt": "ContactPage",
+    }
+
+    for pfad, erwarteter_typ in erwartete_typen.items():
+        html = klient.get(pfad).get_data(as_text=True)
+        elemente = flache_json_ld_elemente(html)
+
+        assert any(
+            eintrag.get("@type") == erwarteter_typ
+            for eintrag in elemente
+        ), pfad
+
+    tesla_html = klient.get("/tesla-dashboard").get_data(as_text=True)
+    tesla = next(
+        eintrag
+        for eintrag in flache_json_ld_elemente(tesla_html)
+        if eintrag.get("@type") == "WebApplication"
+    )
+    assert tesla["mainEntityOfPage"] == "https://do1ffe.de/tesla-dashboard"
+    assert "position" not in json.dumps(tesla, ensure_ascii=False).casefold()
+
+
+def test_social_vorschaubilder_nutzen_vorhandene_lokale_assets():
+    klient = app.test_client()
+    startseite = klient.get("/").get_data(as_text=True)
+    funkbruecke = klient.get("/Funkbruecke").get_data(as_text=True)
+
+    assert '<meta name="twitter:card" content="summary_large_image">' in startseite
+    assert "https://do1ffe.de/static/assets/hero-radio-mesh.png" in startseite
+    assert "https://do1ffe.de/static/assets/funkbruecke-logo.png" in funkbruecke
+    assert '<meta property="og:image:alt"' in startseite
+    assert '<meta name="twitter:image:alt"' in funkbruecke
+
+
+def test_indexierbare_hauptseiten_haben_eindeutige_kernmetadaten():
+    klient = app.test_client()
+    titel = set()
+    beschreibungen = set()
+
+    for pfad in webseite.INDEXIERBARE_PFADE:
+        html = klient.get(pfad).get_data(as_text=True)
+        seitentitel = re.findall(r"<title>(.*?)</title>", html, flags=re.DOTALL)
+        beschreibung = re.findall(
+            r'<meta\s+name="description"\s+content="(.*?)"',
+            html,
+            flags=re.DOTALL,
+        )
+        h1 = re.findall(r"<h1(?:\s[^>]*)?>.*?</h1>", html, flags=re.DOTALL)
+        canonical = re.findall(r'<link rel="canonical" href="([^"]+)">', html)
+
+        assert len(seitentitel) == 1, pfad
+        assert len(beschreibung) == 1, pfad
+        assert len(h1) == 1, pfad
+        assert canonical == [f"https://do1ffe.de{pfad}"], pfad
+        assert '<meta name="robots" content="index,follow,' in html, pfad
+        titel.add(" ".join(seitentitel[0].split()))
+        beschreibungen.add(" ".join(beschreibung[0].split()))
+
+    assert len(titel) == len(webseite.INDEXIERBARE_PFADE)
+    assert len(beschreibungen) == len(webseite.INDEXIERBARE_PFADE)
+
+
+def test_footer_hat_vollständiges_copyright_mit_startjahr():
+    html = app.test_client().get("/").get_data(as_text=True)
+
+    assert 'data-start-year="2026"' in html
+    assert "&copy; <span data-year data-start-year=\"2026\">2026</span> Erik Schauer, do1ffe@darc.de" in html
+
+
+def test_robots_txt_erlaubt_inhalte_und_sperrt_technische_pfade():
     klient = app.test_client()
     antwort = klient.get("/robots.txt")
     text = antwort.get_data(as_text=True)
@@ -499,7 +748,9 @@ def test_robots_txt_erlaubt_vollständige_indexierung():
     assert antwort.content_type == "text/plain; charset=utf-8"
     assert "User-agent: *" in text
     assert "Allow: /" in text
-    assert "Disallow" not in text
+    assert "Disallow: /api/" in text
+    assert "Disallow: /downloads/" in text
+    assert "Disallow: /static/" not in text
     assert "Sitemap: https://do1ffe.de/sitemap.xml" in text
 
 
@@ -513,21 +764,26 @@ def test_sitemap_listet_indexierbare_hauptseiten():
     wurzel = ElementTree.fromstring(antwort.get_data(as_text=True))
     namensraum = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
     urls = [element.text for element in wurzel.findall(f"{namensraum}url/{namensraum}loc")]
+    lastmods = [element.text for element in wurzel.findall(f"{namensraum}url/{namensraum}lastmod")]
 
     assert urls == [
         "https://do1ffe.de/",
         "https://do1ffe.de/ov-l11",
+        "https://do1ffe.de/ov-l11/ov-abend-2026-08-11",
         "https://do1ffe.de/tesla-dashboard",
         "https://do1ffe.de/tempco2",
-        "https://do1ffe.de/github",
+        "https://do1ffe.de/autobahn",
+        "https://do1ffe.de/dienste",
         "https://do1ffe.de/meshcore",
         "https://do1ffe.de/Funkbruecke",
         "https://do1ffe.de/kontakt",
-        "https://do1ffe.de/impressum",
-        "https://do1ffe.de/datenschutz",
         "https://do1ffe.de/ueber-mich",
-        "https://do1ffe.de/projekte",
     ]
+    assert "https://do1ffe.de/impressum" not in urls
+    assert "https://do1ffe.de/datenschutz" not in urls
+    assert len(lastmods) == len(urls)
+    for lastmod in lastmods:
+        datetime.strptime(lastmod, "%Y-%m-%d")
 
 
 def test_ov_l11_zeigt_sommerpause_und_anmeldung():
@@ -537,10 +793,57 @@ def test_ov_l11_zeigt_sommerpause_und_anmeldung():
 
     assert "Sommerpause" in html
     assert "11.08.2026" in html
-    assert "Dienstag, 11.08.2026 um 19 Uhr" in html
+    assert "11.08.2026 von 19 bis 21 Uhr" in html
     assert "https://treff.lima11.de" in html
+    assert 'href="/ov-l11/ov-abend-2026-08-11"' in html
     assert "application/ld+json" in html
-    assert "2026-08-11T19:00:00+02:00" in html
+    assert '"@type": "Organization"' in html
+    assert '"@type": "Event"' not in html
+
+
+def test_ov_abend_hat_vollständige_sichtbare_termindaten():
+    klient = app.test_client()
+    antwort = klient.get("/ov-l11/ov-abend-2026-08-11")
+    html = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 200
+    assert "OV-Abend am 11. August 2026" in html
+    assert "11. August 2026 ab 19 Uhr" in html
+    assert "19 Uhr" in html
+    assert "21 Uhr" in html
+    assert "Haus der Begegnung" in html
+    assert "I. Weberstraße 28" in html
+    assert "Kostenfrei" in html
+    assert "interessierte Gäste" in html
+    assert '<link rel="canonical" href="https://do1ffe.de/ov-l11/ov-abend-2026-08-11">' in html
+    assert '<meta name="twitter:card" content="summary_large_image">' in html
+    assert 'href="/ov-l11/ov-abend-2026-08-11"' in klient.get("/ov-l11").get_data(as_text=True)
+
+
+def test_ov_abend_hat_vollständige_strukturierte_event_daten():
+    klient = app.test_client()
+    html = klient.get("/ov-l11/ov-abend-2026-08-11").get_data(as_text=True)
+    json_ld = extrahiere_json_ld(html)
+    ereignis = next(eintrag for eintrag in json_ld if eintrag.get("@type") == "Event")
+    breadcrumb = next(
+        eintrag for eintrag in json_ld if eintrag.get("@type") == "BreadcrumbList"
+    )
+
+    assert ereignis["name"] == "OV-Abend DARC OV L11"
+    assert ereignis["description"]
+    assert ereignis["startDate"] == "2026-08-11T19:00:00+02:00"
+    assert ereignis["endDate"] == "2026-08-11T21:00:00+02:00"
+    assert ereignis["url"] == "https://do1ffe.de/ov-l11/ov-abend-2026-08-11"
+    assert ereignis["image"] == "https://do1ffe.de/static/assets/ov-l11-radio.svg"
+    assert ereignis["location"]["address"]["streetAddress"] == "I. Weberstraße 28"
+    assert ereignis["offers"]["price"] == 0
+    assert ereignis["offers"]["priceCurrency"] == "EUR"
+    assert ereignis["offers"]["url"] == ereignis["url"]
+    assert ereignis["organizer"]["url"].startswith("https://www.darc.de/")
+    assert ereignis["performer"]["url"].startswith("https://www.darc.de/")
+    assert [element["position"] for element in breadcrumb["itemListElement"]] == [1, 2, 3]
+    assert breadcrumb["itemListElement"][1]["item"] == "https://do1ffe.de/ov-l11"
+    assert breadcrumb["itemListElement"][2]["item"] == ereignis["url"]
 
 
 def test_impressum_enthält_anbieterangaben():
@@ -568,21 +871,38 @@ def test_datenschutz_enthält_webseite_downloads_und_google_play_apps():
     assert "Art. 6 Abs. 1 lit. f DSGVO" in html
 
 
-def test_githubseite_enthält_repo_auswahl():
+def test_diensteseite_enthält_freigegebene_subdomains():
     klient = app.test_client()
-    antwort = klient.get("/github")
+    antwort = klient.get("/dienste")
     html = antwort.get_data(as_text=True)
 
-    assert "tesla-dashboard" in html
-    assert "CoreScope" in html
-    assert "meshcore-network-monitor" in html
-    assert "42 öffentliche Repositories" in html
-    assert "Private Repos" in html
-    assert "Python, JavaScript" in html
-    assert "zuletzt 20.05.2026 bei tesla-dashboard" in html
-    assert "Stars" in html
-    assert "11 gezählt, nicht verlinkt" in html
-    assert "https://github.com/DO1FFE" in html
+    assert "Dienste und Webwerkzeuge" in html
+    assert "13 freigegebene Subdomains" in html
+    assert "qrcode.do1ffe.de" in html
+    assert "tesla.do1ffe.de" in html
+    assert "rb.do1ffe.de" in html
+    assert "fb2l.do1ffe.de" in html
+    assert "wetter.do1ffe.de" in html
+    assert "wm2027.do1ffe.de" in html
+    assert "calendar.do1ffe.de" in html
+    assert "virtual.do1ffe.de" in html
+    assert "lernshack.do1ffe.de" in html
+    assert "rt3any.do1ffe.de" in html
+    assert "sofortgeschenk.do1ffe.de" in html
+    assert "introgen.do1ffe.de" in html
+    assert "rufzeichen.do1ffe.de" in html
+    assert 'class="section article-layout"' not in html
+    assert "Diese Übersicht ist bewusst keine automatische Inventarliste" not in html
+    assert "GitHub bleibt für Quellcode und Entwicklungsspuren relevant" not in html
+    assert "dash.do1ffe.de" not in html
+    assert "mesh.do1ffe.de" not in html
+    assert "downloads.do1ffe.de" not in html
+    assert "klima.do1ffe.de" not in html
+    assert "live.do1ffe.de" not in html
+    assert "stream.do1ffe.de" not in html
+    assert "promo.do1ffe.de" not in html
+    assert "sp.do1ffe.de" not in html
+    assert "Private Repos" not in html
 
 
 def test_github_private_repo_anzahl_nutzt_nur_passenden_token(monkeypatch):
@@ -827,7 +1147,7 @@ def test_meshcoreseite_zeigt_oeffentliche_regionenkarte_ohne_gps_marker(tmp_path
     assert "set repeat on" in html
     assert "Kommando" in html
     assert "Erklärung" in html
-    assert "Aktiviert die Repeat-Funktion" in html
+    assert "Setzt die Repeat-Funktion" in html
     assert "Bei „*“ verwirft MeshCore Pakete ohne Region-Transport-Code." in html
     assert "Speichert die seit dem Neustart geänderte Regionskonfiguration dauerhaft." in html
     assert "region list allowed" not in html
@@ -835,6 +1155,273 @@ def test_meshcoreseite_zeigt_oeffentliche_regionenkarte_ohne_gps_marker(tmp_path
     assert "L.circleMarker" not in html
     assert "51.4818" not in html
     assert "7.2162" not in html
+
+
+def test_meshcoreseite_übernimmt_alle_profile_und_kommandos_aus_regionen_api(monkeypatch):
+    monkeypatch.setattr(
+        webseite,
+        "MESHCORE_REGIONEN_API_URL",
+        "https://downloads.do1ffe.de/api/MeshCoreRepeaterKonfigurator/regionen",
+    )
+    monkeypatch.setattr(
+        webseite,
+        "hole_meshcore_regionen_api",
+        lambda: {
+            "schema": 1,
+            "gemeinsameEinstellungen": {
+                "basisKommandos": ["board", "ver", "get role"],
+            },
+            "profile": [
+                {
+                    "id": "deutschland",
+                    "name": "Deutschland",
+                    "land": "Deutschland",
+                    "bundesland": "",
+                    "stadt": "",
+                    "allowScopes": ["europe", "eu", "de"],
+                    "denyScopes": [],
+                    "homeRegion": "de",
+                    "defaultRegion": "de",
+                    "kommandos": [
+                        "board",
+                        "ver",
+                        "get role",
+                        "set rxdelay 2",
+                        "set txdelay 0.8",
+                        "set direct.txdelay 0.4",
+                        "set flood.max 17",
+                        "region put de",
+                        "region allowf de",
+                        "region home de",
+                        "region default de",
+                        "region save",
+                    ],
+                },
+                {
+                    "id": "deutschland-nordrhein-westfalen-bochum",
+                    "name": "Bochum",
+                    "land": "Deutschland",
+                    "bundesland": "Nordrhein-Westfalen",
+                    "stadt": "Bochum",
+                    "allowScopes": ["de", "de-nw", "bochum"],
+                    "denyScopes": ["*"],
+                    "homeRegion": "de-nw",
+                    "defaultRegion": "de",
+                    "kommandos": [
+                        "board",
+                        "set rxdelay 2",
+                        "set txdelay 0.8",
+                        "set direct.txdelay 0.4",
+                        "set flood.max 17",
+                        "region put bochum",
+                        "region allowf bochum",
+                        "region denyf *",
+                        "region home de-nw",
+                        "region default de",
+                        "region save",
+                    ],
+                },
+            ],
+        },
+    )
+
+    antwort = app.test_client().get("/meshcore")
+    html = antwort.get_data(as_text=True)
+
+    assert antwort.status_code == 200
+    assert "Aktive Regionsprofile in der App." in html
+    assert "Deutschland" in html
+    assert "Bochum" in html
+    assert "set rxdelay 2" in html
+    assert "set txdelay 0.8" in html
+    assert "set direct.txdelay 0.4" in html
+    assert "set flood.max 17" in html
+    assert "set flood.max 64" not in html
+    assert "<code role=\"cell\">board</code>" not in html
+    assert '"istStadt": false' in html
+    assert '"istStadt": true' in html
+
+
+def test_meshcore_regionen_fallback_ersetzt_veraltete_profilweite_werte():
+    kommandos = webseite.meshcore_profilweite_setup_kommandos_ergänzen([
+        "set repeat on",
+        "set flood.max 64",
+        "set rxdelay 5",
+    ])
+
+    assert kommandos == [
+        "set repeat on",
+        "set rxdelay 2",
+        "set txdelay 0.8",
+        "set direct.txdelay 0.4",
+        "set flood.max 17",
+    ]
+
+
+def test_meshcore_beschreibt_alle_offiziellen_parameterkommandos():
+    erwartete_parameter = {
+        "radio",
+        "tx",
+        "freq",
+        "radio.rxgain",
+        "name",
+        "lat",
+        "lon",
+        "prv.key",
+        "guest.password",
+        "owner.info",
+        "adc.multiplier",
+        "public.key",
+        "role",
+        "repeat",
+        "path.hash.mode",
+        "loop.detect",
+        "txdelay",
+        "direct.txdelay",
+        "rxdelay",
+        "dutycycle",
+        "af",
+        "int.thresh",
+        "agc.reset.interval",
+        "multi.acks",
+        "flood.advert.interval",
+        "advert.interval",
+        "flood.max",
+        "flood.max.unscoped",
+        "flood.max.advert",
+        "acl",
+        "allow.read.only",
+        "bridge.type",
+        "bridge.enabled",
+        "bridge.delay",
+        "bridge.source",
+        "bridge.baud",
+        "bridge.channel",
+        "bridge.secret",
+        "bootloader.ver",
+        "pwrmgt.support",
+        "pwrmgt.source",
+        "pwrmgt.bootreason",
+        "pwrmgt.bootmv",
+    }
+    daten = webseite.lade_meshcore_kommando_beschreibungen()
+    parameter_kommandos = daten["parameterKommandos"]
+
+    assert set(parameter_kommandos) == erwartete_parameter
+    for parameter, beschreibungen in parameter_kommandos.items():
+        lesen = webseite.meshcore_kommando_erklärung(f"get {parameter}")
+        assert lesen == beschreibungen["lesen"]
+        assert "keine spezielle Erklärung" not in lesen
+
+        if "setzen" in beschreibungen:
+            setzen = webseite.meshcore_kommando_erklärung(f"set {parameter} TESTWERT")
+            assert "TESTWERT" in setzen or parameter in {
+                "prv.key",
+                "guest.password",
+                "bridge.secret",
+            }
+            assert "keine spezielle Erklärung" not in setzen
+
+
+def test_meshcore_beschreibt_alle_offiziellen_festen_kommandos():
+    erwartete_kommandos = {
+        "reboot",
+        "poweroff",
+        "shutdown",
+        "clkreboot",
+        "clock sync",
+        "clock",
+        "advert",
+        "advert.zerohop",
+        "start ota",
+        "erase",
+        "neighbors",
+        "discover.neighbors",
+        "clear stats",
+        "stats-core",
+        "stats-radio",
+        "stats-packets",
+        "log start",
+        "log stop",
+        "log erase",
+        "log",
+        "ver",
+        "board",
+        "powersaving",
+        "region",
+        "region load",
+        "region save",
+        "region home",
+        "region default",
+        "gps",
+        "gps sync",
+        "gps setloc",
+        "gps advert",
+        "sensor list",
+        "io",
+    }
+    daten = webseite.lade_meshcore_kommando_beschreibungen()
+
+    assert set(daten["exakteKommandos"]) == erwartete_kommandos
+    for kommando in erwartete_kommandos:
+        assert (
+            webseite.meshcore_kommando_erklärung(kommando)
+            == daten["exakteKommandos"][kommando]
+        )
+
+
+def test_meshcore_beschreibt_alle_offiziellen_variablen_kommandofamilien():
+    beispiele = [
+        "time 1785326400",
+        "neighbor.remove 12ab",
+        "tempradio 869.525,250,11,5,30",
+        "password geheim",
+        "powersaving on",
+        "setperm 12ab 3",
+        "region load de F",
+        "region put de europe",
+        "region allowf de",
+        "region denyf *",
+        "region home de",
+        "region default de",
+        "region get de",
+        "region def europe eu de",
+        "region remove de",
+        "region list allowed",
+        "gps advert prefs",
+        "gps on",
+        "sensor list 10",
+        "sensor get temperatur",
+        "sensor set intervall 60",
+        "io s0f",
+    ]
+    daten = webseite.lade_meshcore_kommando_beschreibungen()
+
+    assert len(daten["präfixKommandos"]) == len(beispiele)
+    for kommando in beispiele:
+        beschreibung = webseite.meshcore_kommando_erklärung(kommando)
+        assert "nicht dokumentiert" not in beschreibung
+        assert "keine spezielle Erklärung" not in beschreibung
+
+
+def test_meshcore_beschreibt_variable_und_künftige_parameterwerte():
+    flood = webseite.meshcore_kommando_erklärung("set flood.max 42")
+    rxdelay = webseite.meshcore_kommando_erklärung("set rxdelay 5")
+    neuer_set_parameter = webseite.meshcore_kommando_erklärung(
+        "set neuer.parameter on"
+    )
+    neuer_get_parameter = webseite.meshcore_kommando_erklärung(
+        "get neuer.parameter"
+    )
+
+    assert "Hop-Anzahl" in flood
+    assert "42" in flood
+    assert "Empfangsverzögerungsbasis" in rxdelay
+    assert "5" in rxdelay
+    assert "neuer.parameter" in neuer_set_parameter
+    assert "on" in neuer_set_parameter
+    assert "neuer.parameter" in neuer_get_parameter
+    assert "Sendet dieses Kommando" not in neuer_set_parameter
 
 
 def test_meshcoreseite_nutzt_regionen_json_vor_standardprofil(tmp_path, monkeypatch):

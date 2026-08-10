@@ -3,7 +3,7 @@ const nav = document.querySelector("[data-nav]");
 const toggle = document.querySelector("[data-nav-toggle]");
 const farbschemaSchalter = document.querySelector("[data-theme-toggle]");
 const farbschemaSchalterText = document.querySelector("[data-theme-toggle-label]");
-const year = document.querySelector("[data-year]");
+const copyrightJahre = document.querySelector("[data-year]");
 const meshcoreFirmwareAnzeige = document.querySelector("[data-meshcore-firmware]");
 const meshcoreFirmwareVersion = document.querySelector("[data-meshcore-firmware-version]");
 const tempCo2Anzeige = document.querySelector("[data-tempco2]");
@@ -23,16 +23,34 @@ const tempCo2LageLuftfeuchtigkeit = document.querySelector("[data-tempco2-lage-l
 const tempCo2Diagramme = document.querySelectorAll("[data-tempco2-chart]");
 const tempCo2TabButtons = document.querySelectorAll("[data-tempco2-tab]");
 const tempCo2TabPanels = document.querySelectorAll("[data-tempco2-tab-panel]");
+const tempCo2ZeitraumRegler = document.querySelector("[data-tempco2-range]");
+const tempCo2ZeitraumAusgabe = document.querySelector("[data-tempco2-range-output]");
+const tempCo2ZeitraumMarken = document.querySelectorAll("[data-tempco2-range-option]");
 let tempCo2AktuelleDaten = null;
 let tempCo2TrendMesswerte = [];
 const tempCo2DiagrammStatus = new Map();
 const tempCo2DiagrammCacheMillis = 55 * 1000;
 const tempCo2MaxSichtbareMesspunkte = 90;
+let tempCo2ZeitraumLadeTimer = null;
+
+const tempCo2ZeitraumOptionen = [
+  { schlüssel: "1h", kurz: "1h", kicker: "1 Stunde", titel: "Stundengraph" },
+  { schlüssel: "6h", kurz: "6h", kicker: "6 Stunden", titel: "6-Stunden-Graph" },
+  { schlüssel: "12h", kurz: "12h", kicker: "12 Stunden", titel: "12-Stunden-Graph" },
+  { schlüssel: "tag", kurz: "24h", kicker: "24 Stunden", titel: "Tagesgraph" },
+  { schlüssel: "monat", kurz: "1 Monat", kicker: "1 Monat", titel: "Monatsgraph" },
+  { schlüssel: "6monate", kurz: "6 Monate", kicker: "6 Monate", titel: "Halbjahresgraph" },
+  { schlüssel: "jahr", kurz: "1 Jahr", kicker: "1 Jahr", titel: "Jahresgraph" },
+];
 
 document.body.classList.remove("no-js");
 
-if (year) {
-  year.textContent = new Date().getFullYear().toString();
+if (copyrightJahre) {
+  const startjahr = Number(copyrightJahre.dataset.startYear || new Date().getFullYear());
+  const aktuellesJahr = new Date().getFullYear();
+  copyrightJahre.textContent = aktuellesJahr > startjahr
+    ? `${startjahr} - ${aktuellesJahr}`
+    : startjahr.toString();
 }
 
 const farbschemaSpeicherSchlüssel = "farbschema";
@@ -241,6 +259,62 @@ if (tempCo2TabButtons.length && tempCo2TabPanels.length) {
     if (tabId) {
       aktiviereTempCo2Tab(tabId, { scrollen: true });
     }
+  });
+}
+
+const begrenzeTempCo2ZeitraumIndex = (index) =>
+  Math.min(tempCo2ZeitraumOptionen.length - 1, Math.max(0, Number.parseInt(index, 10) || 0));
+
+const aktualisiereTempCo2Zeitraum = (index, optionen = {}) => {
+  const zeitraumIndex = begrenzeTempCo2ZeitraumIndex(index);
+  const zeitraum = tempCo2ZeitraumOptionen[zeitraumIndex];
+  const karte = tempCo2Diagramme[0] || null;
+  if (!zeitraum || !(karte instanceof HTMLElement)) {
+    return;
+  }
+
+  karte.setAttribute("data-tempco2-chart", zeitraum.schlüssel);
+
+  const kicker = karte.querySelector("[data-tempco2-chart-kicker]");
+  const titel = karte.querySelector("[data-tempco2-chart-title]");
+  const svg = karte.querySelector("svg");
+  const leertext = karte.querySelector("[data-tempco2-chart-empty]");
+
+  if (tempCo2ZeitraumRegler) {
+    tempCo2ZeitraumRegler.value = zeitraumIndex.toString();
+  }
+  if (tempCo2ZeitraumAusgabe) {
+    tempCo2ZeitraumAusgabe.textContent = zeitraum.kurz;
+  }
+  tempCo2ZeitraumMarken.forEach((marke) => {
+    marke.classList.toggle("is-active", marke.getAttribute("data-tempco2-range-option") === zeitraumIndex.toString());
+  });
+  if (kicker) {
+    kicker.textContent = zeitraum.kicker;
+  }
+  if (titel) {
+    titel.textContent = zeitraum.titel;
+  }
+  if (svg) {
+    svg.setAttribute("aria-label", `${zeitraum.titel} für Temperatur, Luftfeuchtigkeit und CO2`);
+  }
+  if (leertext) {
+    leertext.textContent = `Für ${zeitraum.kurz} liegen noch keine Messwerte vor. Das Diagramm sitzt schon mit gespitztem Bleistift bereit.`;
+  }
+
+  if (optionen.laden) {
+    window.clearTimeout(tempCo2ZeitraumLadeTimer);
+    tempCo2ZeitraumLadeTimer = window.setTimeout(
+      () => ladeTempCo2Diagramm(karte, { erzwingen: Boolean(optionen.erzwingen) }),
+      140,
+    );
+  }
+};
+
+if (tempCo2ZeitraumRegler && tempCo2Diagramme.length > 0) {
+  aktualisiereTempCo2Zeitraum(tempCo2ZeitraumRegler.value);
+  tempCo2ZeitraumRegler.addEventListener("input", () => {
+    aktualisiereTempCo2Zeitraum(tempCo2ZeitraumRegler.value, { laden: true });
   });
 }
 
@@ -934,6 +1008,29 @@ const formatiereZeitpunktKurz = (zeit) =>
     minute: "2-digit",
   }).format(new Date(zeit));
 
+const formatiereZeitpunktAchse = (zeit, dauerMillis) => {
+  const datum = new Date(zeit);
+  if (dauerMillis >= 120 * 24 * 60 * 60 * 1000) {
+    return new Intl.DateTimeFormat("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    }).format(datum);
+  }
+  if (dauerMillis >= 36 * 60 * 60 * 1000) {
+    return new Intl.DateTimeFormat("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(datum);
+  }
+  return new Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(datum);
+};
+
 const rundeSkalenwert = (wert, serie, richtung) => {
   const faktor = 1 / serie.skalenSchritt;
   const skaliert = wert * faktor;
@@ -1089,7 +1186,10 @@ const zeichneTempCo2Diagramm = (karte, messwerte) => {
 
   svg.replaceChildren();
   svg.setAttribute("viewBox", `0 0 ${tempCo2DiagrammLayout.breite} ${tempCo2DiagrammLayout.höhe}`);
-  zähler.textContent = `${messwerte.length} Werte`;
+  const gesamtwerte = Number(karte.dataset.tempco2Gesamtwerte || messwerte.length);
+  zähler.textContent = gesamtwerte > messwerte.length
+    ? `${gesamtwerte} Werte · ${messwerte.length} gezeichnet`
+    : `${messwerte.length} Werte`;
   leer.hidden = messwerte.length > 0;
 
   const messpunkte = messwerte
@@ -1222,9 +1322,9 @@ const zeichneTempCo2Diagramm = (karte, messwerte) => {
     x2: tempCo2DiagrammLayout.rechts,
     y2: tempCo2DiagrammLayout.zeitY,
   }));
-  svg.append(svgElement("text", { class: "tempco2-axis", x: tempCo2DiagrammLayout.links, y: tempCo2DiagrammLayout.zeitY + 20 }, formatiereZeitpunktKurz(start)));
-  svg.append(svgElement("text", { class: "tempco2-axis", x: (tempCo2DiagrammLayout.links + tempCo2DiagrammLayout.rechts) / 2, y: tempCo2DiagrammLayout.zeitY + 20, "text-anchor": "middle" }, formatiereZeitpunktKurz(mitte)));
-  svg.append(svgElement("text", { class: "tempco2-axis", x: tempCo2DiagrammLayout.rechts, y: tempCo2DiagrammLayout.zeitY + 20, "text-anchor": "end" }, formatiereZeitpunktKurz(ende)));
+  svg.append(svgElement("text", { class: "tempco2-axis", x: tempCo2DiagrammLayout.links, y: tempCo2DiagrammLayout.zeitY + 20 }, formatiereZeitpunktAchse(start, ende - start)));
+  svg.append(svgElement("text", { class: "tempco2-axis", x: (tempCo2DiagrammLayout.links + tempCo2DiagrammLayout.rechts) / 2, y: tempCo2DiagrammLayout.zeitY + 20, "text-anchor": "middle" }, formatiereZeitpunktAchse(mitte, ende - start)));
+  svg.append(svgElement("text", { class: "tempco2-axis", x: tempCo2DiagrammLayout.rechts, y: tempCo2DiagrammLayout.zeitY + 20, "text-anchor": "end" }, formatiereZeitpunktAchse(ende, ende - start)));
 };
 
 const findeAktivesTempCo2Diagramm = () =>
@@ -1244,9 +1344,10 @@ async function ladeTempCo2Diagramm(karte, optionen = {}) {
   const jetzt = Date.now();
   const darfCacheNutzen = !optionen.erzwingen && status.geladenUm && jetzt - status.geladenUm < tempCo2DiagrammCacheMillis;
   if (darfCacheNutzen && Array.isArray(status.messwerte)) {
-    if (!karte.dataset.tempco2Gezeichnet) {
+    karte.dataset.tempco2Gesamtwerte = (status.messwerteGesamt || status.messwerte.length).toString();
+    if (karte.dataset.tempco2GezeichneterZeitraum !== zeitraum) {
       zeichneTempCo2Diagramm(karte, status.messwerte);
-      karte.dataset.tempco2Gezeichnet = "true";
+      karte.dataset.tempco2GezeichneterZeitraum = zeitraum;
     }
     return;
   }
@@ -1265,30 +1366,37 @@ async function ladeTempCo2Diagramm(karte, optionen = {}) {
       const antwort = await fetch(`/api/tempco2/historie?zeitraum=${encodeURIComponent(zeitraum)}`, { cache: "no-store" });
       const daten = antwort.ok ? await antwort.json() : {};
       const messwerte = Array.isArray(daten.messwerte) ? daten.messwerte : [];
+      const messwerteGesamt = Number.isFinite(Number(daten.messwerte_gesamt)) ? Number(daten.messwerte_gesamt) : messwerte.length;
 
       tempCo2DiagrammStatus.set(zeitraum, {
         messwerte,
+        messwerteGesamt,
+        verdichtet: Boolean(daten.verdichtet),
         geladenUm: Date.now(),
         wirdGeladen: null,
       });
 
-      if (zeitraum === "tag") {
+      if (messwerte.length > 0 && !daten.verdichtet) {
         tempCo2TrendMesswerte = messwerte;
         if (tempCo2AktuelleDaten) {
           aktualisiereLuftlagebericht(tempCo2AktuelleDaten);
         }
       }
 
+      karte.dataset.tempco2Gesamtwerte = messwerteGesamt.toString();
       zeichneTempCo2Diagramm(karte, messwerte);
-      karte.dataset.tempco2Gezeichnet = "true";
+      karte.dataset.tempco2GezeichneterZeitraum = zeitraum;
     } catch {
       tempCo2DiagrammStatus.set(zeitraum, {
         messwerte: [],
+        messwerteGesamt: 0,
+        verdichtet: false,
         geladenUm: Date.now(),
         wirdGeladen: null,
       });
+      karte.dataset.tempco2Gesamtwerte = "0";
       zeichneTempCo2Diagramm(karte, []);
-      karte.dataset.tempco2Gezeichnet = "true";
+      karte.dataset.tempco2GezeichneterZeitraum = zeitraum;
     }
   })();
 
@@ -1325,3 +1433,5 @@ if ("IntersectionObserver" in window) {
 } else {
   revealTargets.forEach((target) => target.classList.add("is-visible"));
 }
+
+// Copyright © 2026 Erik Schauer, do1ffe@darc.de

@@ -3,6 +3,28 @@
 {% block titel %}Kontakt | DO1FFE{% endblock %}
 {% block beschreibung %}Kontakt zu DO1FFE für Amateurfunk, Softwareprojekte, DARC OV L11 und technische Fragen.{% endblock %}
 
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "@id": "https://do1ffe.de/kontakt#webpage",
+  "url": "https://do1ffe.de/kontakt",
+  "name": "Kontakt zu DO1FFE",
+  "description": "Kontakt zu Erik Schauer, DO1FFE, für Amateurfunk, Softwareprojekte, DARC OV L11 und technische Fragen.",
+  "isPartOf": {"@id": "https://do1ffe.de/#website"},
+  "mainEntity": {
+    "@type": "Person",
+    "@id": "https://do1ffe.de/ueber-mich#person",
+    "name": "Erik Schauer",
+    "alternateName": "DO1FFE",
+    "email": "do1ffe@darc.de"
+  },
+  "inLanguage": "de-DE"
+}
+</script>
+{% endblock %}
+
 {% block inhalt %}
 <section class="page-hero page-hero--mesh">
   <div class="page-hero__content reveal">

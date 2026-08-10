@@ -1,4 +1,4 @@
-from collections import Counter, deque
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 import hmac
 import hashlib
@@ -14,9 +14,34 @@ from urllib.request import Request, urlopen
 from xml.sax.saxutils import escape
 from zoneinfo import ZoneInfo
 
-from flask import Flask, abort, redirect, render_template, request, send_file, url_for
+import click
+from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
+from flask_compress import Compress
+
+from services import road_weather
 
 app = Flask(__name__)
+app.json.ensure_ascii = False
+app.config["COMPRESS_MIMETYPES"] = [
+    "application/javascript",
+    "application/json",
+    "application/xml",
+    "image/svg+xml",
+    "text/css",
+    "text/html",
+    "text/javascript",
+    "text/xml",
+]
+app.config["COMPRESS_MIN_SIZE"] = 500
+Compress(app)
+
+KANONISCHE_BASIS_URL = "https://do1ffe.de"
+COPYRIGHT_STARTJAHR = 2026
+ROBOTS_INDEXIERBAR = (
+    "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
+)
+ROBOTS_NICHT_INDEXIERBAR = "noindex,follow,noarchive"
+ROBOTS_FEHLERSEITE = "noindex,nofollow,nosnippet,noarchive"
 
 
 @app.context_processor
@@ -29,35 +54,218 @@ def statische_dateien_mit_version():
             version = int(time.time())
         return url_for("static", filename=dateiname, v=version)
 
-    return {"statische_datei": statische_datei}
+    aktuelles_jahr = datetime.now(BERLINER_ZEITZONE).year
+    copyright_jahre = str(COPYRIGHT_STARTJAHR)
+    if aktuelles_jahr > COPYRIGHT_STARTJAHR:
+        copyright_jahre = f"{COPYRIGHT_STARTJAHR} - {aktuelles_jahr}"
+
+    return {
+        "statische_datei": statische_datei,
+        "copyright_jahre": copyright_jahre,
+    }
 
 
-KANONISCHE_BASIS_URL = "https://do1ffe.de"
-INDEXIERBARE_PFADE = (
-    "/",
-    "/ov-l11",
-    "/tesla-dashboard",
-    "/tempco2",
-    "/github",
-    "/meshcore",
-    "/Funkbruecke",
-    "/kontakt",
-    "/impressum",
-    "/datenschutz",
-    "/ueber-mich",
-    "/projekte",
+@app.context_processor
+def seo_strukturierte_daten():
+    seite = SEO_SEITEN_NACH_ENDPOINT.get(request.endpoint or "")
+    if not seite:
+        return {
+            "breadcrumb_jsonld": "",
+            "seo_kanonische_url": "",
+            "seo_robots": ROBOTS_FEHLERSEITE,
+        }
+
+    ist_indexierbar = (
+        seite.get("indexierbar", True) and not bool(request.query_string)
+    )
+    seo_daten = {
+        "breadcrumb_jsonld": "",
+        "seo_kanonische_url": kanonische_url(seite["pfad"]),
+        "seo_robots": (
+            ROBOTS_INDEXIERBAR
+            if ist_indexierbar
+            else ROBOTS_NICHT_INDEXIERBAR
+        ),
+    }
+    if seite["pfad"] == "/":
+        return seo_daten
+
+    elemente = [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "DO1FFE",
+            "item": kanonische_url("/"),
+        }
+    ]
+    if seite.get("eltern_pfad"):
+        elemente.append(
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": seite["eltern_name"],
+                "item": kanonische_url(seite["eltern_pfad"]),
+            }
+        )
+    elemente.append(
+        {
+            "@type": "ListItem",
+            "position": len(elemente) + 1,
+            "name": seite["name"],
+            "item": kanonische_url(seite["pfad"]),
+        }
+    )
+    breadcrumb = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": elemente,
+    }
+    seo_daten["breadcrumb_jsonld"] = json.dumps(
+        breadcrumb,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+    return seo_daten
+
+
+@app.before_request
+def leite_www_auf_kanonischen_host_um():
+    angefragter_host = request.host.partition(":")[0].casefold()
+    if angefragter_host != "www.do1ffe.de":
+        return None
+
+    ziel = f"{KANONISCHE_BASIS_URL}{request.path}"
+    if request.query_string:
+        ziel = f"{ziel}?{request.query_string.decode('latin-1')}"
+    return redirect(ziel, code=301)
+
+
+SEO_SEITEN = (
+    {
+        "endpoint": "startseite",
+        "pfad": "/",
+        "name": "Startseite",
+        "dateien": ("templates/startseite.html", "templates/layout.html"),
+    },
+    {
+        "endpoint": "ov_l11",
+        "pfad": "/ov-l11",
+        "name": "OV L11",
+        "dateien": ("templates/ov_l11.html", "templates/layout.html"),
+    },
+    {
+        "endpoint": "ov_abend_2026_08_11",
+        "pfad": "/ov-l11/ov-abend-2026-08-11",
+        "name": "OV-Abend am 11.08.2026",
+        "eltern_pfad": "/ov-l11",
+        "eltern_name": "OV L11",
+        "dateien": (
+            "templates/ov_abend_2026_08_11.html",
+            "templates/layout.html",
+            "static/assets/ov-l11-radio.svg",
+        ),
+    },
+    {
+        "endpoint": "tesla_dashboard",
+        "pfad": "/tesla-dashboard",
+        "name": "Tesla-Dashboard",
+        "dateien": ("templates/tesla_dashboard.html", "templates/layout.html"),
+    },
+    {
+        "endpoint": "tempco2",
+        "pfad": "/tempco2",
+        "name": "TempCO2",
+        "dateien": ("templates/tempco2.html", "templates/layout.html", "static/script.js"),
+    },
+    {
+        "endpoint": "autobahn",
+        "pfad": "/autobahn",
+        "name": "Autobahnwetter",
+        "dateien": (
+            "templates/autobahn.html",
+            "templates/layout.html",
+            "static/autobahn.js",
+            "services/road_weather.py",
+        ),
+    },
+    {
+        "endpoint": "dienste",
+        "pfad": "/dienste",
+        "name": "Dienste",
+        "dateien": ("templates/github.html", "templates/layout.html", "app.py"),
+    },
+    {
+        "endpoint": "meshcore",
+        "pfad": "/meshcore",
+        "name": "MeshCore",
+        "dateien": ("templates/meshcore.html", "templates/layout.html", "app.py"),
+    },
+    {
+        "endpoint": "funkbruecke",
+        "pfad": "/Funkbruecke",
+        "name": "FunkBrücke",
+        "dateien": ("templates/funkbruecke.html", "templates/layout.html", "app.py"),
+    },
+    {
+        "endpoint": "kontakt",
+        "pfad": "/kontakt",
+        "name": "Kontakt",
+        "dateien": ("templates/kontakt.html", "templates/layout.html"),
+    },
+    {
+        "endpoint": "impressum",
+        "pfad": "/impressum",
+        "name": "Impressum",
+        "indexierbar": False,
+        "dateien": ("templates/impressum.html", "templates/layout.html"),
+    },
+    {
+        "endpoint": "datenschutz",
+        "pfad": "/datenschutz",
+        "name": "Datenschutzerklärung",
+        "indexierbar": False,
+        "dateien": ("templates/datenschutz.html", "templates/layout.html"),
+    },
+    {
+        "endpoint": "ueber_mich",
+        "pfad": "/ueber-mich",
+        "name": "Über mich",
+        "dateien": ("templates/ueber_mich.html", "templates/layout.html"),
+    },
 )
+INDEXIERBARE_PFADE = tuple(
+    seite["pfad"]
+    for seite in SEO_SEITEN
+    if seite.get("indexierbar", True)
+)
+SEO_SEITEN_NACH_ENDPOINT = {seite["endpoint"]: seite for seite in SEO_SEITEN}
 BERLINER_ZEITZONE = ZoneInfo("Europe/Berlin")
 MESHCORE_REPEATER_APK_ORDNER = Path("/home/do1ffe/software-downloads/MeshCoreRepeaterKonfigurator")
 MESHCORE_REPEATER_ARCHIV_ORDNER = Path("/home/do1ffe/meshcore-repeater-konfigurator/artifacts")
 MESHCORE_BLE_UPDATER_ORDNER = Path("/home/do1ffe/software-downloads/Meshcore-BLE-Updater")
 MESHCORE_REGIONEN_ORDNER = Path("/home/do1ffe/meshcore-repeater-konfigurator/regionen-vorschlaege")
+MESHCORE_REGIONEN_API_URL = os.getenv(
+    "MESHCORE_REGIONEN_API_URL",
+    "https://downloads.do1ffe.de/api/MeshCoreRepeaterKonfigurator/regionen",
+)
+MESHCORE_REGIONEN_API_TIMEOUT_SEKUNDEN = 4
 MESHCORE_KOMMANDO_BESCHREIBUNGEN_DATEI = Path(__file__).with_name("daten") / "meshcore-kommandos-de.json"
 MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER = Path("/home/do1ffe/software-downloads")
 MESHCORE_REPEATER_DOWNLOAD_ZÄHLER_DATEI = MESHCORE_REPEATER_DOWNLOAD_BASIS_ORDNER / ".download-zaehler.json"
 TEMP_CO2_STANDARD_DATEI = Path(__file__).with_name("daten") / "tempco2-aktuell.json"
 TEMP_CO2_STANDARD_HISTORIE_DATEI = Path(__file__).with_name("daten") / "tempco2-historie.jsonl"
 TEMP_CO2_STANDARD_MAX_ALTER_SEKUNDEN = 1800
+TEMP_CO2_MAX_GRAPH_MESSWERTE = 3000
+TEMP_CO2_HISTORIE_ZEITRÄUME = {
+    "1h": timedelta(hours=1),
+    "6h": timedelta(hours=6),
+    "12h": timedelta(hours=12),
+    "tag": timedelta(days=1),
+    "woche": timedelta(days=7),
+    "monat": timedelta(days=31),
+    "6monate": timedelta(days=183),
+    "jahr": timedelta(days=365),
+}
 TEMP_CO2_SPERRE = Lock()
 MESHCORE_REPEATER_APK_MUSTER = "MeshCoreRepeaterKonfigurator-*-release-signed.apk"
 MESHCORE_REPEATER_HISTORIE_AB_VERSION = "1.0.22"
@@ -159,6 +367,10 @@ MESHCORE_FLASHER_CACHE = {
     "zeit": 0,
     "daten": None,
 }
+MESHCORE_REGIONEN_CACHE_SPERRE = Lock()
+MESHCORE_REGIONEN_CACHE = {
+    "daten": None,
+}
 GITHUB_BENUTZER = "DO1FFE"
 GITHUB_API_BASIS = "https://api.github.com"
 GITHUB_API_TIMEOUT_SEKUNDEN = 6
@@ -204,6 +416,12 @@ STANDARD_MESHCORE_REGIONEN = [
         "denyScopes": [],
     },
 ]
+MESHCORE_PROFILWEITE_SETUP_KOMMANDOS = [
+    "set rxdelay 2",
+    "set txdelay 0.8",
+    "set direct.txdelay 0.4",
+    "set flood.max 17",
+]
 MESHCORE_SETUP_KOMMANDOS = [
     "set radio.rxgain on",
     "set repeat on",
@@ -215,7 +433,7 @@ MESHCORE_SETUP_KOMMANDOS = [
     "set int.thresh 0",
     "set path.hash.mode 1",
     "set loop.detect minimal",
-    "set flood.max 64",
+    *MESHCORE_PROFILWEITE_SETUP_KOMMANDOS,
 ]
 MESHCORE_STANDARD_HOME_REGION = "de-nw"
 MESHCORE_STANDARD_DEFAULT_REGION = "de"
@@ -278,12 +496,144 @@ REPOSITORIES = [
     },
 ]
 
+DIENSTE = [
+    {
+        "titel": "QR-Code-Generator",
+        "domain": "qrcode.do1ffe.de",
+        "kategorie": "Webwerkzeug",
+        "beschreibung": (
+            "QR-Code-Generator für URLs, Texte, E-Mail-Adressen, Telefonnummern, "
+            "SMS-Vorlagen und Kontaktdaten. Eigene Codes können gestaltet, im Konto "
+            "gespeichert und als PNG, JPG oder SVG heruntergeladen werden."
+        ),
+    },
+    {
+        "titel": "Tesla-Dashboard",
+        "domain": "tesla.do1ffe.de",
+        "kategorie": "Fahrzeugdaten",
+        "beschreibung": (
+            "Persönliches Dashboard für Fahrzeugstatus, Karte, Fahrdaten, "
+            "Ladeinformationen, Temperaturen und Verlaufsauswertungen. Die Seite "
+            "macht die wichtigsten Werte des Tesla sichtbar, ohne direkt auf die "
+            "Tesla-App angewiesen zu sein."
+        ),
+    },
+    {
+        "titel": "Live-ÖPNV-Karte Essen",
+        "domain": "rb.do1ffe.de",
+        "kategorie": "Karte",
+        "beschreibung": (
+            "Live-Karte für Busse und Bahnen in Essen. Wenn echte Fahrzeugpositionen "
+            "verfügbar sind, werden sie bevorzugt angezeigt; sonst werden Positionen "
+            "aus GTFS-Realtime, Haltefolge und Prognosen nachvollziehbar geschätzt."
+        ),
+    },
+    {
+        "titel": "FunkBrücke FB2L",
+        "domain": "fb2l.do1ffe.de",
+        "kategorie": "Amateurfunk",
+        "beschreibung": (
+            "Livekarte für FunkBrücke-Stationen, Heartbeats, Nachbarwege und "
+            "Mesh-Verbindungen. Die Ansicht zeigt, welche Stationen aktuell melden "
+            "und welche Funkwege zwischen ihnen plausibel nutzbar sind."
+        ),
+    },
+    {
+        "titel": "Wetter Essen",
+        "domain": "wetter.do1ffe.de",
+        "kategorie": "Wetter",
+        "beschreibung": (
+            "Wetterübersicht für Essen mit Tagesansicht, Mehrtagesprognose und "
+            "Kurzfristwerten. Neben der normalen Vorschau werden je nach Datenlage "
+            "auch stündliche Werte, Wetterlage und Regenwahrscheinlichkeit angezeigt."
+        ),
+    },
+    {
+        "titel": "Frauen-WM 2027 Tippspiel",
+        "domain": "wm2027.do1ffe.de",
+        "kategorie": "Spiel",
+        "beschreibung": (
+            "Browser-Tippspiel zur Frauen-Weltmeisterschaft 2027 in Brasilien. "
+            "Spielplan, Gruppen, Rangliste und private Tippgruppen kommen in einer "
+            "gemeinsamen Oberfläche zusammen; die WM 2026 bleibt im Archiv erhalten."
+        ),
+    },
+    {
+        "titel": "Google-Geburtstagsimport",
+        "domain": "calendar.do1ffe.de",
+        "kategorie": "Webwerkzeug",
+        "beschreibung": (
+            "Überträgt Geburtstage und andere datierte Felder aus Google Kontakten "
+            "nach eigener Freigabe in einen separaten Google Kalender. Der Abgleich "
+            "wird bewusst gestartet und lässt sich anschließend wieder widerrufen."
+        ),
+    },
+    {
+        "titel": "Virtual Essen",
+        "domain": "virtual.do1ffe.de",
+        "kategorie": "Spiel",
+        "beschreibung": (
+            "Browserbasiertes Online-Spiel mit Essen-Karte, Login, Avatar, Chat "
+            "und ersten Lebenssimulations-Elementen. Das Projekt verbindet eine "
+            "2D-/2.5D-Spielwelt mit serverseitiger Echtzeitlogik."
+        ),
+    },
+    {
+        "titel": "Lernshack",
+        "domain": "lernshack.do1ffe.de",
+        "kategorie": "Amateurfunk",
+        "beschreibung": (
+            "Lernplattform für angehende Funkamateure mit Missionen, Übungen, "
+            "Fortschrittssystem und virtuellem Funkgerät. Der Schwerpunkt liegt "
+            "auf Klasse-N-Inhalten und einem spielbaren Einstieg in Funkpraxis."
+        ),
+    },
+    {
+        "titel": "RT3-zu-AnyTone-Konverter",
+        "domain": "rt3any.do1ffe.de",
+        "kategorie": "Funkwerkzeug",
+        "beschreibung": (
+            "Konverter für Retevis-RT3- und Tytera-MD-380-Codeplugs in ein "
+            "AnyTone-Importpaket. Statt eine firmwareabhängige RDT-Datei zu "
+            "erzeugen, nutzt das Werkzeug robuste CSV- und LST-Importdateien."
+        ),
+    },
+    {
+        "titel": "SofortGeschenk",
+        "domain": "sofortgeschenk.do1ffe.de",
+        "kategorie": "Webwerkzeug",
+        "beschreibung": (
+            "Webanwendung für personalisierte PDF-Geschenke. Nach Produktauswahl, "
+            "Textangaben und Zahlung wird ein individuelles PDF erzeugt und als "
+            "Download bereitgestellt."
+        ),
+    },
+    {
+        "titel": "IntroGen",
+        "domain": "introgen.do1ffe.de",
+        "kategorie": "Medien",
+        "beschreibung": (
+            "Generator für Video-Intros und Abspänne mit Vorlagen, Vorschau und "
+            "MP4-Export. Die Anwendung richtet sich an einfache Video-Projekte, "
+            "bei denen ein fertiger Einstieg oder Abschluss schnell erzeugt werden soll."
+        ),
+    },
+    {
+        "titel": "BNetzA-Rufzeichensuche",
+        "domain": "rufzeichen.do1ffe.de",
+        "kategorie": "Amateurfunk",
+        "beschreibung": (
+            "Rufzeichensuche auf Basis der veröffentlichten Amateurfunkliste der "
+            "Bundesnetzagentur. Die PDF-Daten werden lokal aufbereitet und für "
+            "schnelle Recherchen in einer kompakten Weboberfläche bereitgestellt."
+        ),
+    },
+]
+
 
 @app.after_request
 def verhindere_dynamischen_cache(antwort):
     dynamische_endpunkte = {
-        "github",
-        "projekte",
         "meshcore",
         "meshcore_repeater_konfigurator_changelog",
         "meshcore_ble_updater_android",
@@ -296,12 +646,30 @@ def verhindere_dynamischen_cache(antwort):
         "tempco2_aktueller_messwert",
         "tempco2_historie",
         "tempco2_messwert_empfangen",
+        "autobahn",
     }
     if request.endpoint in dynamische_endpunkte:
         antwort.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         antwort.headers["Pragma"] = "no-cache"
         antwort.headers["Expires"] = "0"
         antwort.headers["Surrogate-Control"] = "no-store"
+    elif request.endpoint == "static" and antwort.status_code == 200:
+        antwort.headers["Cache-Control"] = (
+            "public, max-age=3600, stale-while-revalidate=86400"
+        )
+
+    seite = SEO_SEITEN_NACH_ENDPOINT.get(request.endpoint or "")
+    if antwort.status_code >= 400:
+        antwort.headers["X-Robots-Tag"] = ROBOTS_FEHLERSEITE
+    elif request.path.startswith(("/api/", "/downloads/")):
+        antwort.headers["X-Robots-Tag"] = "noindex,nofollow,nosnippet,noarchive"
+    elif seite and request.query_string:
+        antwort.headers["X-Robots-Tag"] = ROBOTS_NICHT_INDEXIERBAR
+    elif seite and not seite.get("indexierbar", True):
+        antwort.headers["X-Robots-Tag"] = ROBOTS_NICHT_INDEXIERBAR
+
+    if antwort.mimetype == "text/html":
+        antwort.headers.setdefault("Content-Language", "de")
     return antwort
 
 
@@ -331,6 +699,37 @@ def lade_umgebungsdatei():
         wert = wert.strip().strip("\"'")
         if schlüssel and schlüssel not in os.environ:
             os.environ[schlüssel] = wert
+
+
+def strassenwetter_konfiguration():
+    lade_umgebungsdatei()
+    return road_weather.Konfiguration.aus_umgebung()
+
+
+@app.cli.command("road-weather-update")
+@click.option("--force", "erzwingen", is_flag=True, help="15-Minuten-Sperre für einen administrativen Test ignorieren.")
+def strassenwetter_aktualisieren(erzwingen=False):
+    """Lädt erlaubte Straßenwetterwerte in den lokalen SQLite-Speicher."""
+
+    konfiguration = strassenwetter_konfiguration()
+    try:
+        ergebnis = road_weather.StrassenwetterSammler(konfiguration).aktualisiere(erzwingen=erzwingen)
+    except (RuntimeError, ValueError) as fehler:
+        raise click.ClickException(str(fehler)) from fehler
+    click.echo(json.dumps(ergebnis, ensure_ascii=False, sort_keys=True))
+    if ergebnis.get("status") == "error":
+        raise click.ClickException(str(ergebnis.get("message") or "Straßenwetter-Abruf fehlgeschlagen"))
+
+
+@app.cli.command("road-weather-cleanup")
+def strassenwetter_historie_bereinigen():
+    """Löscht ausschließlich abgelaufene Straßenwetter-Historieneinträge."""
+
+    konfiguration = strassenwetter_konfiguration()
+    anzahl = road_weather.StrassenwetterSpeicher(konfiguration.datenbank_pfad).bereinige_historie(
+        konfiguration.aufbewahrung_tage
+    )
+    click.echo(f"{anzahl} abgelaufene Historieneinträge gelöscht.")
 
 
 def hole_github_json(pfad, parameter=None):
@@ -578,6 +977,23 @@ def lade_github_daten():
         GITHUB_CACHE["zeit"] = jetzt
         GITHUB_CACHE["daten"] = daten
         return daten
+
+
+def öffentliche_dienste():
+    dienste = []
+    for dienst in DIENSTE:
+        eintrag = dict(dienst)
+        eintrag["url"] = f"https://{dienst['domain']}/"
+        dienste.append(eintrag)
+    return dienste
+
+
+def dienst_statistik(dienste):
+    kategorien = Counter(dienst["kategorie"] for dienst in dienste)
+    return {
+        "anzahl": len(dienste),
+        "kategorien": ", ".join(kategorie for kategorie, _ in kategorien.most_common()),
+    }
 
 
 def apk_version(datei):
@@ -1123,8 +1539,8 @@ def erster_text(wert, standard=""):
     return text or standard
 
 
-def meshcore_profil_kommandos(scopes, deny_scopes, home_region, default_region):
-    kommandos = list(MESHCORE_SETUP_KOMMANDOS)
+def meshcore_profil_kommandos(scopes, deny_scopes, home_region, default_region, set_kommandos=None):
+    kommandos = list(set_kommandos or MESHCORE_SETUP_KOMMANDOS)
     for scope in scopes:
         kommandos.append(f"region put {scope}")
         kommandos.append(f"region allowf {scope}")
@@ -1138,12 +1554,67 @@ def meshcore_profil_kommandos(scopes, deny_scopes, home_region, default_region):
     return kommandos
 
 
+def meshcore_profilweite_setup_kommandos_ergänzen(kommandos):
+    erzwungene_schlüssel = {
+        kommando.split(maxsplit=2)[1]
+        for kommando in MESHCORE_PROFILWEITE_SETUP_KOMMANDOS
+    }
+    freie_kommandos = [
+        kommando
+        for kommando in kommandos
+        if len(kommando.split(maxsplit=2)) < 2
+        or kommando.split(maxsplit=2)[1] not in erzwungene_schlüssel
+    ]
+    return freie_kommandos + list(MESHCORE_PROFILWEITE_SETUP_KOMMANDOS)
+
+
 def lade_meshcore_kommando_beschreibungen():
     try:
         daten = json.loads(MESHCORE_KOMMANDO_BESCHREIBUNGEN_DATEI.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
     return daten if isinstance(daten, dict) else {}
+
+
+def formatiere_meshcore_beschreibung(vorlage, **werte):
+    if not isinstance(vorlage, str) or not vorlage:
+        return ""
+    try:
+        return vorlage.format(**werte)
+    except (KeyError, ValueError):
+        return ""
+
+
+def meshcore_parameter_kommando_erklärung(kommando, beschreibungen):
+    teile = kommando.split(maxsplit=2)
+    if len(teile) < 2 or teile[0] not in {"get", "set"}:
+        return ""
+
+    aktion, parameter = teile[:2]
+    wert = teile[2] if len(teile) == 3 else ""
+    parameter_kommandos = beschreibungen.get("parameterKommandos")
+    parameter_beschreibung = (
+        parameter_kommandos.get(parameter)
+        if isinstance(parameter_kommandos, dict)
+        else None
+    )
+    if isinstance(parameter_beschreibung, dict):
+        schlüssel = "lesen" if aktion == "get" else "setzen"
+        beschreibung = formatiere_meshcore_beschreibung(
+            parameter_beschreibung.get(schlüssel),
+            parameter=parameter,
+            wert=wert,
+        )
+        if beschreibung:
+            return beschreibung
+
+    fallback = beschreibungen.get("fallback")
+    vorlage = fallback.get(aktion) if isinstance(fallback, dict) else ""
+    return formatiere_meshcore_beschreibung(
+        vorlage,
+        parameter=parameter,
+        wert=wert,
+    )
 
 
 def meshcore_kommando_erklärung(kommando):
@@ -1153,6 +1624,14 @@ def meshcore_kommando_erklärung(kommando):
         beschreibung = exakte_kommandos.get(kommando)
         if isinstance(beschreibung, str) and beschreibung:
             return beschreibung
+
+    parameter_beschreibung = meshcore_parameter_kommando_erklärung(
+        kommando,
+        beschreibungen,
+    )
+    if parameter_beschreibung:
+        return parameter_beschreibung
+
     präfix_kommandos = beschreibungen.get("präfixKommandos")
     if isinstance(präfix_kommandos, list):
         for eintrag in präfix_kommandos:
@@ -1161,7 +1640,12 @@ def meshcore_kommando_erklärung(kommando):
             präfix = eintrag.get("präfix")
             beschreibung = eintrag.get("beschreibung")
             if isinstance(präfix, str) and isinstance(beschreibung, str) and kommando.startswith(präfix):
-                return beschreibung.format(wert=kommando.removeprefix(präfix))
+                formatierte_beschreibung = formatiere_meshcore_beschreibung(
+                    beschreibung,
+                    wert=kommando.removeprefix(präfix),
+                )
+                if formatierte_beschreibung:
+                    return formatierte_beschreibung
     fallback = beschreibungen.get("fallback")
     if isinstance(fallback, dict):
         beschreibung = fallback.get(kommando) or fallback.get("*")
@@ -1180,7 +1664,7 @@ def meshcore_kommando_details(kommandos):
     ]
 
 
-def meshcore_regionenkarte_punkte():
+def meshcore_regionenkarte_fallback_punkte():
     punkte = []
     datenquellen = {}
     for daten in [*STANDARD_MESHCORE_REGIONEN, *lade_regionen_json_dateien()]:
@@ -1203,13 +1687,23 @@ def meshcore_regionenkarte_punkte():
             daten.get("defaultRegionen") if "defaultRegionen" in daten else daten.get("defaultRegion"),
             MESHCORE_STANDARD_DEFAULT_REGION,
         )
+        set_kommandos = meshcore_profilweite_setup_kommandos_ergänzen(
+            text_liste(daten.get("setKommandos")) or MESHCORE_SETUP_KOMMANDOS
+        )
         if not region_id or not stadt_name or not land or not scopes:
             continue
-        kommandos = meshcore_profil_kommandos(scopes, deny_scopes, home_region, default_region)
+        kommandos = meshcore_profil_kommandos(
+            scopes,
+            deny_scopes,
+            home_region,
+            default_region,
+            set_kommandos,
+        )
         punkte.append({
             "id": region_id,
             "stadt": stadt or stadt_name,
             "stadtName": stadt_name,
+            "istStadt": True,
             "land": land,
             "bundesland": bundesland,
             "allow": scopes,
@@ -1228,6 +1722,101 @@ def meshcore_regionenkarte_punkte():
             punkt["stadtName"].casefold(),
         ),
     )
+
+
+def hole_meshcore_regionen_api():
+    anfrage = Request(
+        MESHCORE_REGIONEN_API_URL,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "do1ffe-webseite",
+        },
+    )
+    with urlopen(anfrage, timeout=MESHCORE_REGIONEN_API_TIMEOUT_SEKUNDEN) as antwort:
+        return json.loads(antwort.read().decode("utf-8"))
+
+
+def normalisiere_meshcore_regionen_api(daten):
+    if not isinstance(daten, dict) or not isinstance(daten.get("profile"), list):
+        raise ValueError("Die Regionen-API enthält keine Profilliste.")
+
+    gemeinsame_einstellungen = daten.get("gemeinsameEinstellungen")
+    if not isinstance(gemeinsame_einstellungen, dict):
+        gemeinsame_einstellungen = {}
+    basis_kommandos = set(text_liste(gemeinsame_einstellungen.get("basisKommandos")))
+
+    punkte = []
+    for profil in daten["profile"]:
+        if not isinstance(profil, dict):
+            continue
+        region_id = textwert(profil.get("id"))
+        name = textwert(profil.get("name") or profil.get("stadt"))
+        stadt_name = textwert(profil.get("stadt"))
+        land = textwert(profil.get("land"))
+        bundesland = textwert(profil.get("bundesland"))
+        scopes = text_liste(profil.get("allowScopes") or profil.get("scopes"))
+        deny_scopes = text_liste(profil.get("denyScopes"))
+        home_region = erster_text(
+            profil.get("homeRegionen") if "homeRegionen" in profil else profil.get("homeRegion"),
+            MESHCORE_STANDARD_HOME_REGION,
+        )
+        default_region = erster_text(
+            profil.get("defaultRegionen") if "defaultRegionen" in profil else profil.get("defaultRegion"),
+            MESHCORE_STANDARD_DEFAULT_REGION,
+        )
+        kommandos = [
+            kommando
+            for kommando in text_liste(profil.get("kommandos"))
+            if kommando not in basis_kommandos
+        ]
+        if not region_id or not name or not land or not scopes or not kommandos:
+            continue
+
+        punkte.append({
+            "id": region_id,
+            "stadt": name,
+            "stadtName": stadt_name,
+            "istStadt": bool(stadt_name),
+            "land": land,
+            "bundesland": bundesland,
+            "allow": scopes,
+            "disallow": deny_scopes,
+            "home": home_region,
+            "default": default_region,
+            "kommandos": kommandos,
+            "kommandoDetails": meshcore_kommando_details(kommandos),
+            "farbe": REGIONENKARTE_FARBEN[len(punkte) % len(REGIONENKARTE_FARBEN)],
+        })
+
+    if not punkte:
+        raise ValueError("Die Regionen-API enthält keine gültigen Profile.")
+
+    return sorted(
+        punkte,
+        key=lambda punkt: (
+            punkt["land"].casefold(),
+            2 if punkt["istStadt"] else 1 if punkt["bundesland"] else 0,
+            punkt["bundesland"].casefold(),
+            punkt["stadt"].casefold(),
+        ),
+    )
+
+
+def meshcore_regionenkarte_punkte():
+    zwischenspeicher = MESHCORE_REGIONEN_CACHE.get("daten")
+    if MESHCORE_REGIONEN_API_URL:
+        try:
+            punkte = normalisiere_meshcore_regionen_api(hole_meshcore_regionen_api())
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, OSError, ValueError):
+            punkte = zwischenspeicher
+        else:
+            with MESHCORE_REGIONEN_CACHE_SPERRE:
+                MESHCORE_REGIONEN_CACHE["daten"] = punkte
+
+        if punkte:
+            return punkte
+
+    return meshcore_regionenkarte_fallback_punkte()
 
 
 def meshcore_repeater_apk_übersicht():
@@ -1383,6 +1972,25 @@ def kanonische_url(pfad):
     return f"{KANONISCHE_BASIS_URL}{pfad}"
 
 
+def projekt_dateipfad(relativer_pfad):
+    return Path(__file__).resolve().parent / relativer_pfad
+
+
+def sitemap_lastmod(seite):
+    zeitpunkte = []
+    for relativer_pfad in seite.get("dateien", ()):
+        try:
+            zeitpunkte.append(projekt_dateipfad(relativer_pfad).stat().st_mtime)
+        except OSError:
+            continue
+    if not zeitpunkte:
+        try:
+            zeitpunkte.append(Path(__file__).stat().st_mtime)
+        except OSError:
+            zeitpunkte.append(time.time())
+    return datetime.fromtimestamp(max(zeitpunkte), timezone.utc).date().isoformat()
+
+
 def tempco2_upload_token():
     lade_umgebungsdatei()
     return os.environ.get("TEMP_CO2_UPLOAD_TOKEN", "").strip()
@@ -1519,25 +2127,37 @@ def tempco2_lade_historie(seit_utc):
     messwerte = []
     try:
         with datei.open("r", encoding="utf-8") as datenstrom:
-            zeilen = deque(datenstrom, maxlen=20000)
+            for zeile in datenstrom:
+                if not zeile.strip():
+                    continue
+                try:
+                    messwert = json.loads(zeile)
+                except json.JSONDecodeError:
+                    continue
+                if not isinstance(messwert, dict):
+                    continue
+                zeitpunkt = tempco2_parse_utc(messwert.get("empfangen_utc"))
+                if zeitpunkt is None or zeitpunkt < seit_utc:
+                    continue
+                messwerte.append(messwert)
     except OSError:
         return []
 
-    for zeile in zeilen:
-        if not zeile.strip():
-            continue
-        try:
-            messwert = json.loads(zeile)
-        except json.JSONDecodeError:
-            continue
-        if not isinstance(messwert, dict):
-            continue
-        zeitpunkt = tempco2_parse_utc(messwert.get("empfangen_utc"))
-        if zeitpunkt is None or zeitpunkt < seit_utc:
-            continue
-        messwerte.append(messwert)
-
     return sorted(messwerte, key=lambda eintrag: eintrag.get("empfangen_utc", ""))
+
+
+def tempco2_verdichte_historie(messwerte):
+    if len(messwerte) <= TEMP_CO2_MAX_GRAPH_MESSWERTE:
+        return messwerte, False
+
+    schritt = max(1, (len(messwerte) + TEMP_CO2_MAX_GRAPH_MESSWERTE - 1) // TEMP_CO2_MAX_GRAPH_MESSWERTE)
+    letzter_index = len(messwerte) - 1
+    verdichtet = [
+        messwert
+        for index, messwert in enumerate(messwerte)
+        if index == 0 or index == letzter_index or index % schritt == 0
+    ]
+    return verdichtet, True
 
 
 def tempco2_ist_aktuell(messwert):
@@ -1566,21 +2186,21 @@ def tempco2_aktueller_messwert():
 @app.route("/api/tempco2/historie")
 def tempco2_historie():
     zeitraum = request.args.get("zeitraum", "tag").strip().casefold()
-    dauer = {
-        "tag": timedelta(days=1),
-        "woche": timedelta(days=7),
-        "monat": timedelta(days=31),
-    }.get(zeitraum)
+    dauer = TEMP_CO2_HISTORIE_ZEITRÄUME.get(zeitraum)
     if dauer is None:
         abort(400)
 
     seit_utc = datetime.now(timezone.utc) - dauer
     with TEMP_CO2_SPERRE:
         messwerte = tempco2_lade_historie(seit_utc)
+    messwerte_gesamt = len(messwerte)
+    messwerte, verdichtet = tempco2_verdichte_historie(messwerte)
 
     return {
         "zeitraum": zeitraum,
         "messwerte": messwerte,
+        "messwerte_gesamt": messwerte_gesamt,
+        "verdichtet": verdichtet,
     }
 
 
@@ -1606,12 +2226,29 @@ def tempco2_messwert_empfangen():
     }
 
 
+@app.route("/api/autobahn")
+def autobahn_api():
+    daten = road_weather.lade_api_daten(strassenwetter_konfiguration())
+    antwort = jsonify(daten)
+    antwort.headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=840"
+    antwort.headers["X-Content-Type-Options"] = "nosniff"
+    return antwort
+
+
+@app.route("/autobahn")
+def autobahn():
+    daten = road_weather.lade_api_daten(strassenwetter_konfiguration())
+    return render_template("autobahn.html", strassenwetter=daten)
+
+
 @app.route("/robots.txt")
 def crawler_regeln():
     inhalt = "\n".join(
         [
             "User-agent: *",
             "Allow: /",
+            "Disallow: /api/",
+            "Disallow: /downloads/",
             f"Sitemap: {kanonische_url('/sitemap.xml')}",
             "",
         ]
@@ -1625,16 +2262,61 @@ def sitemap_xml():
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
-    for pfad in INDEXIERBARE_PFADE:
+    for seite in SEO_SEITEN:
+        if not seite.get("indexierbar", True):
+            continue
         zeilen.extend(
             [
                 "  <url>",
-                f"    <loc>{escape(kanonische_url(pfad))}</loc>",
+                f"    <loc>{escape(kanonische_url(seite['pfad']))}</loc>",
+                f"    <lastmod>{sitemap_lastmod(seite)}</lastmod>",
                 "  </url>",
             ]
         )
     zeilen.append("</urlset>")
     return "\n".join(zeilen) + "\n", 200, {"Content-Type": "application/xml; charset=utf-8"}
+
+
+@app.errorhandler(404)
+def seite_nicht_gefunden(_fehler):
+    return (
+        render_template(
+            "fehler.html",
+            fehlercode=404,
+            fehler_titel="Seite nicht gefunden | DO1FFE",
+            fehler_beschreibung="Die angeforderte Seite ist unter dieser Adresse nicht verfügbar.",
+            fehler_ueberschrift="Diese Seite funkt nicht mehr auf dieser Adresse.",
+            fehler_text=(
+                "Der Link ist veraltet, unvollständig oder führt zu einer Seite, "
+                "die hier nicht veröffentlicht ist."
+            ),
+            seo_kanonische_url="",
+            seo_robots=ROBOTS_FEHLERSEITE,
+            breadcrumb_jsonld="",
+        ),
+        404,
+    )
+
+
+@app.errorhandler(500)
+def interner_serverfehler(_fehler):
+    return (
+        render_template(
+            "fehler.html",
+            fehlercode=500,
+            fehler_titel="Technischer Fehler | DO1FFE",
+            fehler_beschreibung="Die angeforderte Seite konnte vorübergehend nicht ausgeliefert werden.",
+            fehler_ueberschrift="Die Technik braucht gerade einen kurzen Neustart im Kopf.",
+            fehler_text=(
+                "Bitte versuche es später erneut. Es werden keine internen "
+                "Fehlerdetails auf der Webseite ausgegeben."
+            ),
+            seo_kanonische_url="",
+            seo_robots=ROBOTS_FEHLERSEITE,
+            breadcrumb_jsonld="",
+        ),
+        500,
+    )
 
 
 @app.route("/")
@@ -1647,6 +2329,11 @@ def ov_l11():
     return render_template("ov_l11.html")
 
 
+@app.route("/ov-l11/ov-abend-2026-08-11")
+def ov_abend_2026_08_11():
+    return render_template("ov_abend_2026_08_11.html")
+
+
 @app.route("/tesla-dashboard")
 def tesla_dashboard():
     return render_template("tesla_dashboard.html")
@@ -1657,9 +2344,19 @@ def tempco2():
     return render_template("tempco2.html")
 
 
+@app.route("/dienste")
+def dienste():
+    dienste_liste = öffentliche_dienste()
+    return render_template(
+        "github.html",
+        dienste=dienste_liste,
+        dienst_statistik=dienst_statistik(dienste_liste),
+    )
+
+
 @app.route("/github")
 def github():
-    return render_template("github.html", **lade_github_daten())
+    return redirect(url_for("dienste"), code=301)
 
 
 @app.route("/api/meshcore/repeater-firmware")
@@ -1798,7 +2495,7 @@ def ueber_mich():
 
 @app.route("/projekte")
 def projekte():
-    return render_template("github.html", **lade_github_daten())
+    return redirect(url_for("dienste"), code=301)
 
 
 if __name__ == "__main__":

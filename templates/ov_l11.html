@@ -26,29 +26,6 @@
       "addressLocality": "Essen",
       "addressCountry": "DE"
     }
-  },
-  "event": {
-    "@type": "Event",
-    "name": "OV-Abend DARC OV L11",
-    "startDate": "2026-08-11T19:00:00+02:00",
-    "eventStatus": "https://schema.org/EventScheduled",
-    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "url": "https://do1ffe.de/ov-l11",
-    "location": {
-      "@type": "Place",
-      "name": "Haus der Begegnung",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "I. Weberstr. 28",
-        "postalCode": "45127",
-        "addressLocality": "Essen",
-        "addressCountry": "DE"
-      }
-    },
-    "organizer": {
-      "@type": "Organization",
-      "name": "DARC OV L11"
-    }
   }
 }
 </script>
@@ -83,7 +60,9 @@
     </p>
     <p class="notice-text">
       Aktueller Stand: Der OV-Abend ist in der Sommerpause. Der nächste OV-Abend
-      findet am Dienstag, 11.08.2026, um 19 Uhr statt. Für freitags bitte vorher
+      findet am Dienstag, 11.08.2026, von 19 bis 21 Uhr statt.
+      <a href="{{ url_for('ov_abend_2026_08_11') }}">Alle Angaben zum OV-Abend</a>.
+      Für freitags bitte vorher
       über <a href="https://treff.lima11.de" target="_blank" rel="noopener noreferrer">treff.lima11.de</a>
       anmelden.
     </p>
@@ -100,7 +79,11 @@
       <div><dt>Ort</dt><dd>Haus der Begegnung, I. Weberstr. 28, 45127 Essen</dd></div>
       <div>
         <dt>OV-Abend</dt>
-        <dd>Sommerpause bis 11.08.2026. Nächster OV-Abend: Dienstag, 11.08.2026 um 19 Uhr.</dd>
+        <dd>
+          Sommerpause bis 11.08.2026. Nächster OV-Abend: Dienstag,
+          11.08.2026 von 19 bis 21 Uhr.
+          <a href="{{ url_for('ov_abend_2026_08_11') }}">Terminseite öffnen</a>
+        </dd>
       </div>
       <div>
         <dt>Clubabend</dt>

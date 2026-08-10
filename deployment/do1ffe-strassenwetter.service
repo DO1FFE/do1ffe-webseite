@@ -1,0 +1,18 @@
+[Unit]
+Description=Straßenwetter H426 aktualisieren
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=do1ffe
+WorkingDirectory=/home/do1ffe/do1ffe-webseite
+EnvironmentFile=/etc/default/do1ffe-strassenwetter
+ExecStart=/usr/bin/flask --app app road-weather-update --force
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/do1ffe/do1ffe-webseite/daten
+
+# Copyright © 2026 Erik Schauer, do1ffe@darc.de

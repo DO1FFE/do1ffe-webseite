@@ -1,0 +1,5 @@
+# Alternative zum systemd-Timer. Die Variablen werden aus der sicheren
+# Produktivkonfiguration übernommen.
+2-59/15 * * * * cd /home/do1ffe/do1ffe-webseite && set -a && . /etc/default/do1ffe-strassenwetter && set +a && /usr/bin/flask --app app road-weather-update --force >> /home/do1ffe/do1ffe-webseite/do1ffe-webseite.log 2>&1
+
+# Copyright © 2026 Erik Schauer, do1ffe@darc.de

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block titel %}{{ fehler_titel }}{% endblock %}
+{% block beschreibung %}{{ fehler_beschreibung }}{% endblock %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--code">
+  <div class="page-hero__content reveal">
+    <p class="eyebrow">Fehler {{ fehlercode }}</p>
+    <h1>{{ fehler_ueberschrift }}</h1>
+    <p>{{ fehler_text }}</p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="{{ url_for('startseite') }}">Zur Startseite</a>
+      <a class="button button--ghost" href="{{ url_for('dienste') }}">Öffentliche Dienste ansehen</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

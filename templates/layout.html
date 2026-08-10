@@ -2,28 +2,44 @@
 <html lang="de">
   <head>
     {% set seitentitel %}{% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}{% endset %}
-    {% set seitenbeschreibung %}{% block beschreibung %}Persönliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, GitHub-Projekte und MeshCore.{% endblock %}{% endset %}
-    {% set kanonische_url = "https://do1ffe.de" ~ request.path %}
+    {% set seitenbeschreibung %}{% block beschreibung %}Persönliche Webseite von Erik Schauer, DO1FFE: Amateurfunk, DARC OV L11, Tesla-Dashboard, öffentliche Dienste und MeshCore.{% endblock %}{% endset %}
+    {% set social_bild %}{% block social_bild %}{% endblock %}{% endset %}
+    {% set social_bild_alt %}{% block social_bild_alt %}{% endblock %}{% endset %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
       content="{{ seitenbeschreibung|trim }}"
     >
-    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+    <meta name="robots" content="{{ seo_robots }}">
     <meta name="author" content="Erik Schauer">
-    <link rel="canonical" href="{{ kanonische_url }}">
+    {% if seo_kanonische_url %}
+    <link rel="canonical" href="{{ seo_kanonische_url }}">
+    {% endif %}
     <meta property="og:locale" content="de_DE">
     <meta property="og:type" content="{% block og_typ %}website{% endblock %}">
     <meta property="og:site_name" content="DO1FFE">
     <meta property="og:title" content="{{ seitentitel|trim }}">
     <meta property="og:description" content="{{ seitenbeschreibung|trim }}">
-    <meta property="og:url" content="{{ kanonische_url }}">
-    <meta name="twitter:card" content="summary">
+    {% if seo_kanonische_url %}
+    <meta property="og:url" content="{{ seo_kanonische_url }}">
+    {% endif %}
+    {% if social_bild|trim %}
+    <meta property="og:image" content="{{ social_bild|trim }}">
+    <meta property="og:image:alt" content="{{ social_bild_alt|trim }}">
+    {% endif %}
+    <meta name="twitter:card" content="{% block twitter_karte %}summary{% endblock %}">
     <meta name="twitter:title" content="{{ seitentitel|trim }}">
     <meta name="twitter:description" content="{{ seitenbeschreibung|trim }}">
+    {% if social_bild|trim %}
+    <meta name="twitter:image" content="{{ social_bild|trim }}">
+    <meta name="twitter:image:alt" content="{{ social_bild_alt|trim }}">
+    {% endif %}
     <meta name="color-scheme" content="light dark">
     <title>{{ seitentitel|trim }}</title>
+    {% if breadcrumb_jsonld %}
+    <script type="application/ld+json">{{ breadcrumb_jsonld|safe }}</script>
+    {% endif %}
     <script>
       (() => {
         let gespeichertesFarbschema = null;
@@ -59,14 +75,15 @@
         <span class="tempco2-status__label">Wohnung</span>
         <span class="tempco2-status__value"><strong data-tempco2-temp>--</strong> °C</span>
         <span class="tempco2-status__value"><strong data-tempco2-humidity>--</strong> % rF</span>
-        <span class="tempco2-status__value"><strong data-tempco2-co2>--</strong> ppm CO2</span>
+        <span class="tempco2-status__value"><strong data-tempco2-co2>--</strong> ppm<span class="tempco2-status__co2-label"> CO₂</span></span>
       </a>
       <nav class="site-nav" id="site-nav" data-nav>
         <a class="{% if request.endpoint == 'startseite' %}is-active{% endif %}" href="{{ url_for('startseite') }}">Start</a>
         <a class="{% if request.endpoint == 'ueber_mich' %}is-active{% endif %}" href="{{ url_for('ueber_mich') }}">Über mich</a>
-        <a class="{% if request.endpoint == 'ov_l11' %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
+        <a class="{% if request.endpoint in ['ov_l11', 'ov_abend_2026_08_11'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
         <a class="{% if request.endpoint == 'tesla_dashboard' %}is-active{% endif %}" href="{{ url_for('tesla_dashboard') }}">Tesla</a>
-        <a class="{% if request.endpoint in ['github', 'projekte'] %}is-active{% endif %}" href="{{ url_for('github') }}">GitHub</a>
+        <a class="{% if request.endpoint == 'autobahn' %}is-active{% endif %}" href="{{ url_for('autobahn') }}">Autobahnwetter</a>
+        <a class="{% if request.endpoint in ['dienste', 'github', 'projekte'] %}is-active{% endif %}" href="{{ url_for('dienste') }}">Dienste</a>
         <a class="{% if request.endpoint == 'meshcore' %}is-active{% endif %}" href="{{ url_for('meshcore') }}">MeshCore</a>
         <a class="{% if request.endpoint == 'funkbruecke' %}is-active{% endif %}" href="{{ url_for('funkbruecke') }}">FunkBrücke</a>
         <a class="{% if request.endpoint == 'kontakt' %}is-active{% endif %}" href="{{ url_for('kontakt') }}">Kontakt</a>
@@ -100,7 +117,7 @@
     </main>
 
     <footer class="site-footer">
-      <span>&copy; <span data-year>2026</span> Erik Schauer, do1ffe@darc.de</span>
+      <span>&copy; <span data-year data-start-year="2026">{{ copyright_jahre }}</span> Erik Schauer, do1ffe@darc.de</span>
       <nav class="site-footer__links" aria-label="Rechtliches und Navigation">
         <a href="{{ url_for('startseite') }}">Startseite</a>
         <a href="{{ url_for('impressum') }}">Impressum</a>

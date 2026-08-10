@@ -7,30 +7,43 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Erik Schauer",
-  "alternateName": "DO1FFE",
-  "email": "do1ffe@darc.de",
-  "url": "https://do1ffe.de/ueber-mich",
-  "sameAs": [
-    "https://github.com/DO1FFE"
-  ],
-  "homeLocation": {
-    "@type": "Place",
-    "name": "Essen, Deutschland"
-  },
-  "memberOf": {
-    "@type": "Organization",
-    "name": "DARC e.V. Ortsverband L11 Essen-Mitte"
-  },
-  "knowsAbout": [
-    "Amateurfunk",
-    "Softwareentwicklung",
-    "MeshCore",
-    "LoRa",
-    "Webwerkzeuge",
-    "Funktechnik",
-    "Tesla Model S 90D"
+  "@graph": [
+    {
+      "@type": "ProfilePage",
+      "@id": "https://do1ffe.de/ueber-mich#webpage",
+      "url": "https://do1ffe.de/ueber-mich",
+      "name": "Über Erik Schauer DO1FFE",
+      "description": "Erik Schauer, DO1FFE aus Essen, stellt seine Themen rund um Amateurfunk, Software, MeshCore, FunkBrücke und technische Webwerkzeuge vor.",
+      "isPartOf": {"@id": "https://do1ffe.de/#website"},
+      "mainEntity": {"@id": "https://do1ffe.de/ueber-mich#person"},
+      "inLanguage": "de-DE"
+    },
+    {
+      "@type": "Person",
+      "@id": "https://do1ffe.de/ueber-mich#person",
+      "name": "Erik Schauer",
+      "alternateName": "DO1FFE",
+      "email": "do1ffe@darc.de",
+      "url": "https://do1ffe.de/ueber-mich",
+      "sameAs": ["https://github.com/DO1FFE"],
+      "homeLocation": {
+        "@type": "Place",
+        "name": "Essen, Deutschland"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "DARC e.V. Ortsverband L11 Essen-Mitte"
+      },
+      "knowsAbout": [
+        "Amateurfunk",
+        "Softwareentwicklung",
+        "MeshCore",
+        "LoRa",
+        "Webwerkzeuge",
+        "Funktechnik",
+        "Tesla Model S 90D"
+      ]
+    }
   ]
 }
 </script>
@@ -236,6 +249,6 @@
 
 <section class="next-links" aria-label="Weitere Themen">
   <a href="{{ url_for('ov_l11') }}">Zum OV L11</a>
-  <a href="{{ url_for('github') }}">Repos ansehen</a>
+  <a href="{{ url_for('dienste') }}">Dienste ansehen</a>
 </section>
 {% endblock %}

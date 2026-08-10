@@ -1,9 +1,40 @@
 {% extends "layout.html" %}
 
-{% block titel %}MeshCore | DO1FFE{% endblock %}
-{% block beschreibung %}MeshCore bei DO1FFE: LoRa-Mesh, Off-Grid-Kommunikation, Nodes, Monitoring und Funkexperimente.{% endblock %}
+{% block titel %}MeshCore Essen: LoRa-Mesh und Off-Grid-Kommunikation | DO1FFE{% endblock %}
+{% block beschreibung %}MeshCore in Essen bei DO1FFE: LoRa-Mesh, Off-Grid-Textnachrichten, Nodes, Monitoring sowie der MeshCore Repeater-Konfigurator für Android.{% endblock %}
 {% block head %}
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": "https://do1ffe.de/meshcore#repeater-konfigurator",
+    "name": "MeshCore Repeater-Konfigurator",
+    "url": "https://do1ffe.de/meshcore#app",
+    "description": "Android-App zum Einrichten favorisierter MeshCore-Repeater über Bluetooth Low Energy.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Android",
+    "inLanguage": "de-DE",
+    "isAccessibleForFree": true,
+    {% if repeater_apk %}
+    "softwareVersion": {{ repeater_apk.version|tojson }},
+    "downloadUrl": "https://do1ffe.de{{ url_for('meshcore_repeater_konfigurator_apk_version', version=repeater_apk.version) }}",
+    {% else %}
+    "downloadUrl": "https://do1ffe.de{{ url_for('meshcore_repeater_konfigurator_apk') }}",
+    {% endif %}
+    "featureList": [
+      "Bluetooth-Low-Energy-Verbindung",
+      "Repeater-Auswahl",
+      "Regionskonfiguration",
+      "Einrichtungskommandos"
+    ],
+    "author": {
+      "@type": "Person",
+      "@id": "https://do1ffe.de/ueber-mich#person",
+      "name": "Erik Schauer"
+    }
+  }
+  </script>
 {% endblock %}
 
 {% block inhalt %}
@@ -173,22 +204,22 @@
 </section>
 
 {% if regionenkarte_punkte %}
-<section class="section content-section mesh-region-map-section" id="appkarte">
+  <section class="section content-section mesh-region-map-section" id="appkarte">
   <div class="section__heading reveal">
     <p class="eyebrow">Regionenkarte</p>
-    <h2>Aktive Stadtprofile in der App.</h2>
+    <h2>Aktive Regionsprofile in der App.</h2>
   </div>
   <div class="mesh-region-map reveal">
     <div id="meshcore-regionenkarte" class="mesh-region-map__canvas" aria-label="Karte der aktiven MeshCore-Stadtprofile"></div>
     <div class="mesh-region-map__legend" aria-label="Legende der aktiven Stadtprofile">
-      {% for region in regionenkarte_punkte %}
+      {% for region in regionenkarte_punkte if region.istStadt %}
       <span style="--region-color: {{ region.farbe }};">
         <i aria-hidden="true"></i>
         {{ region.stadt }}
       </span>
       {% endfor %}
     </div>
-    <div class="mesh-region-map__commands" aria-label="Kompakte Einrichtungskommandos der Stadtprofile">
+    <div class="mesh-region-map__commands" aria-label="Einrichtungskommandos der aktiven Regionsprofile">
       {% for region in regionenkarte_punkte %}
       <details style="--region-color: {{ region.farbe }};">
         <summary>
@@ -318,7 +349,7 @@
 
 <section class="next-links" aria-label="Weitere Themen">
   <a href="{{ url_for('ov_l11') }}">Zurück zum OV L11</a>
-  <a href="{{ url_for('github') }}">GitHub-Repositories</a>
+  <a href="{{ url_for('dienste') }}">Öffentliche Dienste</a>
 </section>
 {% endblock %}
 
@@ -327,6 +358,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const regionenkarteDaten = {{ regionenkarte_punkte|tojson }};
+    const kartenRegionen = regionenkarteDaten.filter((region) => region.istStadt);
 
     function meshcoreHtml(wert) {
       return String(wert ?? "").replace(/[&<>"']/g, (zeichen) => ({
@@ -377,7 +409,7 @@
 
     async function initialisiereMeshcoreRegionenkarte() {
       const element = document.getElementById("meshcore-regionenkarte");
-      if (!element || !window.L || !regionenkarteDaten.length) {
+      if (!element || !window.L || !kartenRegionen.length) {
         return;
       }
 
@@ -391,7 +423,7 @@
         attribution: "&copy; OpenStreetMap-Mitwirkende",
       }).addTo(karte);
 
-      const flächen = await Promise.all(regionenkarteDaten.map(async (region) => {
+      const flächen = await Promise.all(kartenRegionen.map(async (region) => {
         try {
           const feature = await ladeRegionenGrenze(region);
           if (!feature) {

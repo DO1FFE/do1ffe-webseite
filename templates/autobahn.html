@@ -1,0 +1,277 @@
+{% extends "layout.html" %}
+
+{% block titel %}Straßenwetter Essen-Ost | DO1FFE{% endblock %}
+{% block beschreibung %}Lokale Anzeige der gemeldeten Straßenwetterdaten der Station H426 Essen-Ost am Autobahndreieck A40/A52.{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://do1ffe.de/autobahn#webapp",
+  "name": "Straßenwetter Essen-Ost",
+  "url": "https://do1ffe.de/autobahn",
+  "description": "Lokale Anzeige der gemeldeten Straßenwetterdaten der Station H426 Essen-Ost am Autobahndreieck A40/A52.",
+  "applicationCategory": "WeatherApplication",
+  "operatingSystem": "Webbrowser",
+  "inLanguage": "de-DE",
+  "isAccessibleForFree": true,
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "Straßenwetterstation H426 Essen-Ost",
+    "address": {
+      "@type": "PostalAddress",
+      "postalCode": "45139",
+      "addressLocality": "Essen",
+      "addressCountry": "DE"
+    }
+  },
+  "provider": {
+    "@type": "Organization",
+    "name": "Deutscher Wetterdienst",
+    "url": "https://www.dwd.de/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://do1ffe.de/ueber-mich#person",
+    "name": "Erik Schauer"
+  }
+}
+</script>
+{% endblock %}
+
+{% macro messwert_karte(schlüssel, hervorgehoben=false) %}
+  {% set messwert = strassenwetter.measurements[schlüssel] %}
+  {% set hat_wert = messwert.get('value') is not none or messwert.get('value_ms') is not none or messwert.get('degrees') is not none or messwert.get('cardinal') %}
+  <article
+    class="autobahn-messwert{% if hervorgehoben %} autobahn-messwert--gross{% endif %} autobahn-messwert--{{ messwert.status }}"
+    data-autobahn-messwert="{{ schlüssel }}"
+    {% if not hat_wert %}hidden{% endif %}
+  >
+    <div class="autobahn-messwert__kopf">
+      <span class="autobahn-messwert__symbol" aria-hidden="true" data-autobahn-symbol="{{ messwert.icon }}"></span>
+      <h3>{{ messwert.name }}</h3>
+    </div>
+    <p class="autobahn-messwert__wert" data-autobahn-wert>
+      {% if schlüssel in ['wind_speed', 'wind_gust'] and messwert.value_kmh is not none %}
+        {{ ('%.1f'|format(messwert.value_kmh)).replace('.', ',') }} <span>km/h</span>
+      {% elif schlüssel in ['wind_direction', 'wind_gust_direction'] and (messwert.cardinal or messwert.original_value) %}
+        {{ messwert.cardinal or messwert.original_value }}{% if messwert.degrees is not none %} <span>({{ ('%.0f'|format(messwert.degrees)) }}°)</span>{% endif %}
+      {% elif messwert.value is not none %}
+        {% if messwert.label %}
+          {{ messwert.label }}
+        {% elif messwert.value is number %}
+          {% if schlüssel == 'visibility' %}
+            {{ ('%.0f'|format(messwert.value)).replace('.', ',') }} <span>m</span>
+          {% elif schlüssel == 'relative_humidity' %}
+            {{ ('%.1f'|format(messwert.value)).replace('.', ',') }} <span>%</span>
+          {% else %}
+            {{ ('%.1f'|format(messwert.value)).replace('.', ',') }}{% if messwert.unit %} <span>{{ messwert.unit }}</span>{% endif %}
+          {% endif %}
+        {% else %}
+          {{ messwert.value }}{% if messwert.unit %} <span>{{ messwert.unit }}</span>{% endif %}
+        {% endif %}
+      {% elif messwert.status == 'error' %}
+        Momentan nicht abrufbar
+      {% else %}
+        Nicht gemeldet
+      {% endif %}
+    </p>
+    <p class="autobahn-messwert__status" data-autobahn-wert-status>
+      {% if messwert.status == 'current' %}Aktuell gemeldet
+      {% elif messwert.status == 'stale' %}Letzter verfügbarer Wert
+      {% elif messwert.status == 'error' %}Momentan nicht abrufbar
+      {% elif messwert.status == 'disabled' %}Externer Abruf deaktiviert
+      {% else %}Nicht gemeldet{% endif %}
+    </p>
+  </article>
+{% endmacro %}
+
+{% block inhalt %}
+<section class="page-hero page-hero--autobahn">
+  <div class="page-hero__content autobahn-hero__content">
+    <div>
+      <p class="eyebrow">Station H426 · Essen-Ost</p>
+      <h1>Straßenwetter Essen-Ost</h1>
+      <p>Aktuelle Messwerte vom Autobahndreieck Essen-Ost (A40/A52)</p>
+    </div>
+    <dl class="autobahn-stationskopf" aria-label="Stations- und Aktualitätsinformationen">
+      <div>
+        <dt>Status</dt>
+        <dd><span class="autobahn-status autobahn-status--{{ strassenwetter.status }}" data-autobahn-gesamtstatus>{{ strassenwetter.status }}</span></dd>
+      </div>
+      <div>
+        <dt>Messung</dt>
+        <dd data-autobahn-messzeit>{% if strassenwetter.measured_at %}{{ strassenwetter.measured_at }}{% else %}Keine Messzeit vorhanden{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Abgerufen</dt>
+        <dd data-autobahn-abrufzeit>{% if strassenwetter.fetched_at %}{{ strassenwetter.fetched_at }}{% else %}Noch nicht abgerufen{% endif %}</dd>
+      </div>
+      <div>
+        <dt>Standort</dt>
+        <dd>Essen-Ost · 103 m · A40/A52</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<div class="autobahn-seite" data-autobahn-seite>
+  <script type="application/json" data-autobahn-startdaten>{{ strassenwetter|tojson }}</script>
+
+  <section class="autobahn-hauptwerte" aria-labelledby="autobahn-hauptwerte-titel">
+    <div class="autobahn-abschnittskopf">
+      <p class="eyebrow">Auf einen Blick</p>
+      <h2 id="autobahn-hauptwerte-titel">Wichtige Messwerte</h2>
+    </div>
+    <div class="autobahn-hauptwerte__raster">
+      {{ messwert_karte('road_condition', true) }}
+      {{ messwert_karte('surface_temperature_fast_lane', true) }}
+      {{ messwert_karte('surface_temperature_other_lanes', true) }}
+      {{ messwert_karte('air_temperature', true) }}
+      {{ messwert_karte('precipitation_type', true) }}
+      <article
+        class="autobahn-glätte autobahn-glätte--{{ strassenwetter.slipperiness.level }}"
+        data-autobahn-glätte
+        role="{% if strassenwetter.slipperiness.level == 'warning' %}alert{% else %}status{% endif %}"
+      >
+        <span class="autobahn-glätte__symbol" aria-hidden="true">⚠</span>
+        <div>
+          <h3>Glättehinweis</h3>
+          <p data-autobahn-glätte-text>{{ strassenwetter.slipperiness.text }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {% set fahrbahn_sichtbar = namespace(wert=false) %}
+  {% for schlüssel in ['road_condition', 'surface_temperature_fast_lane', 'surface_temperature_other_lanes', 'ground_temperature_10cm', 'ground_temperature_30cm', 'water_film', 'visibility'] %}
+    {% set messwert = strassenwetter.measurements[schlüssel] %}
+    {% if messwert.get('value') is not none or messwert.get('value_ms') is not none or messwert.get('degrees') is not none or messwert.get('cardinal') %}{% set fahrbahn_sichtbar.wert = true %}{% endif %}
+  {% endfor %}
+  <section class="autobahn-bereich" aria-labelledby="autobahn-fahrbahn-titel" data-autobahn-messwertbereich {% if not fahrbahn_sichtbar.wert %}hidden{% endif %}>
+    <div class="autobahn-abschnittskopf">
+      <p class="eyebrow">Fahrbahn und Untergrund</p>
+      <h2 id="autobahn-fahrbahn-titel">Fahrbahn</h2>
+    </div>
+    <div class="autobahn-messwertraster">
+      {{ messwert_karte('road_condition') }}
+      {{ messwert_karte('surface_temperature_fast_lane') }}
+      {{ messwert_karte('surface_temperature_other_lanes') }}
+      {{ messwert_karte('ground_temperature_10cm') }}
+      {{ messwert_karte('ground_temperature_30cm') }}
+      {{ messwert_karte('water_film') }}
+      {{ messwert_karte('visibility') }}
+    </div>
+  </section>
+
+  {% set luft_sichtbar = namespace(wert=false) %}
+  {% for schlüssel in ['air_temperature', 'dew_point', 'relative_humidity'] %}
+    {% set messwert = strassenwetter.measurements[schlüssel] %}
+    {% if messwert.get('value') is not none or messwert.get('value_ms') is not none or messwert.get('degrees') is not none or messwert.get('cardinal') %}{% set luft_sichtbar.wert = true %}{% endif %}
+  {% endfor %}
+  <section class="autobahn-bereich" aria-labelledby="autobahn-luft-titel" data-autobahn-messwertbereich {% if not luft_sichtbar.wert %}hidden{% endif %}>
+    <div class="autobahn-abschnittskopf">
+      <p class="eyebrow">Atmosphäre</p>
+      <h2 id="autobahn-luft-titel">Luft und Feuchtigkeit</h2>
+    </div>
+    <div class="autobahn-messwertraster">
+      {{ messwert_karte('air_temperature') }}
+      {{ messwert_karte('dew_point') }}
+      {{ messwert_karte('relative_humidity') }}
+    </div>
+  </section>
+
+  {% set wind_sichtbar = namespace(wert=false) %}
+  {% for schlüssel in ['wind_direction', 'wind_gust_direction', 'wind_speed', 'wind_gust'] %}
+    {% set messwert = strassenwetter.measurements[schlüssel] %}
+    {% if messwert.get('value') is not none or messwert.get('value_ms') is not none or messwert.get('degrees') is not none or messwert.get('cardinal') %}{% set wind_sichtbar.wert = true %}{% endif %}
+  {% endfor %}
+  <section class="autobahn-bereich" aria-labelledby="autobahn-wind-titel" data-autobahn-messwertbereich {% if not wind_sichtbar.wert %}hidden{% endif %}>
+    <div class="autobahn-abschnittskopf">
+      <p class="eyebrow">Richtung und Geschwindigkeit</p>
+      <h2 id="autobahn-wind-titel">Wind</h2>
+    </div>
+    <div class="autobahn-messwertraster">
+      {{ messwert_karte('wind_direction') }}
+      {{ messwert_karte('wind_gust_direction') }}
+      {{ messwert_karte('wind_speed') }}
+      {{ messwert_karte('wind_gust') }}
+    </div>
+  </section>
+
+  {% set niederschlag_sichtbar = namespace(wert=false) %}
+  {% for schlüssel in ['precipitation_15min', 'precipitation_type', 'precipitation_intensity'] %}
+    {% set messwert = strassenwetter.measurements[schlüssel] %}
+    {% if messwert.get('value') is not none or messwert.get('value_ms') is not none or messwert.get('degrees') is not none or messwert.get('cardinal') %}{% set niederschlag_sichtbar.wert = true %}{% endif %}
+  {% endfor %}
+  <section class="autobahn-bereich" aria-labelledby="autobahn-niederschlag-titel" data-autobahn-messwertbereich {% if not niederschlag_sichtbar.wert %}hidden{% endif %}>
+    <div class="autobahn-abschnittskopf">
+      <p class="eyebrow">Regen, Schnee und mehr</p>
+      <h2 id="autobahn-niederschlag-titel">Niederschlag</h2>
+    </div>
+    <div class="autobahn-messwertraster">
+      {{ messwert_karte('precipitation_15min') }}
+      {{ messwert_karte('precipitation_type') }}
+      {{ messwert_karte('precipitation_intensity') }}
+    </div>
+  </section>
+
+  <section class="autobahn-bereich autobahn-station" aria-labelledby="autobahn-station-titel">
+    <div class="autobahn-abschnittskopf">
+      <p class="eyebrow">Messstelle</p>
+      <h2 id="autobahn-station-titel">Stationsinformationen</h2>
+    </div>
+    <div class="autobahn-station__raster">
+      <dl class="autobahn-stationsdaten">
+        <div><dt>Stations-ID</dt><dd>H426</dd></div>
+        <div><dt>Name</dt><dd>Essen-Ost</dd></div>
+        <div><dt>Höhe</dt><dd>103 m</dd></div>
+        <div><dt>Bereich</dt><dd>Autobahndreieck Essen-Ost</dd></div>
+        <div><dt>Autobahnen</dt><dd>A40 und A52</dd></div>
+        <div><dt>Stadtteile</dt><dd>Huttrop / Frillendorf</dd></div>
+        <div><dt>Postleitzahl</dt><dd>45139 Essen</dd></div>
+      </dl>
+      <div class="autobahn-position">
+        <h3>Ungefähre Position der Station Essen-Ost</h3>
+        <p>51,4547° N · 7,0421° O</p>
+        <a
+          class="button"
+          href="https://www.openstreetmap.org/?mlat=51.4547&amp;mlon=7.0421#map=16/51.4547/7.0421"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Standort auf OpenStreetMap öffnen</a>
+      </div>
+    </div>
+  </section>
+
+  <aside class="autobahn-quelle" aria-labelledby="autobahn-quelle-titel">
+    <h2 id="autobahn-quelle-titel">Quelle und wichtiger Hinweis</h2>
+    <p>
+      Datenbasis: BMVBS und Straßenbauverwaltungen der Länder. Bereitstellung:
+      <a href="{{ strassenwetter.source.url }}" target="_blank" rel="noopener noreferrer" data-autobahn-quelllink>{{ strassenwetter.source.display_source }}</a>.
+      Die Angaben erfolgen ohne Gewähr und ersetzen keine amtlichen Verkehrs- oder Unwetterwarnungen.
+    </p>
+    <p>Die GMA-Daten sind ungeprüfte Punktmessungen und bilden nicht zwingend die Verhältnisse eines gesamten Straßenabschnitts ab.</p>
+    <p>Straßenverhältnisse können sich zwischen zwei Messstellen und innerhalb kurzer Zeit verändern.</p>
+    {% if not strassenwetter.enabled %}
+      <p class="autobahn-quelle__deaktiviert" data-autobahn-deaktiviert>
+        Der externe Abruf ist derzeit deaktiviert. Angezeigt werden ausschließlich bereits lokal gespeicherte Werte.
+      </p>
+    {% endif %}
+  </aside>
+
+  <noscript>
+    <p class="autobahn-noscript">Die zuletzt serverseitig gespeicherten Messwerte sind auch ohne JavaScript sichtbar.</p>
+  </noscript>
+</div>
+
+<section class="next-links" aria-label="Weitere Wetter- und Projektseiten">
+  <a href="{{ url_for('dienste') }}">Weitere öffentliche Dienste</a>
+  <a href="{{ url_for('startseite') }}">Zur Startseite</a>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ statische_datei('autobahn.js') }}"></script>
+{% endblock %}

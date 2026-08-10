@@ -1,7 +1,34 @@
 {% extends "layout.html" %}
 
-{% block titel %}FunkBrücke | DO1FFE{% endblock %}
-{% block beschreibung %}FunkBrücke: Windows-Prototyp für FB2-Digitalbetrieb, Yaesu FT-991A, Chat, automatische Warteschlange, Mesh und Downloads.{% endblock %}
+{% block titel %}FunkBrücke: digitale Amateurfunk-Nachrichten | DO1FFE{% endblock %}
+{% block beschreibung %}FunkBrücke ist ein Windows-Prototyp für digitale Amateurfunk-Nachrichten mit Yaesu FT-991A, FB2, Chat, Warteschlange, Empfang und Mesh.{% endblock %}
+{% block social_bild %}https://do1ffe.de/static/assets/funkbruecke-logo.png{% endblock %}
+{% block social_bild_alt %}Logo der Windows-Anwendung FunkBrücke{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://do1ffe.de/Funkbruecke#software",
+  "name": "FunkBrücke",
+  "url": "https://do1ffe.de/Funkbruecke",
+  "description": "Windows-Prototyp für digitale Amateurfunk-Nachrichten mit Yaesu FT-991A, FB2, Chat, Warteschlange und Mesh.",
+  "applicationCategory": "CommunicationApplication",
+  "operatingSystem": "Windows x64",
+  "softwareVersion": {{ funkbruecke_version.version|tojson }},
+  {% if funkbruecke_haupt_download and funkbruecke_haupt_download.verfügbar %}
+  "downloadUrl": {{ funkbruecke_haupt_download.url|tojson }},
+  {% endif %}
+  "inLanguage": "de-DE",
+  "author": {
+    "@type": "Person",
+    "@id": "https://do1ffe.de/ueber-mich#person",
+    "name": "Erik Schauer"
+  }
+}
+</script>
+{% endblock %}
 
 {% block inhalt %}
 <section class="page-hero page-hero--funkbruecke">
@@ -235,6 +262,6 @@
 
 <section class="next-links" aria-label="Weitere Themen">
   <a href="{{ url_for('meshcore') }}">MeshCore lesen</a>
-  <a href="{{ url_for('github') }}">Weitere GitHub-Projekte</a>
+  <a href="{{ url_for('dienste') }}">Weitere Dienste</a>
 </section>
 {% endblock %}

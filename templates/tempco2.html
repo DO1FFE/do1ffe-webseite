@@ -3,6 +3,35 @@
 {% block titel %}TempCO2 Wohnungsluft | DO1FFE{% endblock %}
 {% block beschreibung %}Live-Werte aus meiner Wohnung: Temperatur, Luftfeuchte und CO2 mit Graphen, Luftlagebericht und einer erstaunlich langen Geschichte über Bluetooth.{% endblock %}
 
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://do1ffe.de/tempco2#webapp",
+  "name": "TempCO2 Wohnungsluft",
+  "url": "https://do1ffe.de/tempco2",
+  "description": "Webanzeige für lokal per Bluetooth erfasste Temperatur, Luftfeuchtigkeit und CO2-Werte aus einer Wohnung in Essen.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Webbrowser",
+  "inLanguage": "de-DE",
+  "isAccessibleForFree": true,
+  "featureList": [
+    "Temperaturanzeige",
+    "Luftfeuchtigkeitsanzeige",
+    "CO2-Anzeige",
+    "Zeitverläufe",
+    "Luftlagebericht"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://do1ffe.de/ueber-mich#person",
+    "name": "Erik Schauer"
+  }
+}
+</script>
+{% endblock %}
+
 {% block inhalt %}
 <section class="page-hero page-hero--tempco2">
   <div class="page-hero__content tempco2-hero__content reveal">
@@ -78,50 +107,49 @@
     <span><i class="tempco2-bereich-legende__farbe tempco2-bereich-legende__farbe--kritisch" aria-hidden="true"></i>Kritisch</span>
   </div>
 
-  <div class="tempco2-graph-tabs reveal" id="graphen" data-tempco2-tabs>
-    <div class="tempco2-tablist" role="tablist" aria-label="Zeitraum für die TempCO2-Graphen">
-      <button class="is-active" type="button" id="tempco2-tab-tag" role="tab" aria-selected="true" aria-controls="tagesgraph" tabindex="0" data-tempco2-tab="tag">24h</button>
-      <button type="button" id="tempco2-tab-woche" role="tab" aria-selected="false" aria-controls="wochengraph" tabindex="-1" data-tempco2-tab="woche">Woche</button>
-      <button type="button" id="tempco2-tab-monat" role="tab" aria-selected="false" aria-controls="monatsgraph" tabindex="-1" data-tempco2-tab="monat">Monat</button>
+  <div class="tempco2-graph-tabs reveal" id="graphen">
+    <div class="tempco2-zeitraumregler" data-tempco2-range-controls>
+      <div class="tempco2-zeitraumregler__kopf">
+        <div>
+          <p class="eyebrow">Zeitraum</p>
+          <h2>Messfenster wählen</h2>
+        </div>
+        <output for="tempco2-zeitraum" data-tempco2-range-output>24h</output>
+      </div>
+      <div class="tempco2-zeitraumregler__skala">
+        <input
+          id="tempco2-zeitraum"
+          type="range"
+          min="0"
+          max="6"
+          step="1"
+          value="3"
+          aria-label="Zeitraum für den TempCO2-Graphen"
+          data-tempco2-range
+        >
+        <div class="tempco2-zeitraumregler__marken" aria-hidden="true">
+          <span data-tempco2-range-option="0">1h</span>
+          <span data-tempco2-range-option="1">6h</span>
+          <span data-tempco2-range-option="2">12h</span>
+          <span data-tempco2-range-option="3" class="is-active">1 Tag</span>
+          <span data-tempco2-range-option="4">1 Monat</span>
+          <span data-tempco2-range-option="5">6 Monate</span>
+          <span data-tempco2-range-option="6">1 Jahr</span>
+        </div>
+      </div>
     </div>
 
-    <article class="tempco2-chart" id="tagesgraph" role="tabpanel" aria-labelledby="tempco2-tab-tag" data-tempco2-chart="tag" data-tempco2-tab-panel="tag">
+    <article class="tempco2-chart" id="zeitraumgraph" data-tempco2-chart="tag">
       <header>
         <div>
-          <p class="eyebrow">24 Stunden</p>
-          <h2>Tagesgraph</h2>
+          <p class="eyebrow" data-tempco2-chart-kicker>24 Stunden</p>
+          <h2 data-tempco2-chart-title>Tagesgraph</h2>
         </div>
         <span data-tempco2-chart-count>--</span>
       </header>
-      <svg viewBox="0 0 760 430" role="img" aria-label="Tagesgraph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
-      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum Tagesgraph"></div>
+      <svg viewBox="0 0 760 430" role="img" aria-label="Graph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
+      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum gewählten Zeitraum"></div>
       <p data-tempco2-chart-empty hidden>Für diesen Zeitraum liegen noch keine Messwerte vor. Das Diagramm übt schon einmal seriöses Schweigen.</p>
-    </article>
-
-    <article class="tempco2-chart" id="wochengraph" role="tabpanel" aria-labelledby="tempco2-tab-woche" data-tempco2-chart="woche" data-tempco2-tab-panel="woche" hidden>
-      <header>
-        <div>
-          <p class="eyebrow">7 Tage</p>
-          <h2>Wochengraph</h2>
-        </div>
-        <span data-tempco2-chart-count>--</span>
-      </header>
-      <svg viewBox="0 0 760 430" role="img" aria-label="Wochengraph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
-      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum Wochengraph"></div>
-      <p data-tempco2-chart-empty hidden>Für diesen Zeitraum liegen noch keine Messwerte vor. Die Woche wartet noch auf verwertbare Raumklima-Akten.</p>
-    </article>
-
-    <article class="tempco2-chart" id="monatsgraph" role="tabpanel" aria-labelledby="tempco2-tab-monat" data-tempco2-chart="monat" data-tempco2-tab-panel="monat" hidden>
-      <header>
-        <div>
-          <p class="eyebrow">31 Tage</p>
-          <h2>Monatsgraph</h2>
-        </div>
-        <span data-tempco2-chart-count>--</span>
-      </header>
-      <svg viewBox="0 0 760 430" role="img" aria-label="Monatsgraph für Temperatur, Luftfeuchtigkeit und CO2"></svg>
-      <div class="tempco2-chart-values" data-tempco2-chart-values aria-label="Kennzahlen zum Monatsgraph"></div>
-      <p data-tempco2-chart-empty hidden>Für diesen Zeitraum liegen noch keine Messwerte vor. Der Monat stellt gerade den Ausschuss für Luftfragen zusammen.</p>
     </article>
   </div>
 
@@ -265,5 +293,10 @@
       auch noch kommentiert wird.
     </p>
   </section>
+</section>
+
+<section class="next-links" aria-label="Weitere Messwerte und Projekte">
+  <a href="{{ url_for('autobahn') }}">Straßenwetter Essen-Ost</a>
+  <a href="{{ url_for('dienste') }}">Weitere öffentliche Dienste</a>
 </section>
 {% endblock %}

@@ -1,6 +1,59 @@
 {% extends "layout.html" %}
 
 {% block titel %}DO1FFE | Funk, Code und Daten{% endblock %}
+{% block beschreibung %}Erik Schauer, DO1FFE aus Essen: Amateurfunk im DARC OV L11, Softwareprojekte, Tesla-Dashboard, MeshCore, FunkBrücke und öffentliche Webwerkzeuge.{% endblock %}
+{% block twitter_karte %}summary_large_image{% endblock %}
+{% block social_bild %}https://do1ffe.de/static/assets/hero-radio-mesh.png{% endblock %}
+{% block social_bild_alt %}Amateurfunkstation mit Funkgerät, Notebook und LoRa-Mesh-Geräten{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://do1ffe.de/#website",
+      "url": "https://do1ffe.de/",
+      "name": "DO1FFE",
+      "alternateName": "Erik Schauer DO1FFE",
+      "description": "Amateurfunk, Softwareprojekte, öffentliche Webwerkzeuge, Fahrzeugdaten und MeshCore aus Essen.",
+      "inLanguage": "de-DE",
+      "publisher": {"@id": "https://do1ffe.de/ueber-mich#person"}
+    },
+    {
+      "@type": "Person",
+      "@id": "https://do1ffe.de/ueber-mich#person",
+      "name": "Erik Schauer",
+      "alternateName": "DO1FFE",
+      "url": "https://do1ffe.de/ueber-mich",
+      "sameAs": ["https://github.com/DO1FFE"],
+      "homeLocation": {"@type": "Place", "name": "Essen, Deutschland"},
+      "memberOf": {
+        "@type": "Organization",
+        "name": "DARC e.V. Ortsverband L11 Essen-Mitte"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://do1ffe.de/#webpage",
+      "url": "https://do1ffe.de/",
+      "name": "DO1FFE | Funk, Code und Daten",
+      "description": "Erik Schauer, DO1FFE aus Essen: Amateurfunk im DARC OV L11, Softwareprojekte, Tesla-Dashboard, MeshCore, FunkBrücke und öffentliche Webwerkzeuge.",
+      "isPartOf": {"@id": "https://do1ffe.de/#website"},
+      "about": {"@id": "https://do1ffe.de/ueber-mich#person"},
+      "inLanguage": "de-DE",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://do1ffe.de/static/assets/hero-radio-mesh.png",
+        "width": 1783,
+        "height": 882
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
 
 {% block inhalt %}
 <section class="hero hero--editorial" id="start" aria-labelledby="hero-title">
@@ -51,7 +104,7 @@
     <p>
       Diese Webseite ist deshalb wie ein offenes Regal: links der DARC-Ortsverband L11
       mit Clubabend und OV-Frequenzen, daneben das Tesla-Dashboard mit Live-Daten und
-      Kartenansicht, weiter rechts GitHub-Repositories für kleine und große Alltagshelfer.
+      Kartenansicht, weiter rechts öffentliche Dienste für kleine und große Alltagshelfer.
       Und irgendwo dazwischen funkt MeshCore über LoRa.
     </p>
   </div>
@@ -74,10 +127,10 @@
     <a href="{{ url_for('tesla_dashboard') }}">Dashboard erklärt</a>
   </article>
   <article class="topic-card reveal">
-    <span class="card-kicker">Code</span>
-    <h3>GitHub-Repositories</h3>
-    <p>Öffentliche Repositories: viel Python, viel Funk, Vereinshelfer, Dashboards und Tools.</p>
-    <a href="{{ url_for('github') }}">Repos ansehen</a>
+    <span class="card-kicker">Dienste</span>
+    <h3>Webwerkzeuge</h3>
+    <p>Öffentlich freigegebene Subdomains: QR-Codes, Karten, Wetter, Funktools und Lernseiten.</p>
+    <a href="{{ url_for('dienste') }}">Dienste ansehen</a>
   </article>
   <article class="topic-card reveal">
     <span class="card-kicker">LoRa</span>
@@ -119,13 +172,13 @@
       <a href="{{ url_for('tesla_dashboard') }}">Mehr zum Dashboard</a>
     </article>
     <article class="note-card reveal">
-      <h3>Repos als Logbuch</h3>
+      <h3>Dienste als Werkbank</h3>
       <p>
-        GitHub ist hier kein Trophäenschrank. Die Repositories lesen sich eher wie
-        ein Basteltisch: Club-Zahlungsterminal, Adventskalender für den OV,
-        AX.25-UDP-Router, PTT-Steuerung, DAPNET-API und Websteuerungen.
+        Die öffentliche Dienste-Liste zeigt, was unter do1ffe.de direkt nutzbar ist:
+        QR-Code-Generator, ÖPNV-Karte, Wetterseite, FunkBrücke-Livekarte,
+        Lernshack, Rufzeichensuche und weitere Webwerkzeuge.
       </p>
-      <a href="{{ url_for('github') }}">Projektübersicht</a>
+      <a href="{{ url_for('dienste') }}">Diensteübersicht</a>
     </article>
     <article class="note-card reveal">
       <h3>MeshCore beobachten</h3>

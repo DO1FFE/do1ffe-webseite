@@ -1,26 +1,244 @@
 {
+  "stand": "2026-07-29",
   "quellen": [
     "https://docs.meshcore.io/cli_commands/",
-    "https://github.com/meshcore-dev/MeshCore/wiki/Repeater-&-Room-Server-CLI-Reference",
-    "https://blog.meshcore.io/2026/01/20/region-filtering"
+    "https://github.com/meshcore-dev/MeshCore/blob/main/docs/cli_commands.md",
+    "https://github.com/meshcore-dev/MeshCore/blob/main/src/helpers/CommonCLI.cpp",
+    "https://github.com/meshcore-dev/MeshCore/blob/main/examples/simple_sensor/SensorMesh.cpp"
   ],
   "exakteKommandos": {
-    "set radio.rxgain on": "Aktiviert den RX-Boosted-Gain-Modus des SX12xx-Funkchips. Laut MeshCore gilt der Parameter ab Firmware 1.14.1 und ist nur wirksam, wenn Hardware und Firmware ihn unterstützen.",
-    "set repeat on": "Aktiviert die Repeat-Funktion. Der Repeater darf dadurch MeshCore-Pakete weiterleiten.",
-    "set af 9": "Setzt den älteren Airtime-Faktor auf 9. Nach einer Sendung bleibt der Repeater ungefähr neunmal so lange still wie die Sendung gedauert hat; das entspricht grob 10 Prozent Duty Cycle. MeshCore empfiehlt ab Firmware 1.15.0 stattdessen „set dutycycle“.",
-    "set dutycycle 10": "Setzt das Duty-Cycle-Limit auf 10 Prozent. Dieser neuere Parameter ist laut MeshCore ab Firmware 1.15.0 verfügbar.",
-    "set advert.interval 60": "Setzt das lokale Zero-Hop-Advert-Intervall auf 60 Minuten. MeshCore rundet diesen Wert auf gerade Minuten; 0 würde die lokalen Adverts deaktivieren.",
-    "set flood.advert.interval 3": "Setzt das Flood-Advert-Intervall auf 3 Stunden. 0 würde Flood-Adverts deaktivieren.",
-    "set multi.acks 1": "Aktiviert Multi-Acks. MeshCore sendet dadurch zusätzliche Bestätigungen bzw. nutzt zusätzliche ACK-Pfade.",
-    "set int.thresh 0": "Setzt die lokale Interferenzschwelle auf 0. Der Parameter steuert den von MeshCore verwendeten Interference-Threshold-Wert.",
-    "set path.hash.mode 1": "Setzt die Pfad-Hash-Größe für Repeater-Adverts auf Modus 1. Laut MeshCore bedeutet das 2 Byte Hash-Größe; damit sind bis zu 65.536 eindeutige IDs möglich und der maximale Flood-Pfad sinkt auf 32 Hops.",
-    "set loop.detect minimal": "Aktiviert die minimale Loop-Erkennung. MeshCore verwirft Flood-Pakete, wenn der eigene Repeater-Hash je nach Pfad-Hash-Größe zu oft im Pfad auftaucht.",
-    "set flood.max 64": "Setzt die maximale Flood-Hop-Anzahl auf 64. Das ist laut MeshCore der obere erlaubte Wert."
+    "reboot": "Startet den Knoten neu. Das Gerät sendet darauf keine Antwort.",
+    "poweroff": "Schaltet den Knoten aus. Das Gerät sendet darauf keine Antwort.",
+    "shutdown": "Schaltet den Knoten aus. Das Gerät sendet darauf keine Antwort.",
+    "clkreboot": "Setzt die interne Uhr zurück und startet den Knoten neu. Das Gerät sendet darauf keine Antwort.",
+    "clock sync": "Synchronisiert die Uhr des Knotens mit der Uhr des fernsteuernden Geräts.",
+    "clock": "Zeigt die aktuelle Uhrzeit des Knotens in UTC an.",
+    "advert": "Sendet sofort ein Flood-Advert über das Mesh.",
+    "advert.zerohop": "Sendet sofort ein lokales Zero-Hop-Advert.",
+    "start ota": "Startet eine Over-the-Air-Aktualisierung der Firmware.",
+    "erase": "Löscht das lokale Dateisystem und setzt das Gerät auf Werkseinstellungen zurück. Dieses serielle Kommando ist destruktiv.",
+    "neighbors": "Listet die bis zu acht zuletzt per Advert erkannten Nachbarknoten auf.",
+    "discover.neighbors": "Startet die Erkennung direkt erreichbarer Zero-Hop-Nachbarn.",
+    "clear stats": "Setzt die gesammelten Gerätestatistiken zurück.",
+    "stats-core": "Zeigt serielle Systemstatistiken wie Batterie, Laufzeit, Warteschlangenlänge und Debug-Flags an.",
+    "stats-radio": "Zeigt serielle Funkstatistiken wie Rauschpegel, RSSI, SNR, Airtime und Empfangsfehler an.",
+    "stats-packets": "Zeigt seriell die Zähler empfangener und gesendeter Pakete an.",
+    "log start": "Beginnt die Aufzeichnung empfangener Pakete im Gerätespeicher.",
+    "log stop": "Beendet die Aufzeichnung empfangener Pakete.",
+    "log erase": "Löscht die gespeicherte Paketaufzeichnung.",
+    "log": "Gibt die gespeicherte Paketaufzeichnung über die serielle Schnittstelle aus.",
+    "ver": "Zeigt die installierte MeshCore-Firmwareversion an.",
+    "board": "Zeigt Hersteller und Hardwarebezeichnung des Geräts an.",
+    "powersaving": "Zeigt an, ob der Energiesparmodus des Repeaters aktiv ist.",
+    "region": "Gibt den vollständigen Regionsbaum mit den aktuellen Flood-Berechtigungen aus.",
+    "region load": "Startet das interaktive Laden eines Regionsbaums. Einrückungen bilden die Hierarchie, ein optionales F erlaubt Flooding.",
+    "region save": "Speichert die seit dem Neustart geänderte Regionskonfiguration dauerhaft.",
+    "region home": "Zeigt die aktuelle Home-Region des Knotens an.",
+    "region default": "Zeigt die aktuelle Default-Scope-Region des Knotens an.",
+    "gps": "Zeigt Zustand, Aktivität, Fix und Satellitenzahl des GPS-Moduls an, sofern GPS-Unterstützung vorhanden ist.",
+    "gps sync": "Synchronisiert die Uhr des Knotens mit der GPS-Zeit.",
+    "gps setloc": "Übernimmt die aktuellen GPS-Koordinaten als gespeicherten Standort.",
+    "gps advert": "Zeigt die aktuelle Richtlinie für Standortangaben in Adverts an.",
+    "sensor list": "Listet alle Sensorwerte auf, sofern Sensorunterstützung einkompiliert ist.",
+    "io": "Liest bei einer Sensor-Firmware den aktuellen GPIO-Zustand als Hexadezimalwert."
+  },
+  "parameterKommandos": {
+    "radio": {
+      "lesen": "Zeigt Frequenz, Bandbreite, Spreizfaktor und Coderate der LoRa-Funkkonfiguration an.",
+      "setzen": "Setzt die LoRa-Funkkonfiguration auf „{wert}“: Frequenz in MHz, Bandbreite in kHz, Spreizfaktor und Coderate. Die Änderung wird nach einem Neustart aktiv."
+    },
+    "tx": {
+      "lesen": "Zeigt die konfigurierte Sendeleistung des LoRa-Funkchips in dBm an.",
+      "setzen": "Setzt die Sendeleistung des LoRa-Funkchips auf {wert} dBm. Zusätzliche Verstärkerstufen und die gesetzlichen Grenzwerte müssen separat berücksichtigt werden."
+    },
+    "freq": {
+      "lesen": "Zeigt die konfigurierte Funkfrequenz in MHz an.",
+      "setzen": "Setzt die Funkfrequenz auf {wert} MHz. Das serielle Kommando wird nach einem Neustart aktiv."
+    },
+    "radio.rxgain": {
+      "lesen": "Zeigt an, ob der RX-Boosted-Gain-Modus des SX12xx- beziehungsweise LR1110-Funkchips aktiv ist.",
+      "setzen": "Setzt den RX-Boosted-Gain-Modus auf „{wert}“. Der Parameter wird ab Firmware 1.14.1 und nur von unterstützter Hardware ausgewertet."
+    },
+    "name": {
+      "lesen": "Zeigt den in Adverts verwendeten Knotennamen an.",
+      "setzen": "Setzt den in Adverts verwendeten Knotennamen auf „{wert}“. Mit Standortangabe sind höchstens 24 Byte, sonst 32 Byte möglich."
+    },
+    "lat": {
+      "lesen": "Zeigt die gespeicherte geografische Breite des Knotens in Grad an.",
+      "setzen": "Setzt die geografische Breite des Knotens auf {wert} Grad."
+    },
+    "lon": {
+      "lesen": "Zeigt die gespeicherte geografische Länge des Knotens in Grad an.",
+      "setzen": "Setzt die geografische Länge des Knotens auf {wert} Grad."
+    },
+    "prv.key": {
+      "lesen": "Gibt den privaten 64-stelligen Hexadezimalschlüssel über die serielle Schnittstelle aus. Der Wert muss geheim bleiben.",
+      "setzen": "Ersetzt den privaten Geräteschlüssel durch einen 64-stelligen Hexadezimalwert. Die Änderung wird nach einem Neustart aktiv."
+    },
+    "guest.password": {
+      "lesen": "Zeigt das konfigurierte Gastpasswort eines Room-Servers an.",
+      "setzen": "Ändert das Gastpasswort des Room-Servers."
+    },
+    "owner.info": {
+      "lesen": "Zeigt die gespeicherten Eigentümerinformationen des Knotens an.",
+      "setzen": "Setzt die Eigentümerinformationen auf „{wert}“. Senkrechte Striche werden als Zeilenumbrüche gespeichert; erforderlich ist Firmware 1.12 oder neuer."
+    },
+    "adc.multiplier": {
+      "lesen": "Zeigt den ADC-Korrekturfaktor für die Batteriespannungsmessung an.",
+      "setzen": "Setzt den ADC-Korrekturfaktor auf {wert}. Zulässig sind Werte von 0,0 bis 10,0; nicht jede Hardware unterstützt diese Einstellung."
+    },
+    "public.key": {
+      "lesen": "Zeigt den öffentlichen Schlüssel des Knotens an."
+    },
+    "role": {
+      "lesen": "Zeigt die konfigurierte Rolle des Knotens an."
+    },
+    "repeat": {
+      "lesen": "Zeigt an, ob der Knoten MeshCore-Pakete als Repeater weiterleitet.",
+      "setzen": "Setzt die Repeat-Funktion auf „{wert}“ und aktiviert oder deaktiviert damit die Paketweiterleitung."
+    },
+    "path.hash.mode": {
+      "lesen": "Zeigt die Hash-Größe an, die der Repeater in eigenen Adverts verwendet.",
+      "setzen": "Setzt die Hash-Größe für eigene Repeater-Adverts auf Modus {wert}: 0 bedeutet 1 Byte, 1 bedeutet 2 Byte und 2 bedeutet 3 Byte. Modus 3 ist reserviert und darf nicht verwendet werden."
+    },
+    "loop.detect": {
+      "lesen": "Zeigt den Modus der Flood-Schleifenerkennung an.",
+      "setzen": "Setzt die Flood-Schleifenerkennung auf „{wert}“. Unterstützt werden off, minimal, moderate und strict; strengere Modi verwerfen Pakete früher, wenn der eigene Repeater-Hash bereits im Pfad vorkommt."
+    },
+    "txdelay": {
+      "lesen": "Zeigt den Verzögerungsfaktor für die Weiterleitung von Flood-Paketen an.",
+      "setzen": "Setzt den zufälligen Kollisionsvermeidungsfaktor für Flood-Weiterleitungen auf {wert}. Größere Werte verringern gleichzeitige Aussendungen, erhöhen aber die Latenz; 0 deaktiviert das Zeitfenster."
+    },
+    "direct.txdelay": {
+      "lesen": "Zeigt den Verzögerungsfaktor für die Weiterleitung direkt gerouteter Pakete an.",
+      "setzen": "Setzt den zufälligen Kollisionsvermeidungsfaktor für direkte, geroutete Weiterleitungen auf {wert}. Größere Werte erhöhen das Zeitfenster und damit die Latenz; 0 deaktiviert es."
+    },
+    "rxdelay": {
+      "lesen": "Zeigt die experimentelle Basis der signalabhängigen Empfangsverzögerung an.",
+      "setzen": "Setzt die experimentelle Empfangsverzögerungsbasis auf {wert}. Schwach empfangene Flood-Pakete werden dadurch später verarbeitet, damit starke Pfade Vorrang erhalten; 0 deaktiviert die Verzögerung."
+    },
+    "dutycycle": {
+      "lesen": "Zeigt das Duty-Cycle-Limit in Prozent an.",
+      "setzen": "Setzt das Duty-Cycle-Limit auf {wert} Prozent. Zulässig sind 1 bis 100 Prozent; der Parameter ist ab Firmware 1.15.0 verfügbar."
+    },
+    "af": {
+      "lesen": "Zeigt den veralteten Airtime-Faktor an.",
+      "setzen": "Setzt den veralteten Airtime-Faktor auf {wert}. Nach einer Aussendung folgt ungefähr die mit diesem Faktor multiplizierte Sendedauer als Pause; ab Firmware 1.15.0 sollte stattdessen dutycycle verwendet werden."
+    },
+    "int.thresh": {
+      "lesen": "Zeigt den lokalen Schwellenwert der Funkinterferenzerkennung an.",
+      "setzen": "Setzt den lokalen Interferenzschwellenwert auf {wert}; 0 deaktiviert die Interferenzerkennung."
+    },
+    "agc.reset.interval": {
+      "lesen": "Zeigt das Intervall für das Zurücksetzen der automatischen Empfangsverstärkung an.",
+      "setzen": "Setzt das AGC-Reset-Intervall auf {wert} Sekunden. MeshCore rundet auf ein Vielfaches von vier Sekunden ab; 0 deaktiviert die regelmäßige Rücksetzung."
+    },
+    "multi.acks": {
+      "lesen": "Zeigt an, ob Multi-Acks aktiviert sind.",
+      "setzen": "Setzt Multi-Acks auf {wert}: 0 deaktiviert und 1 aktiviert die Funktion."
+    },
+    "flood.advert.interval": {
+      "lesen": "Zeigt das Intervall für Flood-Adverts in Stunden an.",
+      "setzen": "Setzt das Intervall für Flood-Adverts auf {wert} Stunden. Für Repeater sind 3 bis 168 Stunden vorgesehen; 0 deaktiviert es bei unterstützten Rollen."
+    },
+    "advert.interval": {
+      "lesen": "Zeigt das Intervall für lokale Zero-Hop-Adverts in Minuten an.",
+      "setzen": "Setzt das Intervall für lokale Zero-Hop-Adverts auf {wert} Minuten. MeshCore rundet auf die nächste kleinere gerade Minute; 0 deaktiviert das Intervall."
+    },
+    "flood.max": {
+      "lesen": "Zeigt die maximale Hop-Anzahl für Flood-Pakete an.",
+      "setzen": "Begrenzt die maximale Hop-Anzahl für Flood-Pakete auf {wert}. Zulässig sind Werte von 0 bis 64."
+    },
+    "flood.max.unscoped": {
+      "lesen": "Zeigt die maximale Hop-Anzahl für Flood-Pakete ohne Region-Scope an.",
+      "setzen": "Begrenzt die maximale Hop-Anzahl für Flood-Pakete ohne Region-Scope auf {wert}. Damit können unscoped Nachrichten lokal zugelassen werden, ohne sie weit durch das Mesh zu fluten."
+    },
+    "flood.max.advert": {
+      "lesen": "Zeigt die maximale Hop-Anzahl für Flood-Adverts an.",
+      "setzen": "Begrenzt die maximale Hop-Anzahl für Flood-Adverts auf {wert}. Zulässig sind Werte von 0 bis 64."
+    },
+    "acl": {
+      "lesen": "Zeigt die Access-Control-List mit den berechtigten Begleitknoten über die serielle Schnittstelle an."
+    },
+    "allow.read.only": {
+      "lesen": "Zeigt an, ob ein Room-Server Anmeldungen ohne Passwort im Nur-Lesen-Modus erlaubt.",
+      "setzen": "Setzt den passwortlosen Nur-Lesen-Zugang des Room-Servers auf „{wert}“."
+    },
+    "bridge.type": {
+      "lesen": "Zeigt den in die Firmware einkompilierten Bridge-Typ an."
+    },
+    "bridge.enabled": {
+      "lesen": "Zeigt an, ob die externe Paket-Bridge aktiviert ist.",
+      "setzen": "Setzt die externe Paket-Bridge auf „{wert}“."
+    },
+    "bridge.delay": {
+      "lesen": "Zeigt die zusätzliche Verzögerung der Bridge in Millisekunden an.",
+      "setzen": "Setzt die zusätzliche Bridge-Verzögerung auf {wert} Millisekunden. Zulässig sind 0 bis 10.000 Millisekunden."
+    },
+    "bridge.source": {
+      "lesen": "Zeigt die Paketquelle der Bridge an.",
+      "setzen": "Setzt die Paketquelle der Bridge auf „{wert}“: logRx überträgt empfangene, logTx gesendete Pakete."
+    },
+    "bridge.baud": {
+      "lesen": "Zeigt die Baudrate einer seriellen RS-232-Bridge an.",
+      "setzen": "Setzt die Baudrate der seriellen Bridge auf {wert}. Unterstützt werden 9600, 19200, 38400, 57600 und 115200 Baud."
+    },
+    "bridge.channel": {
+      "lesen": "Zeigt den Funkkanal einer ESP-NOW-Bridge an.",
+      "setzen": "Setzt den ESP-NOW-Bridge-Kanal auf {wert}. Zulässig sind die Kanäle 1 bis 14."
+    },
+    "bridge.secret": {
+      "lesen": "Zeigt das konfigurierte Geheimnis der ESP-NOW-Bridge an.",
+      "setzen": "Setzt das ESP-NOW-Bridge-Geheimnis. Es darf höchstens 15 Zeichen lang sein."
+    },
+    "bootloader.ver": {
+      "lesen": "Zeigt auf nRF52-Geräten die Bootloader-Version an."
+    },
+    "pwrmgt.support": {
+      "lesen": "Zeigt an, welche Energieverwaltungsfunktionen die Hardware unterstützt."
+    },
+    "pwrmgt.source": {
+      "lesen": "Zeigt die aktuelle Energiequelle des Geräts an, sofern die Hardware Energieverwaltung unterstützt."
+    },
+    "pwrmgt.bootreason": {
+      "lesen": "Zeigt den Grund des letzten Starts beziehungsweise Herunterfahrens an, sofern die Hardware dies unterstützt."
+    },
+    "pwrmgt.bootmv": {
+      "lesen": "Zeigt die beim Gerätestart gemessene Spannung in Millivolt an, sofern die Hardware dies unterstützt."
+    }
   },
   "präfixKommandos": [
     {
+      "präfix": "time ",
+      "beschreibung": "Setzt die Uhr des Knotens auf den Unix-Zeitstempel {wert}."
+    },
+    {
+      "präfix": "neighbor.remove ",
+      "beschreibung": "Entfernt alle Nachbareinträge, deren öffentlicher Schlüssel mit „{wert}“ beginnt."
+    },
+    {
+      "präfix": "tempradio ",
+      "beschreibung": "Aktiviert vorübergehend die Funkkonfiguration „{wert}“ mit Frequenz, Bandbreite, Spreizfaktor, Coderate und Laufzeit. Ein Neustart verwirft die Änderung."
+    },
+    {
+      "präfix": "password ",
+      "beschreibung": "Ändert das Administratorpasswort. Knoten, die dieses Passwort verwenden, werden der Administrator-ACL hinzugefügt."
+    },
+    {
+      "präfix": "powersaving ",
+      "beschreibung": "Setzt den Energiesparmodus des Repeaters auf „{wert}“. Im aktiven Zustand schläft das Gerät zwischen Funkaussendungen."
+    },
+    {
+      "präfix": "setperm ",
+      "beschreibung": "Ändert anhand von „{wert}“ den ACL-Eintrag eines Begleitknotens. Die Berechtigungen 0, 1, 2 und 3 stehen für Gast, Nur-Lesen, Lesen/Schreiben und Administrator."
+    },
+    {
+      "präfix": "region load ",
+      "beschreibung": "Lädt oder aktualisiert den Regionseintrag „{wert}“. Ein optionales F erlaubt Flooding; Einrückungen im interaktiven Modus bilden Eltern-Kind-Beziehungen."
+    },
+    {
       "präfix": "region put ",
-      "beschreibung": "Legt die Region „{wert}“ an oder aktualisiert sie. Ohne angegebenen Parent nutzt MeshCore die Wildcard-Region als Elternregion."
+      "beschreibung": "Legt anhand von „{wert}“ eine Region an oder aktualisiert sie. Ein zweiter Name bestimmt die Elternregion; ohne ihn verwendet MeshCore die Wildcard-Region."
     },
     {
       "präfix": "region allowf ",
@@ -37,10 +255,51 @@
     {
       "präfix": "region default ",
       "beschreibung": "Setzt „{wert}“ als Default-Scope-Region des Repeaters. Der Wert kann laut MeshCore auch geleert werden, um den Default-Scope zurückzusetzen."
+    },
+    {
+      "präfix": "region get ",
+      "beschreibung": "Zeigt Name, Elternregion und Flood-Berechtigung der Region „{wert}“ an."
+    },
+    {
+      "präfix": "region def ",
+      "beschreibung": "Definiert mit „{wert}“ einen einzeiligen Regionsbaum. Namen bewegen den Hierarchiezeiger nach unten; | beziehungsweise , kann anschließend zu einer bereits vorhandenen Region springen."
+    },
+    {
+      "präfix": "region remove ",
+      "beschreibung": "Entfernt die Region „{wert}“. Vorher müssen alle untergeordneten Regionen entfernt werden."
+    },
+    {
+      "präfix": "region list ",
+      "beschreibung": "Listet seriell die Regionen mit dem Filter „{wert}“ auf. Erlaubt sind allowed und denied; erforderlich ist Firmware 1.12 oder neuer."
+    },
+    {
+      "präfix": "gps advert ",
+      "beschreibung": "Setzt die GPS-Advert-Richtlinie auf „{wert}“: none unterdrückt Standorte, share verwendet den GPS-Sensor und prefs die gespeicherten Koordinaten."
+    },
+    {
+      "präfix": "gps ",
+      "beschreibung": "Setzt den GPS-Betriebszustand auf „{wert}“, sofern GPS-Unterstützung einkompiliert ist."
+    },
+    {
+      "präfix": "sensor list ",
+      "beschreibung": "Listet die Sensorwerte ab Index {wert} auf, sofern Sensorunterstützung einkompiliert ist."
+    },
+    {
+      "präfix": "sensor get ",
+      "beschreibung": "Liest den Sensorwert „{wert}“, sofern Sensorunterstützung einkompiliert ist."
+    },
+    {
+      "präfix": "sensor set ",
+      "beschreibung": "Setzt anhand von „{wert}“ einen Sensorparameter, sofern Sensorunterstützung einkompiliert ist."
+    },
+    {
+      "präfix": "io ",
+      "beschreibung": "Ändert bei einer Sensor-Firmware den GPIO-Zustand anhand von „{wert}“ und gibt den neuen Hexadezimalwert zurück. r löscht, s setzt und t invertiert die angegebenen Bits; ein Hexadezimalwert ohne Präfix ersetzt den Zustand vollständig."
     }
   ],
   "fallback": {
-    "region save": "Speichert die seit dem Neustart geänderte Regionskonfiguration dauerhaft.",
-    "*": "Sendet dieses Kommando an den verbundenen Repeater."
+    "set": "Setzt den MeshCore-Parameter „{parameter}“ auf „{wert}“. Für diesen künftig hinzugekommenen oder herstellerspezifischen Parameter liegt noch keine spezielle Erklärung vor.",
+    "get": "Liest den aktuellen Wert des MeshCore-Parameters „{parameter}“. Für diesen künftig hinzugekommenen oder herstellerspezifischen Parameter liegt noch keine spezielle Erklärung vor.",
+    "*": "Führt das MeshCore-Kommando aus. Dieses Kommando ist in der aktuellen offiziellen CLI-Referenz nicht dokumentiert."
   }
 }

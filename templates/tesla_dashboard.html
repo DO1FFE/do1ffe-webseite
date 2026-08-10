@@ -1,13 +1,43 @@
 {% extends "layout.html" %}
 
-{% block titel %}Tesla-Dashboard | DO1FFE{% endblock %}
-{% block beschreibung %}Das Tesla-Dashboard von DO1FFE: Fahrzeugdaten, Karte, Statistik, Temperaturen, Status und Supercharger.{% endblock %}
+{% block titel %}Tesla Model S Live-Dashboard und Fahrzeugdaten | DO1FFE{% endblock %}
+{% block beschreibung %}Tesla Model S Live-Dashboard von DO1FFE: Fahrzeugstatus, Ladestatistik, Temperaturen, Karte und Supercharger – ohne private Live-Daten in Suchvorschauen.{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://tesla.do1ffe.de/#webapp",
+  "name": "Tesla Model S Live-Dashboard",
+  "url": "https://tesla.do1ffe.de/",
+  "mainEntityOfPage": "https://do1ffe.de/tesla-dashboard",
+  "description": "Persönliches Web-Dashboard für Fahrzeugstatus, Ladestatistik, Temperaturen, Kartenansicht und Supercharger.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Webbrowser",
+  "browserRequirements": "JavaScript",
+  "inLanguage": "de-DE",
+  "featureList": [
+    "Fahrzeugstatus",
+    "Ladestatistik",
+    "Temperaturübersicht",
+    "Kartenansicht",
+    "Supercharger in der Nähe"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://do1ffe.de/ueber-mich#person",
+    "name": "Erik Schauer"
+  }
+}
+</script>
+{% endblock %}
 
 {% block inhalt %}
 <section class="page-hero page-hero--tesla">
   <div class="page-hero__content reveal">
     <p class="eyebrow">tesla.do1ffe.de · V1.0.1420</p>
-    <h1>Ein eigenes Cockpit für Fahrzeugdaten</h1>
+    <h1>Tesla Model S Live-Dashboard: eigenes Cockpit für Fahrzeugdaten</h1>
     <p>
       Das Tesla-Dashboard ist kein Deko-Screen, sondern eine praktische Anzeige:
       Fahrzeugauswahl, Dashboard, Statistik, Kartenansicht, Zustandsdaten und
@@ -38,6 +68,11 @@
       Innen-, Wunsch-, Außen- und Batterietemperatur zeigen, ob Klima, Wetter und
       Akku gerade in einem sinnvollen Bereich liegen. Tür-, Fenster-, Frunk-,
       Kofferraum- und Ladeanschlussstatus machen daraus eine schnelle Zustandsübersicht.
+    </p>
+    <p>
+      Diese Projektseite erklärt bewusst nur Aufbau und Nutzen der Anwendung.
+      Persönliche Live-Werte, exakte Fahrzeugpositionen und Nachrichten gehören
+      nicht in die öffentliche Projektbeschreibung oder in Suchvorschauen.
     </p>
   </article>
   <aside class="dashboard-panel reveal" aria-label="Dashboard Anzeige">
@@ -84,7 +119,7 @@
 </section>
 
 <section class="next-links" aria-label="Weitere Themen">
-  <a href="{{ url_for('github') }}">Die GitHub-Repositories ansehen</a>
+  <a href="{{ url_for('dienste') }}">Die Dienste ansehen</a>
   <a href="{{ url_for('startseite') }}">Zur Startseite</a>
 </section>
 {% endblock %}
