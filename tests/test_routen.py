@@ -692,6 +692,27 @@ def test_projektseiten_haben_passende_valide_json_ld_typen():
     assert "position" not in json.dumps(tesla, ensure_ascii=False).casefold()
 
 
+def test_kontaktseite_zeigt_telefon_und_whatsapp_mit_direkten_links():
+    html = app.test_client().get("/kontakt").get_data(as_text=True)
+    kontaktseite = next(
+        eintrag
+        for eintrag in flache_json_ld_elemente(html)
+        if eintrag.get("@type") == "ContactPage"
+    )
+    person = kontaktseite["mainEntity"]
+
+    assert 'href="tel:+4915785931891"' in html
+    assert "Telefon: 01578 5931891" in html
+    assert 'href="https://wa.me/4917649060004"' in html
+    assert "WhatsApp: 0176 49060004" in html
+    assert person["telephone"] == "+4915785931891"
+    assert any(
+        kontaktpunkt.get("contactType") == "WhatsApp"
+        and kontaktpunkt.get("telephone") == "+4917649060004"
+        for kontaktpunkt in person["contactPoint"]
+    )
+
+
 def test_social_vorschaubilder_nutzen_vorhandene_lokale_assets():
     klient = app.test_client()
     startseite = klient.get("/").get_data(as_text=True)
@@ -739,7 +760,7 @@ def test_footer_hat_vollständiges_copyright_mit_startjahr():
     assert "&copy; <span data-year data-start-year=\"2026\">2026</span> Erik Schauer, do1ffe@darc.de" in html
 
 
-def test_robots_txt_erlaubt_inhalte_und_sperrt_technische_pfade():
+def test_robots_txt_erlaubt_downloads_und_sperrt_api_pfade():
     klient = app.test_client()
     antwort = klient.get("/robots.txt")
     text = antwort.get_data(as_text=True)
@@ -749,7 +770,7 @@ def test_robots_txt_erlaubt_inhalte_und_sperrt_technische_pfade():
     assert "User-agent: *" in text
     assert "Allow: /" in text
     assert "Disallow: /api/" in text
-    assert "Disallow: /downloads/" in text
+    assert "Disallow: /downloads/" not in text
     assert "Disallow: /static/" not in text
     assert "Sitemap: https://do1ffe.de/sitemap.xml" in text
 

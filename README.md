@@ -71,8 +71,9 @@ Die kanonische Basis ist `https://do1ffe.de`. Aufrufe über `www.do1ffe.de`
 werden dauerhaft auf die entsprechende Non-www-URL umgeleitet. Öffentliche
 Inhaltsseiten liefern je eine kanonische URL, individuelle Metadaten und
 strukturierte Daten aus. `robots.txt` verweist auf die XML-Sitemap und schließt
-API- sowie Downloadpfade vom Crawling aus; diese Antworten tragen zusätzlich
-einen `X-Robots-Tag`.
+API-Pfade vom Crawling aus. Downloadpfade dürfen gecrawlt werden, damit
+Suchmaschinen ihren ausschließenden `X-Robots-Tag` auswerten können. API- und
+Downloadantworten tragen diesen `X-Robots-Tag`.
 
 Impressum und Datenschutzerklärung bleiben intern verlinkt und erreichbar,
 werden aber bewusst mit `noindex,follow` ausgeliefert und stehen daher nicht in

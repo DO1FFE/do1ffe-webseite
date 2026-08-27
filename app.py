@@ -2248,7 +2248,6 @@ def crawler_regeln():
             "User-agent: *",
             "Allow: /",
             "Disallow: /api/",
-            "Disallow: /downloads/",
             f"Sitemap: {kanonische_url('/sitemap.xml')}",
             "",
         ]
