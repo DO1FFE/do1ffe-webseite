@@ -80,7 +80,7 @@
       <nav class="site-nav" id="site-nav" data-nav>
         <a class="{% if request.endpoint == 'startseite' %}is-active{% endif %}" href="{{ url_for('startseite') }}">Start</a>
         <a class="{% if request.endpoint == 'ueber_mich' %}is-active{% endif %}" href="{{ url_for('ueber_mich') }}">Über mich</a>
-        <a class="{% if request.endpoint in ['ov_l11', 'ov_abend_2026_08_11'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
+        <a class="{% if request.endpoint in ['ov_l11', 'ov_abend_2027_02_09'] %}is-active{% endif %}" href="{{ url_for('ov_l11') }}">OV L11</a>
         <a class="{% if request.endpoint == 'tesla_dashboard' %}is-active{% endif %}" href="{{ url_for('tesla_dashboard') }}">Tesla</a>
         <a class="{% if request.endpoint == 'autobahn' %}is-active{% endif %}" href="{{ url_for('autobahn') }}">Autobahnwetter</a>
         <a class="{% if request.endpoint in ['dienste', 'github', 'projekte'] %}is-active{% endif %}" href="{{ url_for('dienste') }}">Dienste</a>

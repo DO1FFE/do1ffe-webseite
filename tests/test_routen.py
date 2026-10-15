@@ -174,7 +174,7 @@ def test_alle_hauptseiten_erreichbar():
     for route in [
         "/",
         "/ov-l11",
-        "/ov-l11/ov-abend-2026-08-11",
+        "/ov-l11/ov-abend-2027-02-09",
         "/tesla-dashboard",
         "/tempco2",
         "/autobahn",
@@ -790,7 +790,7 @@ def test_sitemap_listet_indexierbare_hauptseiten():
     assert urls == [
         "https://do1ffe.de/",
         "https://do1ffe.de/ov-l11",
-        "https://do1ffe.de/ov-l11/ov-abend-2026-08-11",
+        "https://do1ffe.de/ov-l11/ov-abend-2027-02-09",
         "https://do1ffe.de/tesla-dashboard",
         "https://do1ffe.de/tempco2",
         "https://do1ffe.de/autobahn",
@@ -807,16 +807,19 @@ def test_sitemap_listet_indexierbare_hauptseiten():
         datetime.strptime(lastmod, "%Y-%m-%d")
 
 
-def test_ov_l11_zeigt_sommerpause_und_anmeldung():
+def test_ov_l11_zeigt_winterpause_und_anmeldung():
     klient = app.test_client()
     antwort = klient.get("/ov-l11")
     html = antwort.get_data(as_text=True)
 
-    assert "Sommerpause" in html
-    assert "11.08.2026" in html
-    assert "11.08.2026 von 19 bis 21 Uhr" in html
+    assert "Winterpause" in html
+    assert "Sommerpause" not in html
+    assert "09.02.2027" in html
+    assert "11.08.2026" not in html
+    assert "09.02.2027 von 19 bis 21 Uhr" in html
     assert "https://treff.lima11.de" in html
-    assert 'href="/ov-l11/ov-abend-2026-08-11"' in html
+    assert 'href="/ov-l11/ov-abend-2027-02-09"' in html
+    assert 'href="/ov-l11/ov-abend-2026-08-11"' not in html
     assert "application/ld+json" in html
     assert '"@type": "Organization"' in html
     assert '"@type": "Event"' not in html
@@ -824,26 +827,36 @@ def test_ov_l11_zeigt_sommerpause_und_anmeldung():
 
 def test_ov_abend_hat_vollständige_sichtbare_termindaten():
     klient = app.test_client()
-    antwort = klient.get("/ov-l11/ov-abend-2026-08-11")
+    antwort = klient.get("/ov-l11/ov-abend-2027-02-09")
     html = antwort.get_data(as_text=True)
 
     assert antwort.status_code == 200
-    assert "OV-Abend am 11. August 2026" in html
-    assert "11. August 2026 ab 19 Uhr" in html
+    assert "OV-Abend am 9. Februar 2027" in html
+    assert "9. Februar 2027 ab 19 Uhr" in html
+    assert 'datetime="2027-02-09T19:00:00+01:00"' in html
+    assert 'datetime="2027-02-09T21:00:00+01:00"' in html
     assert "19 Uhr" in html
     assert "21 Uhr" in html
     assert "Haus der Begegnung" in html
     assert "I. Weberstraße 28" in html
     assert "Kostenfrei" in html
     assert "interessierte Gäste" in html
-    assert '<link rel="canonical" href="https://do1ffe.de/ov-l11/ov-abend-2026-08-11">' in html
+    assert '<link rel="canonical" href="https://do1ffe.de/ov-l11/ov-abend-2027-02-09">' in html
     assert '<meta name="twitter:card" content="summary_large_image">' in html
-    assert 'href="/ov-l11/ov-abend-2026-08-11"' in klient.get("/ov-l11").get_data(as_text=True)
+    assert '<a class="is-active" href="/ov-l11">OV L11</a>' in html
+    assert 'href="/ov-l11/ov-abend-2027-02-09"' in klient.get("/ov-l11").get_data(as_text=True)
+
+
+def test_veralteter_ov_abend_leitet_dauerhaft_auf_neuen_termin():
+    antwort = app.test_client().get("/ov-l11/ov-abend-2026-08-11")
+
+    assert antwort.status_code == 301
+    assert antwort.headers["Location"] == "/ov-l11/ov-abend-2027-02-09"
 
 
 def test_ov_abend_hat_vollständige_strukturierte_event_daten():
     klient = app.test_client()
-    html = klient.get("/ov-l11/ov-abend-2026-08-11").get_data(as_text=True)
+    html = klient.get("/ov-l11/ov-abend-2027-02-09").get_data(as_text=True)
     json_ld = extrahiere_json_ld(html)
     ereignis = next(eintrag for eintrag in json_ld if eintrag.get("@type") == "Event")
     breadcrumb = next(
@@ -852,9 +865,9 @@ def test_ov_abend_hat_vollständige_strukturierte_event_daten():
 
     assert ereignis["name"] == "OV-Abend DARC OV L11"
     assert ereignis["description"]
-    assert ereignis["startDate"] == "2026-08-11T19:00:00+02:00"
-    assert ereignis["endDate"] == "2026-08-11T21:00:00+02:00"
-    assert ereignis["url"] == "https://do1ffe.de/ov-l11/ov-abend-2026-08-11"
+    assert ereignis["startDate"] == "2027-02-09T19:00:00+01:00"
+    assert ereignis["endDate"] == "2027-02-09T21:00:00+01:00"
+    assert ereignis["url"] == "https://do1ffe.de/ov-l11/ov-abend-2027-02-09"
     assert ereignis["image"] == "https://do1ffe.de/static/assets/ov-l11-radio.svg"
     assert ereignis["location"]["address"]["streetAddress"] == "I. Weberstraße 28"
     assert ereignis["offers"]["price"] == 0

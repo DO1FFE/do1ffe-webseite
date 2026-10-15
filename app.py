@@ -154,13 +154,13 @@ SEO_SEITEN = (
         "dateien": ("templates/ov_l11.html", "templates/layout.html"),
     },
     {
-        "endpoint": "ov_abend_2026_08_11",
-        "pfad": "/ov-l11/ov-abend-2026-08-11",
-        "name": "OV-Abend am 11.08.2026",
+        "endpoint": "ov_abend_2027_02_09",
+        "pfad": "/ov-l11/ov-abend-2027-02-09",
+        "name": "OV-Abend am 09.02.2027",
         "eltern_pfad": "/ov-l11",
         "eltern_name": "OV L11",
         "dateien": (
-            "templates/ov_abend_2026_08_11.html",
+            "templates/ov_abend_2027_02_09.html",
             "templates/layout.html",
             "static/assets/ov-l11-radio.svg",
         ),
@@ -2330,7 +2330,12 @@ def ov_l11():
 
 @app.route("/ov-l11/ov-abend-2026-08-11")
 def ov_abend_2026_08_11():
-    return render_template("ov_abend_2026_08_11.html")
+    return redirect(url_for("ov_abend_2027_02_09"), code=301)
+
+
+@app.route("/ov-l11/ov-abend-2027-02-09")
+def ov_abend_2027_02_09():
+    return render_template("ov_abend_2027_02_09.html")
 
 
 @app.route("/tesla-dashboard")
